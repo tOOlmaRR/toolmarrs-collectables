@@ -1,0 +1,11 @@
+# Data file settings
+data-files:
+    inventory:
+        delimiter: ","
+        importPath: "\\data\\import\\"
+        processedPath: "\\data\\processed\\"
+        rejectedPath: "\\data\\rejected\\"
+        flatFileGeography:
+            titleRowNumber: 1
+            setDetailsRowNumber: 3
+            setContentRowNumber: 12
