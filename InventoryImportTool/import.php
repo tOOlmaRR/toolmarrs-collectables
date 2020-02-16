@@ -17,6 +17,19 @@ use Goodby\CSV\Import\Standard\Lexer;
 use Goodby\CSV\Import\Standard\Interpreter;
 use Goodby\CSV\Import\Standard\LexerConfig;
 use Noodlehaus\Config as Config;
+use GeoTradingCards\InventoryImportUtility\classes\Card;
+use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
+use GeoTradingCards\InventoryImportUtility\classes\CardSet;
+use GeoTradingCards\InventoryImportUtility\classes\CardValue;
+use GeoTradingCards\InventoryImportUtility\classes\GradingClass;
+use GeoTradingCards\InventoryImportUtility\classes\League;
+use GeoTradingCards\InventoryImportUtility\classes\Manufacturer;
+use GeoTradingCards\InventoryImportUtility\classes\PlayerPosition;
+use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
+use GeoTradingCards\InventoryImportUtility\classes\SingleCardGrading;
+use GeoTradingCards\InventoryImportUtility\classes\Sport;
+use GeoTradingCards\InventoryImportUtility\classes\Subset;
+use GeoTradingCards\InventoryImportUtility\classes\Team;
 
 $environment = 'development';
 $configPath = __DIR__ . '\\config\\';
@@ -51,6 +64,22 @@ try {
 
 // Main Program
 try {
+    /* TEMPORARY TESTING AREA
+    $card = new Card();
+    $cardAttribute = new CardAttribute();
+    $cardSet = new CardSet();
+    $cardValue = new CardValue();
+    $gradingClass = new GradingClass();
+    $league = new League();
+    $manufacturer = new Manufacturer();
+    $playerPosition = new PlayerPosition();
+    $singleCard = new SingleCard();
+    $singleCardGrading = new SingleCardGrading();
+    $sport = new Sport();
+    $subset = new Subset();
+    $team = new Team();    
+    */
+    
     // Get list of files to import
     $localImportPath = __DIR__ . $config['data-files']['inventory']['importPath'];
     echo "Looking for files to process and import in $localImportPath ..." . PHP_EOL;
