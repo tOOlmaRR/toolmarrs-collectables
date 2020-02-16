@@ -12,11 +12,6 @@ error_reporting(-1);
 
 require 'vendor/autoload.php';
 
-use GeoTradingCards\InventoryImportUtility\CsvImporter;
-use Goodby\CSV\Import\Standard\Lexer;
-use Goodby\CSV\Import\Standard\Interpreter;
-use Goodby\CSV\Import\Standard\LexerConfig;
-use Noodlehaus\Config as Config;
 use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\classes\CardSet;
@@ -30,6 +25,11 @@ use GeoTradingCards\InventoryImportUtility\classes\SingleCardGrading;
 use GeoTradingCards\InventoryImportUtility\classes\Sport;
 use GeoTradingCards\InventoryImportUtility\classes\Subset;
 use GeoTradingCards\InventoryImportUtility\classes\Team;
+use GeoTradingCards\InventoryImportUtility\CsvImporter;
+use Goodby\CSV\Import\Standard\Lexer;
+use Goodby\CSV\Import\Standard\Interpreter;
+use Goodby\CSV\Import\Standard\LexerConfig;
+use Noodlehaus\Config as Config;
 
 $environment = 'development';
 $configPath = __DIR__ . '\\config\\';
