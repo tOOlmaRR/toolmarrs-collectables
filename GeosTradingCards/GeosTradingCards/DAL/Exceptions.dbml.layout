@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="Exceptions">
+  <DataContextMoniker Name="/ExceptionsDataContext" />
+  <nestedChildShapes>
+    <classShape Id="b25c709b-019c-40cb-a704-88f6d3fcaed5" absoluteBounds="6, 2.875, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/ExceptionsDataContext/Exception" />
+      <nestedChildShapes>
+        <elementListCompartment Id="af907f1b-cdfe-4efc-8a1c-8fb00e3ed66e" absoluteBounds="6.015, 3.335, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

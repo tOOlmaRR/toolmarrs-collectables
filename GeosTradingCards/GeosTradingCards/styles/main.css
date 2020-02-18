@@ -1,0 +1,272 @@
+﻿body
+{
+	margin: 5px 0;
+	color: #444;
+}
+
+h1
+{
+	color: #103200;
+}
+
+a
+{
+	color: #800AFF;
+	text-decoration: none;
+}
+
+a:hover
+{
+	text-decoration: underline;
+}
+
+.error
+{
+	font-size: 10pt;
+	color: Red;
+}
+
+#leaderboard
+{
+	width: 728px;
+	height: 90px;
+	background-color: Black;
+	color: White;
+	margin: 5px auto;
+}
+
+#medrect
+{
+	width: 300px;
+	height: 250px;
+	background-color: Black;
+	color: White;
+	margin: 5px auto;
+	text-align: center;
+}
+
+.breadcrumbs
+{
+	padding: 5px;
+	font-size: 8pt;
+}
+
+.breadcrumbTitle
+{
+	font-weight: bold;
+	color: Black;
+}
+
+.breadcrumbsContent
+{
+	display: inline;
+}
+
+.error
+{
+	font-size: 10pt;
+	color: Red;
+}
+
+/* Left Menu */
+#leftMenu {
+    margin-top: 0;
+    height: auto;
+    position: relative;
+    right: 40px;
+}
+
+#leftMenu li {
+    font-size: 10pt;
+    height: 28px;
+    position: relative;
+    margin-bottom: 5px;
+    list-style-type: none;
+    background-image: url(/images/inactiveLeftTab.gif);
+    background-repeat: no-repeat;
+}
+#leftMenu li a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+#leftMenu li a:hover {
+    background-image: url(/images/currentLeftTab.gif);
+    background-repeat: no-repeat;
+    color: red;
+}
+#leftMenu li a:active 
+{
+    background-image: url(/images/currentLeftTab.gif);
+    background-repeat: no-repeat;
+}
+
+.leftMenuLink
+{
+	position: relative;
+	left: 38px;
+	top: 5px;
+}
+
+/* styles within content */
+#siteBanner
+{
+	background-color: white;
+	text-align: left;
+	position: relative;
+	left: -178px;
+	padding: 5px 0 0 5px;
+}
+
+.footer
+{
+	font-size: 10pt;
+	text-align: center;
+	height: 60px;
+}
+
+.shippingTable
+{
+	background-color: #fff;
+	margin: 0 auto 25px auto;
+	width: 60%
+}
+.shippingTable caption
+{
+	font-size: 12pt;
+	font-weight: bold;
+	margin-bottom: 5px;
+	text-align: left;
+}
+
+.shippingTable th
+{
+	text-align: center;
+}
+
+.floatingPayPal
+{
+	float: right;
+	padding: 0 0 5px 5px;
+}
+
+.gradingTable
+{
+	background-color: #fff;
+	margin: 0 auto 25px auto;
+	width: 80%
+}
+
+.gradingTable th
+{
+	text-align: center;
+}
+
+/* Browse Box */
+.browse
+{
+	border: solid 2px Black;
+	background-color: White;
+	margin-left: 10px;
+	padding: 0 5px;
+	width: 350px;
+	float: right;
+}
+
+.browseRow
+{
+	height: 40px;
+}
+
+.browseLabel
+{
+	font-weight: bold;
+	text-align: right;
+	padding-right: 10px;
+}
+
+.browseBtnRow
+{
+	height: 40px;
+	text-align: right;
+}
+
+.btnBrowse
+{
+	width: 60px;
+	margin-right: 15px;
+}
+
+.btnBrowse .lastBtn
+{
+	margin-right: 0;
+}
+
+/* Grading Table */
+#gradingTable th
+{
+	background-color: #C0C0C0;
+	font-weight: bold;
+	font-size: 14pt;
+	text-align: center;
+	vertical-align: bottom;
+}
+
+#gradingTable .className
+{
+	font-size: 11pt;
+	font-weight: bold;
+	vertical-align: top;
+}
+
+/* Sitemap Page */
+#sitemap
+{
+	margin-bottom: 20px;
+}
+
+#sitemap #column1
+{
+	float: left;
+	left: 0;
+	width: 400px;
+}
+#sitemap #column1 .level1
+{
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+}
+#sitemap #column1 .level1 li
+{
+	padding-bottom: 10px;
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+#sitemap #column1 .level2
+{
+	margin: 0;
+	padding-left: 20px;
+	list-style-type: none;
+}
+#sitemap #column1 .level2 li
+{
+	padding-bottom: 5px;
+	font-size: 12pt;
+	font-weight: normal;
+}
+
+#sitemap #column1 .level3
+{
+	margin: 0;
+	padding-left: 20px;
+	list-style-type: none;
+}
+#sitemap #column1 .level3 li
+{
+	padding-bottom: 3px;
+	font-size: 10pt;
+	font-weight: normal;
+}
