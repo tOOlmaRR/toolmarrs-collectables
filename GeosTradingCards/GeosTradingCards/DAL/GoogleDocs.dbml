@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="CardCollection" Class="GoogleDocsDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=.\SQLEXPRESS;AttachDbFilename=|DataDirectory|\CardCollection.mdf;Integrated Security=True;Connect Timeout=30;User Instance=True" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="CardCollectionConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.GoogleDocsPages" Member="GoogleDocsPages">
+    <Type Name="GoogleDocsPage" Id="ID1">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Season" Type="System.String" DbType="Char(7) NOT NULL" CanBeNull="false" />
+      <Column Name="[Set]" Member="Set" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="GoogleDocsUrl" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Function Name="dbo.[GoogleDocs.SelectAll]" Method="GoogleDocs_SelectAll">
+    <ElementType Name="GoogleDocs_SelectAllResult">
+      <Column Name="ID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Season" Type="System.String" DbType="Char(7) NOT NULL" CanBeNull="false" />
+      <Column Name="[Set]" Member="Set" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="GoogleDocsUrl" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.[GoogleDocs.SelectRowByID]" Method="GoogleDocs_SelectRowByID">
+    <Parameter Name="ID" Parameter="iD" Type="System.Int32" DbType="Int" />
+    <ElementType IdRef="ID1" />
+  </Function>
+</Database>

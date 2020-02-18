@@ -1,0 +1,397 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{AD553DBD-E353-4BD9-BC80-0AB43F6CA034}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GeoTradingCards</RootNamespace>
+    <AssemblyName>GeoTradingCards</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Mobile" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_Data\CardCollection.mdf" />
+    <Content Include="App_Data\CardCollection_log.ldf">
+      <DependentUpon>CardCollection.mdf</DependentUpon>
+    </Content>
+    <Content Include="Default.aspx" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="404.aspx.cs">
+      <DependentUpon>404.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="404.aspx.designer.cs">
+      <DependentUpon>404.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="About.aspx.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="About.aspx.designer.cs">
+      <DependentUpon>About.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="classes\GoogleDoc.cs" />
+    <Compile Include="classes\GoogleDocsList.cs" />
+    <Compile Include="Contact.aspx.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Contact.aspx.designer.cs">
+      <DependentUpon>Contact.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AdminFooter.ascx.cs">
+      <DependentUpon>AdminFooter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AdminFooter.ascx.designer.cs">
+      <DependentUpon>AdminFooter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Advertising\LeaderboardROS.ascx.cs">
+      <DependentUpon>LeaderboardROS.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Advertising\LeaderboardROS.ascx.designer.cs">
+      <DependentUpon>LeaderboardROS.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Advertising\MedRectangleROS.ascx.cs">
+      <DependentUpon>MedRectangleROS.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Advertising\MedRectangleROS.ascx.designer.cs">
+      <DependentUpon>MedRectangleROS.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Breadcrumbs.ascx.cs">
+      <DependentUpon>Breadcrumbs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Breadcrumbs.ascx.designer.cs">
+      <DependentUpon>Breadcrumbs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\LeftMenuMain.ascx.cs">
+      <DependentUpon>LeftMenuMain.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\LeftMenuMain.ascx.designer.cs">
+      <DependentUpon>LeftMenuMain.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\MainFooter.ascx.cs">
+      <DependentUpon>MainFooter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\MainFooter.ascx.designer.cs">
+      <DependentUpon>MainFooter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ShopFooter.ascx.cs">
+      <DependentUpon>ShopFooter.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ShopFooter.ascx.designer.cs">
+      <DependentUpon>ShopFooter.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Stats\GoogleAnalytics.ascx.cs">
+      <DependentUpon>GoogleAnalytics.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Stats\GoogleAnalytics.ascx.designer.cs">
+      <DependentUpon>GoogleAnalytics.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\Tabs.ascx.cs">
+      <DependentUpon>Tabs.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\Tabs.ascx.designer.cs">
+      <DependentUpon>Tabs.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\Databases.cs" />
+    <Compile Include="DAL\ExceptionManager.cs" />
+    <Compile Include="DAL\Exceptions.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Exceptions.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\GoogleDocs.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GoogleDocs.dbml</DependentUpon>
+    </Compile>
+    <Compile Include="DAL\GoogleDocsManager.cs" />
+    <Compile Include="Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Links.aspx.cs">
+      <DependentUpon>Links.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Links.aspx.designer.cs">
+      <DependentUpon>Links.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Main.Master.cs">
+      <DependentUpon>Main.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Main.Master.designer.cs">
+      <DependentUpon>Main.Master</DependentUpon>
+    </Compile>
+    <Compile Include="manage\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="manage\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="manage\GoogleDocsAdmin.aspx.cs">
+      <DependentUpon>GoogleDocsAdmin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="manage\GoogleDocsAdmin.aspx.designer.cs">
+      <DependentUpon>GoogleDocsAdmin.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shop\Baseball.aspx.cs">
+      <DependentUpon>Baseball.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\Baseball.aspx.designer.cs">
+      <DependentUpon>Baseball.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Shop\Grading.aspx.cs">
+      <DependentUpon>Grading.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\Grading.aspx.designer.cs">
+      <DependentUpon>Grading.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Shop\Hockey.aspx.cs">
+      <DependentUpon>Hockey.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\Hockey.aspx.designer.cs">
+      <DependentUpon>Hockey.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Shop\InventoryListing.aspx.cs">
+      <DependentUpon>InventoryListing.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\InventoryListing.aspx.designer.cs">
+      <DependentUpon>InventoryListing.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Shop\Ordering.aspx.cs">
+      <DependentUpon>Ordering.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\Ordering.aspx.designer.cs">
+      <DependentUpon>Ordering.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Shop\Returns.aspx.cs">
+      <DependentUpon>Returns.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\Returns.aspx.designer.cs">
+      <DependentUpon>Returns.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Shop\Shipping.aspx.cs">
+      <DependentUpon>Shipping.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\Shipping.aspx.designer.cs">
+      <DependentUpon>Shipping.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Shop\Shop.aspx.cs">
+      <DependentUpon>Shop.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Shop\Shop.aspx.designer.cs">
+      <DependentUpon>Shop.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Sitemap.aspx.cs">
+      <DependentUpon>Sitemap.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Sitemap.aspx.designer.cs">
+      <DependentUpon>Sitemap.aspx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="About.aspx" />
+    <Content Include="Contact.aspx" />
+    <Content Include="Controls\Advertising\LeaderboardROS.ascx" />
+    <Content Include="Controls\Advertising\MedRectangleROS.ascx" />
+    <Content Include="Controls\Breadcrumbs.ascx" />
+    <Content Include="Controls\LeftMenuMain.ascx" />
+    <Content Include="Controls\MainFooter.ascx" />
+    <Content Include="Controls\ShopFooter.ascx" />
+    <Content Include="Controls\Stats\GoogleAnalytics.ascx" />
+    <Content Include="Controls\Tabs.ascx" />
+    <Content Include="images\currentLeftTab.gif" />
+    <Content Include="images\current_about.gif" />
+    <Content Include="images\current_contact.gif" />
+    <Content Include="images\current_home.gif" />
+    <Content Include="images\current_links.gif" />
+    <Content Include="images\current_shop.gif" />
+    <Content Include="images\inactiveLeftTab.gif" />
+    <Content Include="images\shop.gif" />
+    <Content Include="Links.aspx" />
+    <Content Include="Shop\Baseball.aspx" />
+    <Content Include="Shop\Grading.aspx" />
+    <Content Include="Shop\Hockey.aspx" />
+    <Content Include="Shop\InventoryListing.aspx" />
+    <Content Include="Shop\Ordering.aspx" />
+    <Content Include="scripts\imagery.js" />
+    <Content Include="images\1.gif" />
+    <Content Include="images\2.gif" />
+    <Content Include="images\3.gif" />
+    <Content Include="images\about.gif" />
+    <Content Include="images\after_logo.gif" />
+    <Content Include="images\after_photo.gif" />
+    <Content Include="images\button_bar.jpg" />
+    <Content Include="images\contact.gif" />
+    <Content Include="images\dark_bg.gif" />
+    <Content Include="images\footnote.jpg" />
+    <Content Include="images\footnote_bg.gif" />
+    <Content Include="images\footnote_left.gif" />
+    <Content Include="images\footnote_right1.gif" />
+    <Content Include="images\home.gif" />
+    <Content Include="images\left.jpg" />
+    <Content Include="images\left_bg.gif" />
+    <Content Include="images\links.gif" />
+    <Content Include="images\top.jpg" />
+    <Content Include="images\top_bg.gif" />
+    <Content Include="images\white_bg.gif" />
+    <Content Include="images\yellow_bg.gif" />
+    <Content Include="Main.Master" />
+    <Content Include="Shop\Returns.aspx" />
+    <Content Include="Shop\Shipping.aspx" />
+    <Content Include="Shop\Shop.aspx" />
+    <Content Include="styles\main.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="404.aspx" />
+    <Content Include="Controls\AdminFooter.ascx" />
+    <Content Include="images\banner1.jpg" />
+    <Content Include="images\favicon.ico" />
+    <Content Include="images\nologo.gif" />
+    <Content Include="manage\Default.aspx" />
+    <Content Include="manage\GoogleDocsAdmin.aspx" />
+    <Content Include="Sitemap.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DAL\Exceptions.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>Exceptions.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DAL\Exceptions.dbml.layout">
+      <DependentUpon>Exceptions.dbml</DependentUpon>
+    </None>
+    <None Include="DAL\GoogleDocs.dbml">
+      <Generator>MSLinqToSQLGenerator</Generator>
+      <LastGenOutput>GoogleDocs.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DAL\GoogleDocs.dbml.layout">
+      <DependentUpon>GoogleDocs.dbml</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>1681</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>
+          </IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
