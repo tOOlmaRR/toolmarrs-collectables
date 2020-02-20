@@ -1,6 +1,9 @@
 <?php
 namespace GeoTradingCards\InventoryImportUtility;
 
+use GeoTradingCards\InventoryImportUtility\classes\CardSet;
+use GeoTradingCards\InventoryImportUtility\iImporter;
+
 /**
 * Base Inventory Importer
 * A base class for performing imports. This should be extended as needed if I deal with different file formats
@@ -8,6 +11,69 @@ namespace GeoTradingCards\InventoryImportUtility;
 */    
 class BaseImporter implements iImporter
 {
+    // private members
+    private $parsedCardSet;
+    private $parseError = "";
+    private $dataFileDelimiter;
+    private $stopParsing;
+
+
+    // accessors
+    public function getParsedCardSet() : ?CardSet
+    {
+        return $this->parsedCardSet ?? null;
+    }
+    
+    public function getParseError() : string
+    {
+        return $this->parseError;
+    }
+    
+    public function getFileDelimiter() : string
+    {
+        return $this->dataFileDelimiter;
+    }
+    
+    protected function getStopParsing() : bool
+    {
+        return $this->stopParsing;
+    }
+    
+    
+
+    // setters
+    protected function setParsedCardSet(CardSet $cardSet)
+    {
+        $this->parsedCardSet = $cardSet;
+    }
+    
+    protected function setParseError(string $errorMessage)
+    {
+        $this->parseError = $errorMessage;
+        $this->stopParsing = true;
+    }
+    
+    protected function setFileDelimiter(string $delimiter)
+    {
+        $this->dataFileDelimiter = $delimiter;
+    }
+    
+    protected function setStopParsing(bool $stop)
+    {
+        $this->stopParsing = $stop;
+    }
+    
+    
+    
+    // constructor(s)
+    public function __construct()
+    {
+        $this->setStopParsing(false);
+    }
+    
+    
+    
+    // methods    
     public function locateFilesToImport($importFolder)
     {
         $itemsToRemove = array('.', '..');
@@ -25,10 +91,9 @@ class BaseImporter implements iImporter
         return $files;
     }
     
-    public function validateFile($fullFilePath, &$fileContent, &$rejectionReason)
+    public function validateFile($fullFilePath, &$rejectionReason)
     {
         $fileContent = file_get_contents($fullFilePath);
-        $fileContent = false;
         if ($fileContent === false) {
             $rejectionReason = "Could not read the data file";
             return false;
@@ -40,18 +105,18 @@ class BaseImporter implements iImporter
         }
     }
     
-    public function parseFile($fullFileContent)
+    public function parseFileToImport($fullFileContent)
     {
-        throw new Exception("Function has not been implemented");
+        throw new \Exception("Function has not been implemented");
     }
     
     public function buildDatabaseObjects($inventoryObjects)
     {
-        throw new Exception("Function has not been implemented");
+        throw new \Exception("Function has not been implemented");
     }
     
     public function insertDatabaseObjects($databaseObjects)
     {
-        throw new Exception("Function has not been implemented");
+        throw new \Exception("Function has not been implemented");
     }
 }

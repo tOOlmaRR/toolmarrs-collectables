@@ -91,12 +91,12 @@ class CardSet
         return $this->manufacturer;
     }
     
-    public function getCards() : array
+    public function getCards() : ?array
     {
         return $this->cards;
     }
     
-    public function getSubsets() : array
+    public function getSubsets() : ?array
     {
         return $this->subsets;
     }
