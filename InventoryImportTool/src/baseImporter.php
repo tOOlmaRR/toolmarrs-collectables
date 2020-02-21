@@ -142,7 +142,7 @@ class BaseImporter implements iImporter
                     }
                 } else {
                     // If the manufacturer already exists, update the object associated to the Card Set
-                    $cardSetToInsert->setManufacturer($existingManufacturer->getID());
+                    $cardSetToInsert->setManufacturer($existingManufacturer);
                 }
             } else {
                 $this->getParseError("Manufacturer must be defined");

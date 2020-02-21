@@ -15,6 +15,14 @@ class BaseEntity implements iEntity
     }
     
     
+    // public getters/accessors
+    protected function getDB() : PDO
+    {
+        return $this->db;
+    }
+    
+    
+    
     // methods
     public function get($objectToFind)
     {
