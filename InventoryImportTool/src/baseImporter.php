@@ -3,6 +3,7 @@ namespace GeoTradingCards\InventoryImportUtility;
 
 use GeoTradingCards\InventoryImportUtility\iImporter;
 use GeoTradingCards\InventoryImportUtility\classes\CardSet;
+use GeoTradingCards\InventoryImportUtility\DAL\EntityFactory;
 use GeoTradingCards\InventoryImportUtility\DAL\ManufacturerEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
 
@@ -117,15 +118,21 @@ class BaseImporter implements iImporter
         $cardSetToInsert = $this->getParsedCardSet();
 
         if ($cardSetToInsert != null) {
+            //TODO: Get the DB connection details from configuration
+            $host = "mysql:host=localhost;dbname=tsc2020-dev";
+            $user = "root";
+            $password = "";
+            $entityFactory = new EntityFactory($host, $user, $password);
             $manufacturer = $cardSetToInsert->getManufacturer();
             
             // MANUFACTURER
             if ($manufacturer != null) {
                 // If the manufaturer doesn't already exist, insert it
-                $manufacturerEntity = new ManufacturerEntity();
-                $existingManufacturer = $manufacturerEntity->getManufacturer($manufacturer);
+                //$manufacturerEntity = new ManufacturerEntity();
+                $manufacturerEntity = $entityFactory->getEntity("manufacturer");
+                $existingManufacturer = $manufacturerEntity->get($manufacturer);
                 if (is_null($existingManufacturer)) {
-                    $newManufacturerID = $manufacturerEntity->insertManufacturer($manufacturer);
+                    $newManufacturerID = $manufacturerEntity->insert($manufacturer);
                     if ($newManufacturerID !== false) {
                         $manufacturer->setID($newManufacturerID);
                         $cardSetToInsert->setManufacturer($manufacturer);
@@ -143,12 +150,13 @@ class BaseImporter implements iImporter
             }
             
             // CARDSET
-            $cardSetEntity = new CardSetEntity();
-            $existingCardSet = $cardSetEntity->getCardSet($cardSetToInsert);
+            //$cardSetEntity = new CardSetEntity();
+            $cardSetEntity = $entityFactory->getEntity("cardset");
+            $existingCardSet = $cardSetEntity->get($cardSetToInsert);
             
             // If the CardSet doesn't already exist, insert it
             if (is_null($existingCardSet)) {
-                $newCardSetID = $cardSetEntity->insertCardSet($cardSetToInsert);
+                $newCardSetID = $cardSetEntity->insert($cardSetToInsert);
                 if ($newCardSetID !== false) {
                     $cardSetToInsert->setID($newCardSetID);
                     $this->setParsedCardSet($cardSetToInsert);

@@ -1,9 +1,11 @@
 <?php
 namespace GeoTradingCards\InventoryImportUtility\DAL;
 
+use GeoTradingCards\InventoryImportUtility\DAL\iEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\BaseEntity;
 use GeoTradingCards\InventoryImportUtility\Classes\CardSet as CardSet;
 
-class CardSetEntity
+class CardSetEntity extends BaseEntity implements iEntity
 {
     // private members
     private $baseSetName;
@@ -20,28 +22,16 @@ class CardSetEntity
     
     
     
-    // constructor(s)
-    public function __construct()
-    {
-        
-    }
-    
-    
-    
     // methods
-    public function getCardSet($cardSet)
+    public function get($cardSet)
     {
         return null; // no CardSet found
     }
     
     
     
-    public function insertCardSet($cardSet)
+    public function insert($cardSet)
     {
         return 1; // ID of inserted CardSet
     }
-    
-    
-
 }
-
