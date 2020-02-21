@@ -1,8 +1,10 @@
 <?php
 namespace GeoTradingCards\InventoryImportUtility;
 
-use GeoTradingCards\InventoryImportUtility\classes\CardSet;
 use GeoTradingCards\InventoryImportUtility\iImporter;
+use GeoTradingCards\InventoryImportUtility\classes\CardSet;
+use GeoTradingCards\InventoryImportUtility\DAL\ManufacturerEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
 
 /**
 * Base Inventory Importer
@@ -74,7 +76,7 @@ class BaseImporter implements iImporter
     
     
     // methods    
-    public function locateFilesToImport($importFolder)
+    public function locateFilesToImport($importFolder) : array
     {
         $itemsToRemove = array('.', '..');
         $files = scandir($importFolder);
@@ -91,7 +93,7 @@ class BaseImporter implements iImporter
         return $files;
     }
     
-    public function validateFile($fullFilePath, &$rejectionReason)
+    public function validateFile($fullFilePath, &$rejectionReason) : bool
     {
         $fileContent = file_get_contents($fullFilePath);
         if ($fileContent === false) {
@@ -105,18 +107,66 @@ class BaseImporter implements iImporter
         }
     }
     
-    public function parseFileToImport($fullFileContent)
+    public function parseFileToImport($fullFileContent) : bool
     {
         throw new \Exception("Function has not been implemented");
     }
     
-    public function buildDatabaseObjects($inventoryObjects)
+    public function insertObjects() : bool
     {
-        throw new \Exception("Function has not been implemented");
-    }
-    
-    public function insertDatabaseObjects($databaseObjects)
-    {
-        throw new \Exception("Function has not been implemented");
+        $cardSetToInsert = $this->getParsedCardSet();
+
+        if ($cardSetToInsert != null) {
+            $manufacturer = $cardSetToInsert->getManufacturer();
+            
+            // MANUFACTURER
+            if ($manufacturer != null) {
+                // If the manufaturer doesn't already exist, insert it
+                $manufacturerEntity = new ManufacturerEntity();
+                $existingManufacturer = $manufacturerEntity->getManufacturer($manufacturer);
+                if (is_null($existingManufacturer)) {
+                    $newManufacturerID = $manufacturerEntity->insertManufacturer($manufacturer);
+                    if ($newManufacturerID !== false) {
+                        $manufacturer->setID($newManufacturerID);
+                        $cardSetToInsert->setManufacturer($manufacturer);
+                    } else {
+                        $this->setParseError("Database insert failure: Manufacturer");
+                        return false;
+                    }
+                } else {
+                    // If the manufacturer already exists, update the object associated to the Card Set
+                    $cardSetToInsert->setManufacturer($existingManufacturer->getID());
+                }
+            } else {
+                $this->getParseError("Manufacturer must be defined");
+                return false;
+            }
+            
+            // CARDSET
+            $cardSetEntity = new CardSetEntity();
+            $existingCardSet = $cardSetEntity->getCardSet($cardSetToInsert);
+            
+            // If the CardSet doesn't already exist, insert it
+            if (is_null($existingCardSet)) {
+                $newCardSetID = $cardSetEntity->insertCardSet($cardSetToInsert);
+                if ($newCardSetID !== false) {
+                    $cardSetToInsert->setID($newCardSetID);
+                    $this->setParsedCardSet($cardSetToInsert);
+                } else {
+                    $this->setParseError("Database insert failure: Card Set");
+                    return false;
+                }
+            } else {
+                // Card Set already exists; cancel file processing
+                $this->setParseError("Card Set already exists; Updates via import files are not supported");
+                return false;
+            }
+        } else {
+            $this->setParseError("Card Set must be defined");
+        }
+        
+        //TODO: Cards
+        
+        return true;
     }
 }

@@ -12,7 +12,7 @@ use GeoTradingCards\InventoryImportUtility\classes\Manufacturer;
 */    
 class GmarrStandardCsvImporter extends CsvImporter implements iImporter
 {
-    public function parseFileToImport($fullFileContent)
+    public function parseFileToImport($fullFileContent) : bool
     {
         $fileResource;
         $newCardSet = null;
@@ -214,7 +214,6 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                 return false;
             } else {
                 $this->setParsedCardSet($newCardSet);
-                var_dump($this->getParsedCardSet());
                 return true;
             }
         } catch (\Exception $ex) {

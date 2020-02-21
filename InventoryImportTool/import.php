@@ -110,8 +110,20 @@ try {
             $successFullyParsed = $importer->parseFileToImport($fileFullPath);
             if ($successFullyParsed) {
                 echo "Success! The data file was parsed without issues." . PHP_EOL;
+                echo "Let's insert this data into the database." . PHP_EOL;
+                
+                // Insert the data into the database
+                $success = $importer->insertObjects();
+                if (!$success) {
+                    echo "Failure! An issue occured during database insertions: .". PHP_EOL;
+                    if ($importer->getParseError() != "") {
+                        echo $importer->getParseError();
+                    }
+                } else {
+                    var_dump($importer->getParsedCardSet());
+                }
             } else {
-                echo "Failure! An issue was encountered during parsing: ." . $importer->getParseError() .  PHP_EOL;
+                echo "Failure! An issue was encountered during parsing: ." . $importer->getParseError() . PHP_EOL;
             }
         }
     }
