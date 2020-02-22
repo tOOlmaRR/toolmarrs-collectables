@@ -24,7 +24,7 @@ class ManufacturerEntity extends BaseEntity implements iEntity
             $manufacturerFromDatabase = null;
         } else {
             $manufacturerFromDatabase = new Manufacturer;
-            $manufacturerFromDatabase->setID($row["ID"]);
+            $manufacturerFromDatabase->setID(intval($row["ID"]));
             $manufacturerFromDatabase->setName($row["Name"]);
         }
         return $manufacturerFromDatabase;

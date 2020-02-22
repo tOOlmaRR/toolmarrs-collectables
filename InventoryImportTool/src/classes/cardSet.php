@@ -56,7 +56,7 @@ class CardSet
         return $this->season;
     }
     
-    public function getSize() : int
+    public function getSize() : ?int
     {
         return $this->size;
     }
@@ -66,7 +66,7 @@ class CardSet
         return $this->rarity;
     }
     
-    public function getGradingModifier() : float
+    public function getGradingModifier() : ?float
     {
         return $this->gradingModifier;
     }
@@ -104,7 +104,7 @@ class CardSet
     
     
     // public setters
-    public function setId(int $cardSetID)
+    public function setID(int $cardSetID)
     {
         $this->ID = $cardSetID;
     }
@@ -129,7 +129,7 @@ class CardSet
         $this->season = $cardSetSeason;
     }
 
-    public function setSize(int $cardSetSize)
+    public function setSize(?int $cardSetSize)
     {
         $this->size = $cardSetSize;
     }
@@ -139,7 +139,7 @@ class CardSet
         $this->rarity = $cardSetRarity;
     }
 
-    public function setGradingModifier(float $cardSetGradingModifier)
+    public function setGradingModifier(?float $cardSetGradingModifier)
     {
         $this->gradingModifier = $cardSetGradingModifier;
     }
