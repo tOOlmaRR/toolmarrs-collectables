@@ -18,7 +18,12 @@ class BaseEntity implements iEntity
     // public getters/accessors
     protected function getDB() : PDO
     {
-        return $this->db;
+        if (!is_null($this->db)) {
+            return $this->db;
+        } else {
+            throw new \Exception("Found no database connection: ManufacturerEntity->getDB method");
+        }
+        
     }
     
     
