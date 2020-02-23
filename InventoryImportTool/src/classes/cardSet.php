@@ -43,7 +43,7 @@ class CardSet
     
     public function getInsertSetName() : string
     {
-        return $this->insertSetName;
+        return $this->insertSetName ?? "";
     }
     
     public function getFullName() : string
@@ -63,7 +63,7 @@ class CardSet
     
     public function getRarity() : string
     {
-        return $this->rarity;
+        return $this->rarity ?? "";
     }
     
     public function getGradingModifier() : ?float
@@ -73,15 +73,15 @@ class CardSet
     
     public function getComments() : string
     {
-        return $this->comments;
+        return $this->comments ?? "";
     }
     
-    public function getLastBeckettUpdate() : string
+    public function getLastBeckettUpdate() : ?string
     {
         return $this->lastBeckettUpdate;
     }
     
-    public function getLastInventoryCheck() : string
+    public function getLastInventoryCheck() : ?string
     {
         return $this->lastInventoryCheck;
     }
@@ -149,12 +149,12 @@ class CardSet
         $this->comments = $cardSetComments;
     }
 
-    public function setLastBeckettUpdate(string $cardSetLastBeckettUpdate)
+    public function setLastBeckettUpdate(?string $cardSetLastBeckettUpdate)
     {
         $this->lastBeckettUpdate = $cardSetLastBeckettUpdate;
     }
 
-    public function setLastInventoryCheck(string $cardSetLastInventoryCheck)
+    public function setLastInventoryCheck(?string $cardSetLastInventoryCheck)
     {
         $this->lastInventoryCheck = $cardSetLastInventoryCheck;
     }
