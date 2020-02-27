@@ -119,9 +119,9 @@ class BaseImporter implements iImporter
 
         if ($cardSetToInsert != null) {
             //TODO: Get the DB connection details from configuration
-            $host = "mysql:host=localhost;dbname=tsc2020-dev";
-            $user = "root";
-            $password = "";
+            $host = "mysql:host=127.0.0.1;dbname=tsc2020-dev";
+            $user = "usr_tsc2020_dev_importer";
+            $password = "$=5SZEXjKbgF7#t%";
             $entityFactory = new EntityFactory($host, $user, $password);
             $manufacturer = $cardSetToInsert->getManufacturer();
             
