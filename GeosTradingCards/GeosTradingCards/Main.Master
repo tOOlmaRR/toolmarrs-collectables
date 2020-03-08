@@ -20,7 +20,7 @@
 </head>
 <body bgcolor="#FFFFFF" onLoad="MM_preloadImages('/images/current_home.gif', '/images/home.gif', '/images/current_shop.gif', '/images/current_about.gif', '/images/current_contact.gif', '/images/current_links.gif')">
 <form ID="mainForm" runat="server">
-<Ad:LeaderboardROS ID="LeaderboardAd" runat="server" />
+<Ad:LeaderboardROS ID="LeaderboardAd" Visible="false" runat="server" />
 <table width="990" border="0" cellspacing="0" cellpadding="0" align="center">
 	<tr background="/images/white_bg.gif" align="left"> 
 		<td colspan="2" background="/images/dark_bg.gif" bgcolor="#FFFFFF" valign="top" align="right">
