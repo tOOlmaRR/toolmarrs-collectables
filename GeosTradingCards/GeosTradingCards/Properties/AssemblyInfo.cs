@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Geo Trading Cards")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Geo Trading Cards Website")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("George U Marr Enterprises")]
+[assembly: AssemblyCompany("N/A")]
 [assembly: AssemblyProduct("Geo Trading Cards Website")]
-[assembly: AssemblyCopyright("© 2009 George U Marr Enterprises")]
+[assembly: AssemblyCopyright("© 2020 George U Marr")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.2.2.0")]
-[assembly: AssemblyFileVersion("1.2.2.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]

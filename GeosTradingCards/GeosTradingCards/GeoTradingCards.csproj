@@ -19,6 +19,13 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
+    <Use64BitIISExpress />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -74,6 +81,8 @@
       <DependentUpon>CardCollection.mdf</DependentUpon>
     </Content>
     <Content Include="Default.aspx" />
+    <Content Include="scripts\fullMsSqlDB-20200308.sql" />
+    <Content Include="scripts\fullMsSqlDB-prodDeploy-20200308.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -356,6 +365,7 @@
     <None Include="DAL\GoogleDocs.dbml.layout">
       <DependentUpon>GoogleDocs.dbml</DependentUpon>
     </None>
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
