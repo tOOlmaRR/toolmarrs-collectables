@@ -48,9 +48,6 @@ try {
         $config = new Config($configFiles);        
     }
     
-    // Instantiate objects
-    $importer = new GmarrStandardCsvImporter();
-
     echo "$environment environment has been configured." . PHP_EOL;    
 } catch (Exception $ex) {
     trigger_error(
@@ -83,7 +80,7 @@ try {
     // Get list of files to import
     $localImportPath = __DIR__ . $config['data-files']['inventory']['importPath'];
     echo "Looking for files to process and import in $localImportPath ..." . PHP_EOL;
-    $filesToProcess = $importer->locateFilesToImport($localImportPath);
+    $filesToProcess = GmarrStandardCsvImporter::locateFilesToImport($localImportPath);
     $fileCount = count($filesToProcess);
     echo "Found and returning a list of $fileCount files to process" . PHP_EOL;
     
@@ -91,6 +88,9 @@ try {
     foreach ($filesToProcess as $file) {
         $fileFullPath = $localImportPath . $file;
         echo PHP_EOL . "Beginning to process the following file: $fileFullPath" . PHP_EOL;
+        
+        // Instantiate objects
+        $importer = new GmarrStandardCsvImporter();
         
         // read and validate the file
         $rejectionReason = "";

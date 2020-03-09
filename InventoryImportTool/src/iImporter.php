@@ -8,7 +8,7 @@ Interface iImporter
         @param string $importFolder The full file-system path to scan looking for files to process
         @return array A list of files that can be processed
     */
-    public function locateFilesToImport(string $importFolder) : array;
+    public static function locateFilesToImport(string $importFolder) : array;
     
     /*
         Given a file with full path, perform some basic validation checks on it to ensure that it can be processed.

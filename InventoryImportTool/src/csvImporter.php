@@ -18,7 +18,7 @@ class CsvImporter extends BaseImporter implements iImporter
     
     
     // methods
-    public function locateFilesToImport($importFolder) : array
+    public static function locateFilesToImport($importFolder) : array
     {
         $itemsToRemove = array(".", "..");
         $files = scandir($importFolder);
