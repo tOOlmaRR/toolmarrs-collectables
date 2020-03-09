@@ -6,11 +6,21 @@ namespace GeoTradingCards\InventoryImportUtility;
 * A class used specificaly for importing CSV files. This could be extended as needed if I deal with different CSV formats
 * @author    George U. Marr
 */    
-class CsvImporter extends baseImporter implements iImporter
+class CsvImporter extends BaseImporter implements iImporter
 {
-    public function locateFilesToImport($importFolder)
+    // constructor(s)
+    public function __construct()
     {
-        $itemsToRemove = array('.', '..');
+        parent::__construct();
+        $this->setFileDelimiter(",");
+    }
+    
+    
+    
+    // methods
+    public function locateFilesToImport($importFolder) : array
+    {
+        $itemsToRemove = array(".", "..");
         $files = scandir($importFolder);
         
         // remove the "." and ".." folders

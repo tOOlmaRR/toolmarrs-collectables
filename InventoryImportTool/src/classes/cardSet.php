@@ -43,7 +43,7 @@ class CardSet
     
     public function getInsertSetName() : string
     {
-        return $this->insertSetName;
+        return $this->insertSetName ?? "";
     }
     
     public function getFullName() : string
@@ -56,32 +56,32 @@ class CardSet
         return $this->season;
     }
     
-    public function getSize() : int
+    public function getSize() : ?int
     {
         return $this->size;
     }
     
     public function getRarity() : string
     {
-        return $this->rarity;
+        return $this->rarity ?? "";
     }
     
-    public function getGradingModifier() : float
+    public function getGradingModifier() : ?float
     {
         return $this->gradingModifier;
     }
     
     public function getComments() : string
     {
-        return $this->comments;
+        return $this->comments ?? "";
     }
     
-    public function getLastBeckettUpdate() : string
+    public function getLastBeckettUpdate() : ?string
     {
         return $this->lastBeckettUpdate;
     }
     
-    public function getLastInventoryCheck() : string
+    public function getLastInventoryCheck() : ?string
     {
         return $this->lastInventoryCheck;
     }
@@ -91,12 +91,12 @@ class CardSet
         return $this->manufacturer;
     }
     
-    public function getCards() : array
+    public function getCards() : ?array
     {
         return $this->cards;
     }
     
-    public function getSubsets() : array
+    public function getSubsets() : ?array
     {
         return $this->subsets;
     }
@@ -104,7 +104,7 @@ class CardSet
     
     
     // public setters
-    public function setId(int $cardSetID)
+    public function setID(int $cardSetID)
     {
         $this->ID = $cardSetID;
     }
@@ -129,7 +129,7 @@ class CardSet
         $this->season = $cardSetSeason;
     }
 
-    public function setSize(int $cardSetSize)
+    public function setSize(?int $cardSetSize)
     {
         $this->size = $cardSetSize;
     }
@@ -139,7 +139,7 @@ class CardSet
         $this->rarity = $cardSetRarity;
     }
 
-    public function setGradingModifier(float $cardSetGradingModifier)
+    public function setGradingModifier(?float $cardSetGradingModifier)
     {
         $this->gradingModifier = $cardSetGradingModifier;
     }
@@ -149,12 +149,12 @@ class CardSet
         $this->comments = $cardSetComments;
     }
 
-    public function setLastBeckettUpdate(string $cardSetLastBeckettUpdate)
+    public function setLastBeckettUpdate(?string $cardSetLastBeckettUpdate)
     {
         $this->lastBeckettUpdate = $cardSetLastBeckettUpdate;
     }
 
-    public function setLastInventoryCheck(string $cardSetLastInventoryCheck)
+    public function setLastInventoryCheck(?string $cardSetLastInventoryCheck)
     {
         $this->lastInventoryCheck = $cardSetLastInventoryCheck;
     }

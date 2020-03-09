@@ -1,5 +1,18 @@
+-- select *
+SELECT * FROM `tsc2020-dev`.manufacturer;
+SELECT * FROM `tsc2020-dev`.cardset;
+
+-- delete *
+delete from `tsc2020-dev`.cardset where id < 10;
+delete from `tsc2020-dev`.manufacturer where id < 10;
+
+
+-- reset autoincrement index
+alter table `tsc2020-dev`.manufacturer AUTO_INCREMENT = 1;
+alter table `tsc2020-dev`.cardset AUTO_INCREMENT = 1;
+
 -- card set details
-select set.FulName, manufacturer.Name, set.Season, set.BaseSetName, set.InsertSetName, set.Size, set.Rarity, set.GradingModifier, set.Comments, set.LastInventoryCheck
+select set.Season, manufacturer.Name as `Manufacturer`, set.BaseSetName, set.InsertSetName, set.FullName, set.Size, set.Rarity, set.GradingModifier, set.Comments, set.LastInventoryCheck
 from `tsc2020-dev`.`cardset` as `set`
 left join `tsc2020-dev`.`manufacturer` as `manufacturer` on `set`.`Manufacturer_ID` = `manufacturer`.ID
 order by season;

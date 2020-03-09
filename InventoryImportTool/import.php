@@ -25,14 +25,14 @@ use GeoTradingCards\InventoryImportUtility\classes\SingleCardGrading;
 use GeoTradingCards\InventoryImportUtility\classes\Sport;
 use GeoTradingCards\InventoryImportUtility\classes\Subset;
 use GeoTradingCards\InventoryImportUtility\classes\Team;
-use GeoTradingCards\InventoryImportUtility\CsvImporter;
+use GeoTradingCards\InventoryImportUtility\GmarrStandardCsvImporter;
 use Goodby\CSV\Import\Standard\Lexer;
 use Goodby\CSV\Import\Standard\Interpreter;
 use Goodby\CSV\Import\Standard\LexerConfig;
 use Noodlehaus\Config as Config;
 
-$environment = 'development';
-$configPath = __DIR__ . '\\config\\';
+$environment = "development";
+$configPath = __DIR__ . "\\config\\";
 
 // Bootstapping, Configuration, and Setup
 try {
@@ -49,7 +49,7 @@ try {
     }
     
     // Instantiate objects
-    $importer = new CsvImporter();
+    $importer = new GmarrStandardCsvImporter();
 
     echo "$environment environment has been configured." . PHP_EOL;    
 } catch (Exception $ex) {
@@ -94,8 +94,7 @@ try {
         
         // read and validate the file
         $rejectionReason = "";
-        $fileContent = "";
-        $fileLooksValid = $importer->validateFile($fileFullPath, $fileContent, $rejectionReason);
+        $fileLooksValid = $importer->validateFile($fileFullPath, $rejectionReason);
         
         // if the file looks invalid, move it to the rejected folder, output the reason and move on
         if (!$fileLooksValid) {
@@ -104,10 +103,28 @@ try {
             echo "Moving $fileFullPath to $rejectedFileFullPath" . PHP_EOL;
             if (!rename($fileFullPath, $rejectedFileFullPath)) {
                 echo "*** Failed to move rejected file out of the import folder!" . PHP_EOL;
-            } 
+            }
             continue;
         } else {
-            echo "Data file appears to be valid!" . PHP_EOL;
+            echo "Data file appears to be valid... let's parse some data from it!" . PHP_EOL;
+            $successFullyParsed = $importer->parseFileToImport($fileFullPath);
+            if ($successFullyParsed) {
+                echo "Success! The data file was parsed without issues." . PHP_EOL;
+                echo "Let's insert this data into the database." . PHP_EOL;
+                
+                // Insert the data into the database
+                $success = $importer->insertObjects();
+                if (!$success) {
+                    echo "Failure! An issue occured during database insertions: .". PHP_EOL;
+                    if ($importer->getParseError() != "") {
+                        echo $importer->getParseError();
+                    }
+                } else {
+                    var_dump($importer->getParsedCardSet());
+                }
+            } else {
+                echo "Failure! An issue was encountered during parsing: ." . $importer->getParseError() . PHP_EOL;
+            }
         }
     }
     echo "All data files have been processed" . PHP_EOL;
