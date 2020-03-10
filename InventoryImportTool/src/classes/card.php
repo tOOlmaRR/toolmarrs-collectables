@@ -158,4 +158,15 @@ class Card
     {
         $this->singleCards = $cardSingleCards;
     }
+    
+    
+    
+    public function addSingleCard(SingleCard $newSingleCard)
+    {
+        if ($this->singleCards != null) {
+            $this->singleCards[] = $newSingleCard;
+        } else {
+            $this->singleCards = array($newSingleCard);
+        }
+    }
 }

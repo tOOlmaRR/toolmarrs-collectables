@@ -5,6 +5,7 @@ use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 use GeoTradingCards\InventoryImportUtility\classes\CardSet;
 use GeoTradingCards\InventoryImportUtility\classes\Manufacturer;
 use GeoTradingCards\InventoryImportUtility\classes\Card;
+use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
 
 /**
 * CSV Inventory Importer
@@ -26,10 +27,17 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             $newCardSet = $this->parseCardSetDataFromFile($fileResource, $fileRowNumber);
             
             // parse out all cards from the second section (grid) of the data file and build a collection of Card objects
-            $newCards = $this->parseCardsAndSinglesFromFile($fileResource, $fileRowNumber);
-            
-            // now add the collection of Cards to the CardSet object
-            $newCardSet->setCards($newCards);
+            $newCards = null;
+            if ($newCardSet != null) {
+                $this->setStopParsing(false);
+                $newCards = $this->parseCardsAndSinglesFromFile($fileResource, $fileRowNumber);
+                foreach ($newCards as $newCard) {
+                    var_dump($newCard);
+                }
+                
+                // now add the collection of Cards to the CardSet object
+                $newCardSet->setCards($newCards);
+            }
 
             // close the file now... we're done with it
             fclose($fileResource);
@@ -225,31 +233,60 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
     
     private function parseCardsAndSinglesFromFile($fileResource, &$fileRowNumber) : array
     {
-        $cards = Array();
-        $newCard = new Card();
-        $cards[] = $newCard;
+        // read the first row in the cards grid
+        $currentRow = fgetcsv($fileResource, 0, $this->getFileDelimiter());
         
-        // loop through all rows one-at-a-time until EOF, until we have a few consecutive empty rows, or we find the "Statistics" in the first cell
-        // switch/case statement to handle each column
-            // For ID, we'll want to create a new SingleCard object and assign it to SingleCard.ID
-            // For #, if Card.cardNumber already exists in the newCards array, don't create a new Card - pull the ID of the existing one.
-            // For RC, we'll assume that the RC cardAttribute already exists, pull it from the database and wire it update
-            // For Description, we just put this into Card.title after stripping whitespace
-            // For Team, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
-            // For Position, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
-            // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object 
-            // For HIGH, convert the value to a plain old float value (strip the $) and set the associated CardValue.highValue to this value
-            // For SELL, convert the value to a plain old float value (strip the $) and set the associated SingleCard.sellPrice to this value.
-            // For Condition, we'll need to create a SingleCardGrading object, look up the value in the GradingClass table in the database, retrieve and associated SingleCardGrading to it if it exist and otherwise, create a new GradingClass object and associate that to SingleCardGrading, and then associate the SingleCardGrading to the SingleCard object already associated to the Card object
-            // For Subset, if it's already associated to the CardSet, use that object and associated this card to that Subset; if it's not, create a new Subset object, set it's Subset.Name to this value, and associate it to both the Card object and the CardSet object
-            // For Rarity, we just put this into associated SingleCard.rarity field after stripping whitespace
-            // For Grading, if there just happens to be a value (they should all be empty), set the associated SingleCardGrading.Description field with it's value for now (if there's a value already, append)
-            // For Cost, convert the value to a plain old float value (strip the $) and set the associated SingleCard.cost to this value.
-            // For Status, we just put this into associated SingleCard.status field after stripping whitespace
-            // For Sold, if there just happens to be a value (they should all be empty), convert the value to a plain old float value (strip the $) and set the associated  SingleCard.PriceSoldFor field with it's value
-            // For Comments, we just put this into associated SingleCard.Description field after stripping whitespace (if there's a value already, append)
-        
-        return $cards;
+        // loop through rows in the data file one-at-a-time until:
+        // 1) EOF is reached (or we receive a 'false' value when trying to read the file, which is generally only at the end of a File
+        // 2) the first cell in the row has the value of "Statistics" (denotes the beginning of the last section of the file)
+        // 3) the stopParsing flag has been explicitly set to true
+        $newCards = Array();
+        $rowNumber = 1;
+        while (!$this->getStopParsing() && $currentRow !== false && $currentRow[0] !== "Statistics") {
+            // begin building a new Card object
+            $newCard = new Card();
+            
+            // customize how to handle each column
+            for ($columnNumber = 0; $columnNumber < count($currentRow); $columnNumber++) {
+                switch ($columnNumber) {
+                    // For ID, we'll want to create a new SingleCard object and assign it to SingleCard.ID
+                    case 0: // SingleCard.ID
+                        $id = trim($currentRow[$columnNumber]);
+                        $newSingleCard = new SingleCard();
+                        $newSingleCard->setID($id);
+                        $newCard->addSingleCard($newSingleCard);
+                        break;
+
+                        // For #, if Card.cardNumber already exists in the newCards array, don't create a new Card - pull the ID of the existing one.
+                        // For RC, we'll assume that the RC cardAttribute already exists, pull it from the database and wire it update
+                        // For Description, we just put this into Card.title after stripping whitespace
+                        // For Team, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
+                        // For Position, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
+                        // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object
+                        // For HIGH, convert the value to a plain old float value (strip the $) and set the associated CardValue.highValue to this value
+                        // For SELL, convert the value to a plain old float value (strip the $) and set the associated SingleCard.sellPrice to this value.
+                        // For Condition, we'll need to create a SingleCardGrading object, look up the value in the GradingClass table in the database, retrieve and associated SingleCardGrading to it if it exist and otherwise, create a new GradingClass object and associate that to SingleCardGrading, and then associate the SingleCardGrading to the SingleCard object already associated to the Card object
+                        // For Subset, if it's already associated to the CardSet, use that object and associated this card to that Subset; if it's not, create a new Subset object, set it's Subset.Name to this value, and associate it to both the Card object and the CardSet object
+                        // For Rarity, we just put this into associated SingleCard.rarity field after stripping whitespace
+                        // For Grading, if there just happens to be a value (they should all be empty), set the associated SingleCardGrading.Description field with it's value for now (if there's a value already, append)
+                        // For Cost, convert the value to a plain old float value (strip the $) and set the associated SingleCard.cost to this value.
+                        // For Status, we just put this into associated SingleCard.status field after stripping whitespace
+                        // For Sold, if there just happens to be a value (they should all be empty), convert the value to a plain old float value (strip the $) and set the associated  SingleCard.PriceSoldFor field with it's value
+                        // For Comments, we just put this into associated SingleCard.Description field after stripping whitespace (if there's a value already, append)
+                    default:
+                        // TODO: later, once I've implemented handlers for all columns, we might want to raise an error if this occurs
+                        break;
+                } // end switch
+            } // end for
+            $newCards[] = $newCard;
+            // FOR TESTING ONLY
+            /*if ($rowNumber == 1) {
+                break;
+            }*/
+            $currentRow = fgetcsv($fileResource, 0, $this->getFileDelimiter());
+            $rowNumber++;
+        } // end while
+        return $newCards;
     } // end function
 
 }
