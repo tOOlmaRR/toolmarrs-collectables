@@ -273,7 +273,12 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         break;
                         
-                    // For Description, we just put this into Card.title after stripping whitespace
+
+                    case 2: // Card.Title
+                        // For Description, we just put this into Card.title after stripping whitespace
+                        $cardtitle = trim($currentRow[$columnNumber]);
+                        $newCard->setTitle($cardtitle);
+                        break;
                     
                     case 3: // Card.Attributes
                         // For RC, instead of pulling from the database, we'll build th eobject by hand and have the DAL determine if it needs to be inserted or not
