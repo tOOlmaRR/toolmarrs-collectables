@@ -31,7 +31,7 @@ class CardSet
     
     
     // public getters/accessors
-    public function getId() : int
+    public function getID() : int
     {
         return $this->ID;
     }
