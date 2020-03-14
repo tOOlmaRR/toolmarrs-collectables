@@ -5,6 +5,7 @@ use GeoTradingCards\InventoryImportUtility\classes\CardSet;
 use GeoTradingCards\InventoryImportUtility\classes\Manufacturer;
 use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
+use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 
 use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 
@@ -251,7 +252,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             for ($columnNumber = 0; $columnNumber < count($currentRow); $columnNumber++) {
                 switch ($columnNumber) {
                     // For ID, we'll want to create a new SingleCard object and assign it to SingleCard.ID
-                    case 0: // SingleCard.ID
+                    case 0: // Card.SingleCards.ID
                         $id = trim($currentRow[$columnNumber]);
                         $newSingleCard = new SingleCard();
                         $newSingleCard->setID($id);
@@ -270,9 +271,37 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                             $newCard = $newCards[$cardNumberFromFile];
                             $newCard->addSingleCard($singles[0]);
                         }
+                        break;
+                        
+                    // For Description, we just put this into Card.title after stripping whitespace
                     
-                        // For RC, we'll assume that the RC cardAttribute already exists, pull it from the database and wire it update
-                        // For Description, we just put this into Card.title after stripping whitespace
+                    case 3: // Card.Attributes
+                        // For RC, instead of pulling from the database, we'll build th eobject by hand and have the DAL determine if it needs to be inserted or not
+                        $attributesFromFile = trim($currentRow[$columnNumber]);
+                        if (!empty($attributesFromFile)) {
+                            $attributeObjects = array();
+                            $attributes = array();
+                            if (!StringHelpers::contains($attributesFromFile, " ")) {
+                                $attributes[] = "RC";
+                            } else {
+                                $attributes = explode(" ", $attributesFromFile);
+                            }
+                            
+                            foreach ($attributes as $attribute) {
+                                $attribute = strtoupper($attribute);
+                                $newCardAttribute = new CardAttribute();
+                                $newCardAttribute->setAbbreviation($attribute);
+                                if ($attribute === "RC") {
+                                    $newCardAttribute->setFullName("Rookie Card");
+                                    $newCardAttribute->setComments("This card has been determined to be a rookie card through card appraisal sources such as Beckett");
+                                }
+                                $attributeObjects[] = $newCardAttribute;
+                            }
+                            $newCard->setAttributes($attributeObjects);
+                        }
+                        break;
+                        
+                        
                         // For Team, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
                         // For Position, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
                         // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object
