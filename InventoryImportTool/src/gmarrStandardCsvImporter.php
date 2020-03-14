@@ -1,11 +1,12 @@
 <?php
 namespace GeoTradingCards\InventoryImportUtility;
 
-use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 use GeoTradingCards\InventoryImportUtility\classes\CardSet;
 use GeoTradingCards\InventoryImportUtility\classes\Manufacturer;
 use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
+
+use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 
 /**
 * CSV Inventory Importer
@@ -257,7 +258,19 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         $newCard->addSingleCard($newSingleCard);
                         break;
 
-                        // For #, if Card.cardNumber already exists in the newCards array, don't create a new Card - pull the ID of the existing one.
+                    // For #, if Card.cardNumber already exists in the newCards array, don't create a new Card - pull the ID of the existing one.
+                    case 1: // Card.CardNumber
+                        $cardNumberFromFile = trim($currentRow[$columnNumber]);
+                        $newCard->setCardNumber($cardNumberFromFile);
+                        
+                        // check to see if this card has already been created and added to newcards array - if it has retrieve and use it instead of the new one we're building
+                        if (!empty($cardNumberFromFile) && array_key_exists($cardNumberFromFile, $newCards)) {
+                            // don't lost the single we already created in case 0 above
+                            $singles = $newCard->getSingleCards();
+                            $newCard = $newCards[$cardNumberFromFile];
+                            $newCard->addSingleCard($singles[0]);
+                        }
+                    
                         // For RC, we'll assume that the RC cardAttribute already exists, pull it from the database and wire it update
                         // For Description, we just put this into Card.title after stripping whitespace
                         // For Team, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
@@ -278,7 +291,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         break;
                 } // end switch
             } // end for
-            $newCards[] = $newCard;
+            $newCards[$newCard->getCardNumber()] = $newCard;
             // FOR TESTING ONLY
             /*if ($rowNumber == 1) {
                 break;
