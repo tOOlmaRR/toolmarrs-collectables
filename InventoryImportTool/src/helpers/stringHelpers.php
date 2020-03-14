@@ -24,4 +24,16 @@ class StringHelpers
         }
         return (substr($sourceString, -$len) === $endString); 
     }
+    
+    // Function to check if a given string contains another given string (ie. the 'needle')
+    // Note: this is a case-sensitive match
+    // CREDIT: https://www.tutorialrepublic.com/faq/how-to-check-if-a-string-contains-a-specific-word-in-php.php (as of 2020-03-14)
+    public static function contains($sourceString, $needle) {
+        // Test if string contains the word 
+        if (strpos($sourceString, $needle) !== false) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
