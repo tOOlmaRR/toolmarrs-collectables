@@ -7,6 +7,7 @@ use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\classes\Team;
+use GeoTradingCards\InventoryImportUtility\classes\PlayerPosition;
 
 use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 
@@ -317,8 +318,16 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         break;
                         
-                        
+                    case 5: // Card.PositionID
                         // For Position, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
+                        $positionFromFile = trim($currentRow[$columnNumber]);
+                        if (!empty($positionFromFile)) {
+                            $newPosition = new PlayerPosition();
+                            $newPosition->setAbbreviation($positionFromFile);
+                            $newCard->setPlayerPosition($newPosition);
+                        }
+                        break;
+                        
                         // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object
                         // For HIGH, convert the value to a plain old float value (strip the $) and set the associated CardValue.highValue to this value
                         // For SELL, convert the value to a plain old float value (strip the $) and set the associated SingleCard.sellPrice to this value.
