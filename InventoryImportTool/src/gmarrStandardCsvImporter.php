@@ -8,6 +8,7 @@ use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\classes\Team;
 use GeoTradingCards\InventoryImportUtility\classes\PlayerPosition;
+use GeoTradingCards\InventoryImportUtility\classes\CardValue;
 
 use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 
@@ -309,7 +310,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         break;
                         
                     case 4: // Card.TeamID
-                        // For Team, we'll just build and associate the Team and then have the DAL determine if it needs to be inserted or not need to look it up to see if it exists
+                        // For Team, we'll just build and associate the Team and then have the DAL determine if it needs to be inserted or not
                         $teamNameFromFile = trim($currentRow[$columnNumber]);
                         if (!empty($teamNameFromFile)) {
                             $newTeam = new Team();
@@ -319,7 +320,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         break;
                         
                     case 5: // Card.PositionID
-                        // For Position, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
+                        // For Position, we'll just build and associate the PlayerPosition and then have the DAL determine if it needs to be inserted or not
                         $positionFromFile = trim($currentRow[$columnNumber]);
                         if (!empty($positionFromFile)) {
                             $newPosition = new PlayerPosition();
@@ -328,7 +329,23 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         break;
                         
+                    case 6: // Card.CardValue.LowValue
                         // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object
+                        $lowValueAsStringFromFile = trim($currentRow[$columnNumber]);
+                        $lowValueAsStringFromFile = ltrim($lowValueAsStringFromFile, '$');
+                        
+                        $newCardValue = new CardValue();
+                        if ($lowValueAsStringFromFile == "") {
+                            $newCardValue->setLowValue(null);
+                        } elseif (is_numeric($lowValueAsStringFromFile)) {
+                            $lowValue = floatval($lowValueAsStringFromFile);
+                            $newCardValue->setLowValue($lowValue);
+                        } else {
+                            $this->setParseError("Low value of card is not an integer value");
+                        }
+                        $newCard->setCardValue($newCardValue);
+                        
+                        
                         // For HIGH, convert the value to a plain old float value (strip the $) and set the associated CardValue.highValue to this value
                         // For SELL, convert the value to a plain old float value (strip the $) and set the associated SingleCard.sellPrice to this value.
                         // For Condition, we'll need to create a SingleCardGrading object, look up the value in the GradingClass table in the database, retrieve and associated SingleCardGrading to it if it exist and otherwise, create a new GradingClass object and associate that to SingleCardGrading, and then associate the SingleCardGrading to the SingleCard object already associated to the Card object
