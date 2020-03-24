@@ -26,12 +26,12 @@ class CardValue
         return $this->ID;
     }
 
-    public function getLowValue() : float
+    public function getLowValue() : ?float
     {
         return $this->lowValue;
     }
     
-    public function getHighValue() : float
+    public function getHighValue() : ?float
     {
         return $this->highValue;
     }
@@ -54,12 +54,12 @@ class CardValue
         $this->ID = $cardValueID;
     }
     
-    public function setLowValue(float $cardValueLowValue)
+    public function setLowValue(?float $cardValueLowValue)
     {
         $this->lowValue = $cardValueLowValue;
     }
     
-    public function setHighValue(float $cardValueHighValue)
+    public function setHighValue(?float $cardValueHighValue)
     {
         $this->highValue = $cardValueHighValue;
     }
