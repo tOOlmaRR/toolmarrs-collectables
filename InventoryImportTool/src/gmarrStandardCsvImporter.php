@@ -6,6 +6,7 @@ use GeoTradingCards\InventoryImportUtility\classes\Manufacturer;
 use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
+use GeoTradingCards\InventoryImportUtility\classes\Team;
 
 use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 
@@ -281,7 +282,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         break;
                     
                     case 3: // Card.Attributes
-                        // For RC, instead of pulling from the database, we'll build th eobject by hand and have the DAL determine if it needs to be inserted or not
+                        // For RC, instead of pulling from the database, we'll build the object by hand and have the DAL determine if it needs to be inserted or not
                         $attributesFromFile = trim($currentRow[$columnNumber]);
                         if (!empty($attributesFromFile)) {
                             $attributeObjects = array();
@@ -306,8 +307,17 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         break;
                         
+                    case 4: // Card.TeamID
+                        // For Team, we'll just build and associate the Team and then have the DAL determine if it needs to be inserted or not need to look it up to see if it exists
+                        $teamNameFromFile = trim($currentRow[$columnNumber]);
+                        if (!empty($teamNameFromFile)) {
+                            $newTeam = new Team();
+                            $newTeam->setName($teamNameFromFile);
+                            $newCard->setTeam($newTeam);
+                        }
+                        break;
                         
-                        // For Team, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
+                        
                         // For Position, we'll need to look it up to see if it exists. If it doesn't, we'll have to create one and associated it to the Card object
                         // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object
                         // For HIGH, convert the value to a plain old float value (strip the $) and set the associated CardValue.highValue to this value
