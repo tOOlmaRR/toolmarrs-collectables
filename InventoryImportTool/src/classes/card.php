@@ -164,9 +164,9 @@ class Card
     public function addSingleCard(SingleCard $newSingleCard)
     {
         if ($this->singleCards != null) {
-            $this->singleCards[] = $newSingleCard;
+            $this->singleCards[$newSingleCard->getID()] = $newSingleCard;
         } else {
-            $this->singleCards = array($newSingleCard);
+            $this->singleCards = array($newSingleCard->getID() => $newSingleCard);
         }
     }
 }
