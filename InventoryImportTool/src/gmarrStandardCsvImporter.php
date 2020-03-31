@@ -250,7 +250,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
         while (!$this->getStopParsing() && $currentRow !== false && $currentRow[0] !== "Statistics") {
             // begin building a new Card object
             $newCard = new Card();
-            
+            $singleCardID = null; // remember this while parsing through the current row
             // customize how to handle each column
             for ($columnNumber = 0; $columnNumber < count($currentRow); $columnNumber++) {
                 $cellValue = $currentRow[$columnNumber];
@@ -258,8 +258,9 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                 switch ($columnNumber) {
                     // For ID, we'll want to create a new SingleCard object and assign it to SingleCard.ID
                     case 0: // Card.SingleCards.ID
+                        $singleCardID = $trimmedCellValue;
                         $newSingleCard = new SingleCard();
-                        $newSingleCard->setID($trimmedCellValue);
+                        $newSingleCard->setID($singleCardID);
                         $newCard->addSingleCard($newSingleCard);
                         unset($newSingleCard);
                         break;
@@ -268,12 +269,12 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     case 1: // Card.CardNumber
                         $newCard->setCardNumber($trimmedCellValue);
                         
-                        // check to see if this card has already been created and added to newcards array - if it has retrieve and use it instead of the new one we're building
+                        // check to see if this card has already been created and added to newcards array - if it has, retrieve and use it instead of the new one we're building
                         if (!empty($trimmedCellValue) && array_key_exists($trimmedCellValue, $newCards)) {
                             // don't lose the single we already created in case 0 above
                             $singles = $newCard->getSingleCards();
                             $newCard = $newCards[$trimmedCellValue];
-                            $newCard->addSingleCard($singles[0]);
+                            $newCard->addSingleCard($singles[$singleCardID]);
                         }
                         unset($singles);
                         break;
@@ -333,7 +334,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         
                     case 6: // Card.CardValue.LowValue
                         // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object
-                        $lowValueAsStringFromFile = ltrim($trimmedCellValue, '$');
+                        $lowValueAsStringFromFile = ltrim($trimmedCellValue, "$");
                         $newCardValue = new CardValue();
                         if ($lowValueAsStringFromFile == "") {
                             $newCardValue->setLowValue(null);
@@ -349,8 +350,8 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         break;
                         
                     case 7: // Card.CardValue.HighValue
-                        // For HIGH, convert the value to a plain old float value (strip the $) and set the associated CardValue.highValue to this value
-                        $highValueAsStringFromFile = ltrim($trimmedCellValue, '$');
+                        // For HIGH, convert the value to a float value (strip the $) and set the associated CardValue.highValue to this value
+                        $highValueAsStringFromFile = ltrim($trimmedCellValue, "$");
                         if ($highValueAsStringFromFile == "") {
                             $newCard->getCardValue()->setHighValue(null);
                         } elseif (is_numeric($highValueAsStringFromFile)) {
@@ -363,8 +364,23 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($highValueAsStringFromFile, $highValue);
                         break;
 
+                    case 8: //Card.SingleCard.SellPrice
+                        // For SELL, convert the value to a float value (strip the $), find the single card (based on ID), and set the associated SingleCard.sellPrice to this value.
+                        $sellValueStringFromFile = ltrim($trimmedCellValue, "$");
+                        $singles = $newCard->getSingleCards();
                         
-                        // For SELL, convert the value to a plain old float value (strip the $) and set the associated SingleCard.sellPrice to this value.
+                        if ($sellValueStringFromFile == "") {
+                            $singles[$singleCardID]->setSellPrice(null);
+                        } elseif (is_numeric($sellValueStringFromFile)) {
+                            $sellPrice = floatval($sellValueStringFromFile);
+                            $singles[$singleCardID]->setSellPrice($sellPrice);
+                        } else {
+                            $this->setParseError("Sell value of this single card is not a numeric value");
+                            $singles[$singleCardID]->setSellPrice(null);
+                        }
+                        unset($sellValueStringFromFile, $singles, $sellPrice);
+                        break;
+                        
                         // For Condition, we'll need to create a SingleCardGrading object, look up the value in the GradingClass table in the database, retrieve and associated SingleCardGrading to it if it exist and otherwise, create a new GradingClass object and associate that to SingleCardGrading, and then associate the SingleCardGrading to the SingleCard object already associated to the Card object
                         // For Subset, if it's already associated to the CardSet, use that object and associated this card to that Subset; if it's not, create a new Subset object, set it's Subset.Name to this value, and associate it to both the Card object and the CardSet object
                         // For Rarity, we just put this into associated SingleCard.rarity field after stripping whitespace
