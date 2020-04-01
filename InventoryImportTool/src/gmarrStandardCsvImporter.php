@@ -11,6 +11,7 @@ use GeoTradingCards\InventoryImportUtility\classes\PlayerPosition;
 use GeoTradingCards\InventoryImportUtility\classes\CardValue;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCardGrading;
 use GeoTradingCards\InventoryImportUtility\classes\GradingClass;
+use GeoTradingCards\InventoryImportUtility\classes\Subset;
 
 use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 
@@ -388,15 +389,25 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         $singles = $newCard->getSingleCards();
                         $conditionAbbreviation = strtoupper($trimmedCellValue);
                         if ($conditionAbbreviation !== "") {
-                            $singleCardGrading = new SingleCardGrading();
-                            $gradingClass = new GradingClass();
-                            $gradingClass->setAbbreviation($conditionAbbreviation);
-                            $singleCardGrading->setGradingClass($gradingClass);
-                            $singles[$singleCardID]->setSingleCardGrading($singleCardGrading);
+                            $newSingleCardGrading = new SingleCardGrading();
+                            $newGradingClass = new GradingClass();
+                            $newGradingClass->setAbbreviation($conditionAbbreviation);
+                            $newSingleCardGrading->setGradingClass($newGradingClass);
+                            $singles[$singleCardID]->setSingleCardGrading($newSingleCardGrading);
                         }
-                        unset($singles, $singleCardGrading, $gradingClass);
+                        unset($singles, $newSingleCardGrading, $newGradingClass);
+                        break;
                         
-                        // For Subset, if it's already associated to the CardSet, use that object and associated this card to that Subset; if it's not, create a new Subset object, set it's Subset.Name to this value, and associate it to both the Card object and the CardSet object
+                    case 10: // Card.Subset and CardSet.Subset
+                        // For Subset, create a new Subset object, set it's Subset.Name to this value, and associate it to the Card object. We'll deal with associating Subsets to CardSets later. Let the DAL determine if it needs to be inserted or not.
+                        if ($trimmedCellValue !== "") {
+                            $newSubset = new Subset();
+                            $newSubset->setName($trimmedCellValue);
+                            $newCard->setSubset($newSubset);
+                        }
+                        unset($newSubset);
+                        break;
+                        
                         // For Rarity, we just put this into associated SingleCard.rarity field after stripping whitespace
                         // For Grading, if there just happens to be a value (they should all be empty), set the associated SingleCardGrading.Description field with it's value for now (if there's a value already, append)
                         // For Cost, convert the value to a plain old float value (strip the $) and set the associated SingleCard.cost to this value.
