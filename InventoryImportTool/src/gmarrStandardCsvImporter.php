@@ -346,7 +346,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     case 6: // Card.CardValue.LowValue
                         $lowValueAsStringFromFile = ltrim($trimmedCellValue, "$");
                         $newCardValue = new CardValue();
-                        if ($lowValueAsStringFromFile == "") {
+                        if (empty($lowValueAsStringFromFile)) {
                             $newCardValue->setLowValue(null);
                         } elseif (is_numeric($lowValueAsStringFromFile)) {
                             $lowValue = floatval($lowValueAsStringFromFile);
@@ -362,7 +362,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     // HIGH: strip the $ from this value, convert it to a float, and assign this value to the HighValue property in the Card's CardValue object
                     case 7: // Card.CardValue.HighValue
                         $highValueAsStringFromFile = ltrim($trimmedCellValue, "$");
-                        if ($highValueAsStringFromFile == "") {
+                        if (empty($highValueAsStringFromFile)) {
                             $newCard->getCardValue()->setHighValue(null);
                         } elseif (is_numeric($highValueAsStringFromFile)) {
                             $highValue = floatval($highValueAsStringFromFile);
@@ -377,7 +377,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     // SELL: strip the $ from this value, convert it to a float, and assign this value to the SellPrice field in the SingleCard object
                     case 8: // Card.SingleCard.SellPrice
                         $sellValueStringFromFile = ltrim($trimmedCellValue, "$");
-                        if ($sellValueStringFromFile == "") {
+                        if (empty($sellValueStringFromFile)) {
                             $newSingleCard->setSellPrice(null);
                         } elseif (is_numeric($sellValueStringFromFile)) {
                             $sellPrice = floatval($sellValueStringFromFile);
@@ -394,7 +394,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     // allow the DAL to determine if it needs to be inserted or not
                     case 9: // Card.SingleCard.SingleCardGrading.GradingClass.Abbreviation
                         $conditionAbbreviation = strtoupper($trimmedCellValue);
-                        if ($conditionAbbreviation !== "") {
+                        if (!empty($conditionAbbreviation)) {
                             $newSingleGrading = new SingleCardGrading();
                             $newGradingClass = new GradingClass();
                             $newGradingClass->setAbbreviation($conditionAbbreviation);
@@ -408,7 +408,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     // deal with associating Subsets to CardSets later
                     // allow the DAL to determine if it needs to be inserted or not
                     case 10: // Card.Subset.Name
-                        if ($trimmedCellValue !== "") {
+                        if (!empty($trimmedCellValue)) {
                             $newSubset = new Subset();
                             $newSubset->setName($trimmedCellValue);
                             $newCard->setSubset($newSubset);
@@ -425,7 +425,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     // Grading: attempt to convert this value to a float. If we can, assign it to the OverallGrade field in the SingleCard's SingleCardGrading object
                     // if it can't, but there IS a value here, assign it to the Comments field in the Card's SingleCard object and explicitly indicate what this value is
                     case 12: // Card.SingleCard.SingleCardGrading.OverallGrade ~OR~ Card.SingleCard.Comments
-                        if ($trimmedCellValue !== "") {
+                        if (!empty($trimmedCellValue)) {
                             if (is_numeric($trimmedCellValue)) {
                                 $grade = floatval($trimmedCellValue);
                                 $singleCardGrading = $newSingleCard->getSingleCardGrading();
@@ -441,7 +441,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     // Cost: strip the $ from this value, convert it to a float, and assign this value to the Cost field in the Card's SingleCard object
                     case 13: // Card.SingleCard.Cost
                         $costStringFromFile = ltrim($trimmedCellValue, "$");
-                        if ($costStringFromFile === "") {
+                        if (empty($costStringFromFile)) {
                             $newSingleCard->setCost(null);
                         } elseif (is_numeric($costStringFromFile)) {
                             $cost = floatval($costStringFromFile);
@@ -455,15 +455,13 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
 
                     // Status: assign this value to the Status property in the Card's SingleCard object
                     case 14: // Card.SingleCard.Status
-                        if ($trimmedCellValue !== "") {
-                            $newSingleCard->setStatus($trimmedCellValue);
-                        }
+                        $newSingleCard->setStatus($trimmedCellValue);
                         break;
 
                     // Sold: strip the $ from this value, convert it to a float, and assign this value to the PriceSoldFor field in the Card's SingleCard object
                     case 15: // Card.SingleCard.PriceSoldFor
                         $soldStringFromFile = ltrim($trimmedCellValue, "$");
-                        if ($soldStringFromFile === "") {
+                        if (empty($soldStringFromFile)) {
                             $newSingleCard->setPriceSoldFor(null);
                         } elseif (is_numeric($soldStringFromFile)) {
                             $sold = floatval($soldStringFromFile);
@@ -481,10 +479,8 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         $existingComments = $newSingleCard->getComments();
                         if (!empty($existingComments)) {
                             $newSingleCard->setComments($existingComments . "; Comments: " . $trimmedCellValue);
-                        } elseif (!empty($trimmedCellValue)) {
-                            $newSingleCard->setComments($trimmedCellValue);
                         } else {
-                            $newSingleCard->setComments(null);
+                            $newSingleCard->setComments($trimmedCellValue);
                         }
                         break;
 
