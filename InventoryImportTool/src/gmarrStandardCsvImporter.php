@@ -453,10 +453,45 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($costStringFromFile, $singles, $cost);
                         break;
                         
-                        
+                    case 14: // Card.SingleCard.Status
                         // For Status, we just put this into associated SingleCard.status field after stripping whitespace
-                        // For Sold, if there just happens to be a value (they should all be empty), convert the value to a plain old float value (strip the $) and set the associated  SingleCard.PriceSoldFor field with it's value
-                        // For Comments, we just put this into associated SingleCard.Description field after stripping whitespace (if there's a value already, append)
+                        if ($trimmedCellValue !== "") {
+                            $singles = $newCard->getSingleCards();
+                            $singles[$singleCardID]->setStatus($trimmedCellValue);
+                        }
+                        unset($singles);
+                        break;
+                        
+                    case 15: // Card.SingleCard.PriceSoldFor
+                        // For Sold, if there happens to be a value, convert the value to a float value (strip the $) and set the associated SingleCard.PriceSoldFor field to it's value
+                        $soldStringFromFile = ltrim($trimmedCellValue, "$");
+                        $singles = $newCard->getSingleCards();
+                        if ($soldStringFromFile === "") {
+                            $singles[$singleCardID]->setPriceSoldFor(null);
+                        } elseif (is_numeric($soldStringFromFile)) {
+                            $sold = floatval($soldStringFromFile);
+                            $singles[$singleCardID]->setPriceSoldFor($sold);
+                        } else {
+                            $this->setParseError("'Price Sold For' of this single card is not a numeric value");
+                            $singles[$singleCardID]->setPriceSoldFor(null);
+                        }
+                        unset($soldStringFromFile, $singles, $sold);
+                        break;
+                        
+                    case 16: // Card.SingleCard.Comments
+                        // For Comments, we just put this into associated SingleCard.Comments field after stripping whitespace (if there's a value already, append)
+                        $singles = $newCard->getSingleCards();
+                        $existingComments = $singles[$singleCardID]->getComments();
+                        if (!empty($existingComments)) {
+                            $singles[$singleCardID]->setComments($existingComments . "; Comments: " . $trimmedCellValue);
+                        } elseif (!empty($trimmedCellValue)) {
+                            $singles[$singleCardID]->setComments($trimmedCellValue);
+                        } else {
+                            $singles[$singleCardID]->setComments(null);
+                        }
+                        unset($singles);
+                        break;
+
                     default:
                         // TODO: later, once I've implemented handlers for all columns, we might want to raise an error if this occurs
                         break;
