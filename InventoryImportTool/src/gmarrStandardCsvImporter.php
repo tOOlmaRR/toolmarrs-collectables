@@ -420,7 +420,23 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($singles);
                         break;
                         
-                        // For Grading, if there just happens to be a value (they should all be empty), set the associated SingleCardGrading.Description field with it's value for now (if there's a value already, append)
+                    case 12: // Card.SingleCard.Comments
+                        // For Grading, if there just happens to be a value, ensure it can be converted into an float. If it can, set the OverallGrade property in the SingleCardGrading object. If it can't, but there IS a value, set it in the Comments property of the SingleCard, but make it explicit where this value is from
+                        if ($trimmedCellValue !== "") {
+                            $singles = $newCard->getSingleCards();
+                            $single = $singles[$singleCardID];
+                            if (is_numeric($trimmedCellValue)) {
+                                $grade = floatval($trimmedCellValue);
+                                $singleCardGrading = $single->getSingleCardGrading();
+                                $singleCardGrading->setOverallGrade($grade);
+                            } else {
+                                $gradingComments = "Grading Value: " . $trimmedCellValue;
+                                $single->setComments($gradingComments);    
+                            }
+                        }
+                        unset($singles, $single, $grade, $singleCardGrading, $gradingComments);
+                        break;
+                        
                         // For Cost, convert the value to a plain old float value (strip the $) and set the associated SingleCard.cost to this value.
                         // For Status, we just put this into associated SingleCard.status field after stripping whitespace
                         // For Sold, if there just happens to be a value (they should all be empty), convert the value to a plain old float value (strip the $) and set the associated  SingleCard.PriceSoldFor field with it's value
