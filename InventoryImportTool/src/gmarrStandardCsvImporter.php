@@ -413,7 +413,13 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($newSubset);
                         break;
                         
-                        // For Rarity, we just put this into associated SingleCard.rarity field after stripping whitespace
+                    case 11: // Card.SingleCard.Rarity
+                        // For Rarity, we just put this into the associated field after stripping whitespace. This is part of SingleCard instead of Card to allow for serial #ed cards
+                        $singles = $newCard->getSingleCards();
+                        $singles[$singleCardID]->setRarity($trimmedCellValue);
+                        unset($singles);
+                        break;
+                        
                         // For Grading, if there just happens to be a value (they should all be empty), set the associated SingleCardGrading.Description field with it's value for now (if there's a value already, append)
                         // For Cost, convert the value to a plain old float value (strip the $) and set the associated SingleCard.cost to this value.
                         // For Status, we just put this into associated SingleCard.status field after stripping whitespace
