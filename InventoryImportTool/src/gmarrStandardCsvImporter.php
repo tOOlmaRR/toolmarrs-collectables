@@ -256,9 +256,10 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                 break;
             }
             
-            // begin building a new Card object
+            // begin building new Card objects
             $newCard = new Card();
-            $singleCardID = null; // remember this while parsing through the current row
+            $newSingleCard = new SingleCard();
+
             // customize how to handle each column
             for ($columnNumber = 0; $columnNumber < count($currentRow); $columnNumber++) {
                 $cellValue = $currentRow[$columnNumber];
@@ -267,22 +268,20 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     // For ID, we'll want to create a new SingleCard object and assign it to SingleCard.ID
                     case 0: // Card.SingleCards.ID
                         $singleCardID = $trimmedCellValue;
-                        $newSingleCard = new SingleCard();
                         $newSingleCard->setID($singleCardID);
                         $newCard->addSingleCard($newSingleCard);
-                        unset($newSingleCard);
+                        unset($singleCardID);
                         break;
 
                     // For #, if Card.cardNumber already exists in the newCards array, don't create a new Card - pull the ID of the existing one.
                     case 1: // Card.CardNumber
                         $newCard->setCardNumber($trimmedCellValue);
-                        
                         // check to see if this card has already been created and added to newcards array - if it has, retrieve and use it instead of the new one we're building
                         if (!empty($trimmedCellValue) && array_key_exists($trimmedCellValue, $newCards)) {
                             // don't lose the single we already created in case 0 above
                             $singles = $newCard->getSingleCards();
                             $newCard = $newCards[$trimmedCellValue];
-                            $newCard->addSingleCard($singles[$singleCardID]);
+                            $newCard->addSingleCard($newSingleCard);
                         }
                         unset($singles);
                         break;
@@ -304,7 +303,6 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                             } else {
                                 $attributes = explode(" ", $trimmedCellValue);
                             }
-                            
                             foreach ($attributes as $attribute) {
                                 $attribute = strtoupper($attribute);
                                 $newCardAttribute = new CardAttribute();
@@ -375,32 +373,29 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     case 8: //Card.SingleCard.SellPrice
                         // For SELL, convert the value to a float value (strip the $), find the single card (based on ID), and set the associated SingleCard.sellPrice to this value.
                         $sellValueStringFromFile = ltrim($trimmedCellValue, "$");
-                        $singles = $newCard->getSingleCards();
-                        
                         if ($sellValueStringFromFile == "") {
-                            $singles[$singleCardID]->setSellPrice(null);
+                            $newSingleCard->setSellPrice(null);
                         } elseif (is_numeric($sellValueStringFromFile)) {
                             $sellPrice = floatval($sellValueStringFromFile);
-                            $singles[$singleCardID]->setSellPrice($sellPrice);
+                            $newSingleCard->setSellPrice($sellPrice);
                         } else {
                             $this->setParseError("Sell value of this single card is not a numeric value");
-                            $singles[$singleCardID]->setSellPrice(null);
+                            $newSingleCard->setSellPrice(null);
                         }
-                        unset($sellValueStringFromFile, $singles, $sellPrice);
+                        unset($sellValueStringFromFile, $sellPrice);
                         break;
                         
                     case 9: // Card.SingleCard.SingleCardGrading.GradingClass.Abbreviation
                         // For Condition, create a SingleCardGrading object and a GradingClass object, find the single card (based on ID), assign the parsed value to GradingClass.Abbreviation and link up the two objects to the SingleCard. Let the DAL determine if it needs to be inserted or not.
-                        $singles = $newCard->getSingleCards();
                         $conditionAbbreviation = strtoupper($trimmedCellValue);
                         if ($conditionAbbreviation !== "") {
-                            $newSingleCardGrading = new SingleCardGrading();
+                            $newSingleGrading = new SingleCardGrading();
                             $newGradingClass = new GradingClass();
                             $newGradingClass->setAbbreviation($conditionAbbreviation);
-                            $newSingleCardGrading->setGradingClass($newGradingClass);
-                            $singles[$singleCardID]->setSingleCardGrading($newSingleCardGrading);
+                            $newSingleGrading->setGradingClass($newGradingClass);
+                            $newSingleCard->setSingleCardGrading($newSingleGrading);
                         }
-                        unset($singles, $newSingleCardGrading, $newGradingClass);
+                        unset($newSingleGrading, $newGradingClass);
                         break;
                         
                     case 10: // Card.Subset and CardSet.Subset
@@ -415,81 +410,71 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         
                     case 11: // Card.SingleCard.Rarity
                         // For Rarity, we just put this into the associated field after stripping whitespace. This is part of SingleCard instead of Card to allow for serial #ed cards
-                        $singles = $newCard->getSingleCards();
-                        $singles[$singleCardID]->setRarity($trimmedCellValue);
-                        unset($singles);
+                        $newSingleCard->setRarity($trimmedCellValue);
                         break;
                         
                     case 12: // Card.SingleCard.Comments
                         // For Grading, if there just happens to be a value, ensure it can be converted into an float. If it can, set the OverallGrade property in the SingleCardGrading object. If it can't, but there IS a value, set it in the Comments property of the SingleCard, but make it explicit where this value is from
                         if ($trimmedCellValue !== "") {
-                            $singles = $newCard->getSingleCards();
-                            $single = $singles[$singleCardID];
                             if (is_numeric($trimmedCellValue)) {
                                 $grade = floatval($trimmedCellValue);
-                                $singleCardGrading = $single->getSingleCardGrading();
+                                $singleCardGrading = $newSingleCard->getSingleCardGrading();
                                 $singleCardGrading->setOverallGrade($grade);
                             } else {
                                 $gradingComments = "Grading Value: " . $trimmedCellValue;
-                                $single->setComments($gradingComments);    
+                                $newSingleCard->setComments($gradingComments);    
                             }
                         }
-                        unset($singles, $single, $grade, $singleCardGrading, $gradingComments);
+                        unset($grade, $singleCardGrading, $gradingComments);
                         break;
                         
                     case 13: // Card.SingleCard.Cost
                         // For Cost, convert the value to a float value (strip the $) and set the associated SingleCard.cost to this value.
                         $costStringFromFile = ltrim($trimmedCellValue, "$");
-                        $singles = $newCard->getSingleCards();
                         if ($costStringFromFile === "") {
-                            $singles[$singleCardID]->setCost(null);
+                            $newSingleCard->setCost(null);
                         } elseif (is_numeric($costStringFromFile)) {
                             $cost = floatval($costStringFromFile);
-                            $singles[$singleCardID]->setCost($cost);
+                            $newSingleCard->setCost($cost);
                         } else {
                             $this->setParseError("Cost of this single card is not a numeric value");
-                            $singles[$singleCardID]->setCost(null);
+                            $newSingleCard->setCost(null);
                         }
-                        unset($costStringFromFile, $singles, $cost);
+                        unset($costStringFromFile, $cost);
                         break;
                         
                     case 14: // Card.SingleCard.Status
                         // For Status, we just put this into associated SingleCard.status field after stripping whitespace
                         if ($trimmedCellValue !== "") {
-                            $singles = $newCard->getSingleCards();
-                            $singles[$singleCardID]->setStatus($trimmedCellValue);
+                            $newSingleCard->setStatus($trimmedCellValue);
                         }
-                        unset($singles);
                         break;
                         
                     case 15: // Card.SingleCard.PriceSoldFor
                         // For Sold, if there happens to be a value, convert the value to a float value (strip the $) and set the associated SingleCard.PriceSoldFor field to it's value
                         $soldStringFromFile = ltrim($trimmedCellValue, "$");
-                        $singles = $newCard->getSingleCards();
                         if ($soldStringFromFile === "") {
-                            $singles[$singleCardID]->setPriceSoldFor(null);
+                            $newSingleCard->setPriceSoldFor(null);
                         } elseif (is_numeric($soldStringFromFile)) {
                             $sold = floatval($soldStringFromFile);
-                            $singles[$singleCardID]->setPriceSoldFor($sold);
+                            $newSingleCard->setPriceSoldFor($sold);
                         } else {
                             $this->setParseError("'Price Sold For' of this single card is not a numeric value");
-                            $singles[$singleCardID]->setPriceSoldFor(null);
+                            $newSingleCard->setPriceSoldFor(null);
                         }
-                        unset($soldStringFromFile, $singles, $sold);
+                        unset($soldStringFromFile, $sold);
                         break;
                         
                     case 16: // Card.SingleCard.Comments
                         // For Comments, we just put this into associated SingleCard.Comments field after stripping whitespace (if there's a value already, append)
-                        $singles = $newCard->getSingleCards();
-                        $existingComments = $singles[$singleCardID]->getComments();
+                        $existingComments = $newSingleCard->getComments();
                         if (!empty($existingComments)) {
-                            $singles[$singleCardID]->setComments($existingComments . "; Comments: " . $trimmedCellValue);
+                            $newSingleCard->setComments($existingComments . "; Comments: " . $trimmedCellValue);
                         } elseif (!empty($trimmedCellValue)) {
-                            $singles[$singleCardID]->setComments($trimmedCellValue);
+                            $newSingleCard->setComments($trimmedCellValue);
                         } else {
-                            $singles[$singleCardID]->setComments(null);
+                            $newSingleCard->setComments(null);
                         }
-                        unset($singles);
                         break;
 
                     default:
