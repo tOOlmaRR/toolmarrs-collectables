@@ -251,6 +251,11 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
         $newCards = Array();
         $rowNumber = 1;
         while (!$this->getStopParsing() && $currentRow !== false && $currentRow[0] !== "Statistics") {
+            // skip empty rows
+            if (count(array_filter($currentRow)) == 0) {
+                break;
+            }
+            
             // begin building a new Card object
             $newCard = new Card();
             $singleCardID = null; // remember this while parsing through the current row
