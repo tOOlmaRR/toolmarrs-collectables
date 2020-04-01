@@ -36,12 +36,12 @@ class CardValue
         return $this->highValue;
     }
     
-    public function getLastAppraisal() : string
+    public function getLastAppraisal() : ?string
     {
         return $this->lastAppraisal;
     }
     
-    public function getLastAppraisalSource() : string
+    public function getLastAppraisalSource() : ?string
     {
         return $this->lastAppraisalSource;
     }
@@ -64,12 +64,12 @@ class CardValue
         $this->highValue = $cardValueHighValue;
     }
     
-    public function setLastAppraisal(string $cardValueLastAppraisal)
+    public function setLastAppraisal(?string $cardValueLastAppraisal)
     {
         $this->lastAppraisal = $cardValueLastAppraisal;
     }
     
-    public function setLastAppraisalSource(string $cardValueLastAppraisalSource)
+    public function setLastAppraisalSource(?string $cardValueLastAppraisalSource)
     {
         $this->lastAppraisalSource = $cardValueLastAppraisalSource;
     }

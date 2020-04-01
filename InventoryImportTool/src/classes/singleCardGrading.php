@@ -34,37 +34,37 @@ class SingleCardGrading
         return $this->ID;
     }
     
-    public function getEdges() : int
+    public function getEdges() : ?int
     {
         return $this->edges;
     }
     
-    public function getSurfaces() : int
+    public function getSurfaces() : ?int
     {
         return $this->surfaces;
     }
     
-    public function getCorners() : int
+    public function getCorners() : ?int
     {
         return $this->corners;
     }
     
-    public function getAlignment() : int
+    public function getAlignment() : ?int
     {
         return $this->alignment;
     }
     
-    public function getOverallGrade() : float
+    public function getOverallGrade() : ?float
     {
         return $this->overallGrade;
     }
     
-    public function getBCG_serialNumber() : string
+    public function getBCG_serialNumber() : ?string
     {
         return $this->BCG_serialNumber;
     }
     
-    public function getBCG_Grade() : float
+    public function getBCG_Grade() : ?float
     {
         return $this->BCG_Grade;
     }
@@ -74,7 +74,7 @@ class SingleCardGrading
         return $this->singleCard;
     }
     
-    public function getGradingClass() : GradingClass
+    public function getGradingClass() : ?GradingClass
     {
         return $this->gradingClass;
     }
@@ -87,37 +87,37 @@ class SingleCardGrading
         $this->ID = $singleCardGradingID;
     }
     
-    public function setEdges(int $singleCardGradingEdges)
+    public function setEdges(?int $singleCardGradingEdges)
     {
         $this->edges = $singleCardGradingEdges;
     }
     
-    public function setSurfaces(int $singleCardGradingSurfaces)
+    public function setSurfaces(?int $singleCardGradingSurfaces)
     {
         $this->surfaces = $singleCardGradingSurfaces;
     }
     
-    public function setCorners(int $singleCardGradingCorners)
+    public function setCorners(?int $singleCardGradingCorners)
     {
         $this->corners = $singleCardGradingCorners;
     }
     
-    public function setAlignment(int $singleCardGradingAlignment)
+    public function setAlignment(?int $singleCardGradingAlignment)
     {
         $this->alignment = $singleCardGradingAlignment;
     }
     
-    public function setOverallGrade(float $singleCardGradingOverallGrade)
+    public function setOverallGrade(?float $singleCardGradingOverallGrade)
     {
         $this->overallGrade = $singleCardGradingOverallGrade;
     }
     
-    public function setBCG_serialNumber(string $singleCardGradingBCG_serialNumber)
+    public function setBCG_serialNumber(?string $singleCardGradingBCG_serialNumber)
     {
         $this->BCG_serialNumber = $singleCardGradingBCG_serialNumber;
     }
     
-    public function setBCG_Grade(float $singleCardGradingBCG_Grade)
+    public function setBCG_Grade(?float $singleCardGradingBCG_Grade)
     {
         $this->BCG_Grade = $singleCardGradingBCG_Grade;
     }

@@ -48,12 +48,12 @@ class SingleCard
         return $this->priceSoldFor;
     }
     
-    public function getRarity() : string
+    public function getRarity() : ?string
     {
         return $this->rarity;
     }
     
-    public function getStatus() : string
+    public function getStatus() : ?string
     {
         return $this->status;
     }
@@ -68,7 +68,7 @@ class SingleCard
         return $this->card;
     }
     
-    public function getSingleCardGrading() : SingleCardGrading
+    public function getSingleCardGrading() : ?SingleCardGrading
     {
         return $this->singleCardGrading;
     }
@@ -96,12 +96,12 @@ class SingleCard
         $this->priceSoldFor = $singlePriceSoldFor;
     }
     
-    public function setRarity(string $singleCardRarity)
+    public function setRarity(?string $singleCardRarity)
     {
         $this->rarity = $singleCardRarity;
     }
     
-    public function setStatus(string $singleCardStatus)
+    public function setStatus(?string $singleCardStatus)
     {
         $this->status = $singleCardStatus;
     }

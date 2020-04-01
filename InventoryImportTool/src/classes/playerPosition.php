@@ -24,12 +24,12 @@ class PlayerPosition
         return $this->ID;
     }
     
-    public function getAbbreviation() : string
+    public function getAbbreviation() : ?string
     {
         return $this->abbreviation;
     }
     
-    public function getName() : string
+    public function getName() : ?string
     {
         return $this->name;
     }
@@ -42,12 +42,12 @@ class PlayerPosition
         $this->ID = $playerPositionID;
     }
     
-    public function setAbbreviation(string $playerPositionAbbreviation)
+    public function setAbbreviation(?string $playerPositionAbbreviation)
     {
         $this->abbreviation = $playerPositionAbbreviation;
     }
     
-    public function setName(string $playerPositionName)
+    public function setName(?string $playerPositionName)
     {
         $this->name = $playerPositionName;
     }

@@ -25,17 +25,17 @@ class GradingClass
         return $this->ID;
     }
     
-    public function getAbbreviation() : string
+    public function getAbbreviation() : ?string
     {
         return $this->abbreviation;
     }
     
-    public function getName() : string
+    public function getName() : ?string
     {
         return $this->name;
     }
     
-    public function getDescription() : string
+    public function getDescription() : ?string
     {
         return $this->description;
     }
@@ -48,17 +48,17 @@ class GradingClass
         $this->ID = $gradingClassID;
     }
     
-    public function setAbbreviation(string $gradingClassAbbreviation)
+    public function setAbbreviation(?string $gradingClassAbbreviation)
     {
         $this->abbreviation = $gradingClassAbbreviation;
     }
     
-    public function setName(int $gradingClassName)
+    public function setName(?string $gradingClassName)
     {
         $this->name = $gradingClassName;
     }
     
-    public function setDescription(int $gradingClassDescription)
+    public function setDescription(?string $gradingClassDescription)
     {
         $this->description = $gradingClassDescription;
     }

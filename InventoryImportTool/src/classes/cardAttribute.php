@@ -25,17 +25,17 @@ class CardAttribute
         return $this->ID;
     }
     
-    public function getAbbreviation() : string
+    public function getAbbreviation() : ?string
     {
         return $this->abbreviation;
     }
     
-    public function getFullName() : string
+    public function getFullName() : ?string
     {
         return $this->fullName;
     }
     
-    public function getComments() : string
+    public function getComments() : ?string
     {
         return $this->comments;
     }
@@ -48,17 +48,17 @@ class CardAttribute
         $this->ID = $cardAttributeID;
     }
     
-    public function setAbbreviation(string $cardAttributeAbbreviation)
+    public function setAbbreviation(?string $cardAttributeAbbreviation)
     {
         $this->abbreviation = $cardAttributeAbbreviation;
     }
     
-    public function setFullName(string $cardAttributeFullName)
+    public function setFullName(?string $cardAttributeFullName)
     {
         $this->fullName = $cardAttributeFullName;
     }
     
-    public function setComments(string $cardAttributeComments)
+    public function setComments(?string $cardAttributeComments)
     {
         $this->comments = $cardAttributeComments;
     }
