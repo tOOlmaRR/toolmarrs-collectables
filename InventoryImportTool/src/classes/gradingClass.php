@@ -48,7 +48,7 @@ class GradingClass
         $this->ID = $gradingClassID;
     }
     
-    public function setAbbreviation(int $gradingClassAbbreviation)
+    public function setAbbreviation(string $gradingClassAbbreviation)
     {
         $this->abbreviation = $gradingClassAbbreviation;
     }
