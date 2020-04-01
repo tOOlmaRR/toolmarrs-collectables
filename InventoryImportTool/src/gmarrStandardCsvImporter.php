@@ -437,7 +437,23 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($singles, $single, $grade, $singleCardGrading, $gradingComments);
                         break;
                         
-                        // For Cost, convert the value to a plain old float value (strip the $) and set the associated SingleCard.cost to this value.
+                    case 13: // Card.SingleCard.Cost
+                        // For Cost, convert the value to a float value (strip the $) and set the associated SingleCard.cost to this value.
+                        $costStringFromFile = ltrim($trimmedCellValue, "$");
+                        $singles = $newCard->getSingleCards();
+                        if ($costStringFromFile === "") {
+                            $singles[$singleCardID]->setCost(null);
+                        } elseif (is_numeric($costStringFromFile)) {
+                            $cost = floatval($costStringFromFile);
+                            $singles[$singleCardID]->setCost($cost);
+                        } else {
+                            $this->setParseError("Cost of this single card is not a numeric value");
+                            $singles[$singleCardID]->setCost(null);
+                        }
+                        unset($costStringFromFile, $singles, $cost);
+                        break;
+                        
+                        
                         // For Status, we just put this into associated SingleCard.status field after stripping whitespace
                         // For Sold, if there just happens to be a value (they should all be empty), convert the value to a plain old float value (strip the $) and set the associated  SingleCard.PriceSoldFor field with it's value
                         // For Comments, we just put this into associated SingleCard.Description field after stripping whitespace (if there's a value already, append)
