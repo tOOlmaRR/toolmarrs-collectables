@@ -76,8 +76,8 @@ class BaseImporter implements iImporter
     
     
     
-    // methods    
-    public function locateFilesToImport($importFolder) : array
+    // static methods
+    public static function locateFilesToImport($importFolder) : array
     {
         $itemsToRemove = array('.', '..');
         $files = scandir($importFolder);
@@ -94,6 +94,7 @@ class BaseImporter implements iImporter
         return $files;
     }
     
+    // member functions
     public function validateFile($fullFilePath, &$rejectionReason) : bool
     {
         $fileContent = file_get_contents($fullFilePath);

@@ -24,17 +24,17 @@ class Subset
         return $this->ID;
     }
     
-    public function getName() : string
+    public function getName() : ?string
     {
         return $this->name;
     }
     
-    public function getSize() : int
+    public function getSize() : ?int
     {
         return $this->size;
     }
     
-    public function getGradingModifier() : float
+    public function getGradingModifier() : ?float
     {
         return $this->gradingModifier;
     }
@@ -52,17 +52,17 @@ class Subset
         $this->ID = $subsetID;
     }
     
-    public function setName(string $subsetName)
+    public function setName(?string $subsetName)
     {
         $this->name = $subsetName;
     }
     
-    public function setSize(int $subsetSize)
+    public function setSize(?int $subsetSize)
     {
         $this->size = $subsetSize;
     }
     
-    public function setGradingModifier(float $subsetGradingModifier)
+    public function setGradingModifier(?float $subsetGradingModifier)
     {
         $this->gradingModifier = $subsetGradingModifier;
     }

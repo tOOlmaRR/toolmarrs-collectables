@@ -31,27 +31,27 @@ class CardSet
     
     
     // public getters/accessors
-    public function getId() : int
+    public function getID() : int
     {
         return $this->ID;
     }
     
-    public function getBaseSetName() : string
+    public function getBaseSetName() : ?string
     {
         return $this->baseSetName;
     }
     
-    public function getInsertSetName() : string
+    public function getInsertSetName() : ?string
     {
         return $this->insertSetName ?? "";
     }
     
-    public function getFullName() : string
+    public function getFullName() : ?string
     {
         return $this->fullName;
     }
     
-    public function getSeason() : string
+    public function getSeason() : ?string
     {
         return $this->season;
     }
@@ -61,7 +61,7 @@ class CardSet
         return $this->size;
     }
     
-    public function getRarity() : string
+    public function getRarity() : ?string
     {
         return $this->rarity ?? "";
     }
@@ -71,7 +71,7 @@ class CardSet
         return $this->gradingModifier;
     }
     
-    public function getComments() : string
+    public function getComments() : ?string
     {
         return $this->comments ?? "";
     }
@@ -109,22 +109,22 @@ class CardSet
         $this->ID = $cardSetID;
     }
 
-    public function setBaseSetName(string $cardSetBaseSetName)
+    public function setBaseSetName(?string $cardSetBaseSetName)
     {
         $this->baseSetName = $cardSetBaseSetName;
     }
 
-    public function setInsertSetName(string $cardSetInsertSetName)
+    public function setInsertSetName(?string $cardSetInsertSetName)
     {
         $this->insertSetName = $cardSetInsertSetName;
     }
 
-    public function setFullName(string $cardSetFullName)
+    public function setFullName(?string $cardSetFullName)
     {
         $this->fullName = $cardSetFullName;
     }
 
-    public function setSeason(string $cardSetSeason)
+    public function setSeason(?string $cardSetSeason)
     {
         $this->season = $cardSetSeason;
     }
@@ -134,7 +134,7 @@ class CardSet
         $this->size = $cardSetSize;
     }
 
-    public function setRarity(string $cardSetRarity)
+    public function setRarity(?string $cardSetRarity)
     {
         $this->rarity = $cardSetRarity;
     }
@@ -144,7 +144,7 @@ class CardSet
         $this->gradingModifier = $cardSetGradingModifier;
     }
 
-    public function setComments(string $cardSetComments)
+    public function setComments(?string $cardSetComments)
     {
         $this->comments = $cardSetComments;
     }

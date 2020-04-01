@@ -28,12 +28,12 @@ class League
         return $this->ID;
     }
     
-    public function getAbbreviation() : string
+    public function getAbbreviation() : ?string
     {
         return $this->abbreviation;
     }
     
-    public function getName() : string
+    public function getName() : ?string
     {
         return $this->name;
     }
@@ -56,12 +56,12 @@ class League
         $this->ID = $leagueID;
     }
     
-    public function setAbbreviation(string $leagueAbbreviation)
+    public function setAbbreviation(?string $leagueAbbreviation)
     {
         $this->abbreviation = $leagueAbbreviation;
     }
     
-    public function setName(string $leagueName)
+    public function setName(?string $leagueName)
     {
         $this->name = $leagueName;
     }

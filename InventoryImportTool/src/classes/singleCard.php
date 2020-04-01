@@ -33,32 +33,32 @@ class SingleCard
         return $this->ID;
     }
     
-    public function getSellPrice() : float
+    public function getSellPrice() : ?float
     {
         return $this->sellPrice;
     }
     
-    public function getCost() : float
+    public function getCost() : ?float
     {
         return $this->cost;
     }
     
-    public function getPriceSoldFor() : float
+    public function getPriceSoldFor() : ?float
     {
         return $this->priceSoldFor;
     }
     
-    public function getRarity() : string
+    public function getRarity() : ?string
     {
         return $this->rarity;
     }
     
-    public function getStatus() : string
+    public function getStatus() : ?string
     {
         return $this->status;
     }
     
-    public function getComments() : string
+    public function getComments() : ?string
     {
         return $this->comments;
     }
@@ -68,7 +68,7 @@ class SingleCard
         return $this->card;
     }
     
-    public function getSingleCardGrading() : SingleCardGrading
+    public function getSingleCardGrading() : ?SingleCardGrading
     {
         return $this->singleCardGrading;
     }
@@ -81,32 +81,32 @@ class SingleCard
         $this->ID = $singleCardID;
     }
     
-    public function setSellPrice(float $singleCardSellPrice)
+    public function setSellPrice(?float $singleCardSellPrice)
     {
         $this->sellPrice = $singleCardSellPrice;
     }
     
-    public function setCost(float $singleCardCost)
+    public function setCost(?float $singleCardCost)
     {
         $this->cost = $singleCardCost;
     }
     
-    public function setPriceSoldFor(float $singlePriceSoldFor)
+    public function setPriceSoldFor(?float $singlePriceSoldFor)
     {
         $this->priceSoldFor = $singlePriceSoldFor;
     }
     
-    public function setRarity(string $singleCardRarity)
+    public function setRarity(?string $singleCardRarity)
     {
         $this->rarity = $singleCardRarity;
     }
     
-    public function setStatus(string $singleCardStatus)
+    public function setStatus(?string $singleCardStatus)
     {
         $this->status = $singleCardStatus;
     }
     
-    public function setComments(string $singleCardComments)
+    public function setComments(?string $singleCardComments)
     {
         $this->comments = $singleCardComments;
     }

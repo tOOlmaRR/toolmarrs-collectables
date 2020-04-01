@@ -3,6 +3,7 @@ namespace GeoTradingCards\InventoryImportUtility\DAL;
 
 use GeoTradingCards\InventoryImportUtility\DAL\ManufacturerEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\CardEntity;
 use PDO;
 
 class EntityFactory
@@ -48,6 +49,10 @@ class EntityFactory
                 
             case "cardset":
                 return new CardSetEntity($this->getDatabaseConnection());
+                break;
+                
+            case "card":
+                return new CardEntity($this->getDatabaseConnection());
                 break;
             
             default:

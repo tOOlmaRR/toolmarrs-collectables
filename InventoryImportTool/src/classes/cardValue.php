@@ -26,22 +26,22 @@ class CardValue
         return $this->ID;
     }
 
-    public function getLowValue() : float
+    public function getLowValue() : ?float
     {
         return $this->lowValue;
     }
     
-    public function getHighValue() : float
+    public function getHighValue() : ?float
     {
         return $this->highValue;
     }
     
-    public function getLastAppraisal() : string
+    public function getLastAppraisal() : ?string
     {
         return $this->lastAppraisal;
     }
     
-    public function getLastAppraisalSource() : string
+    public function getLastAppraisalSource() : ?string
     {
         return $this->lastAppraisalSource;
     }
@@ -54,22 +54,22 @@ class CardValue
         $this->ID = $cardValueID;
     }
     
-    public function setLowValue(float $cardValueLowValue)
+    public function setLowValue(?float $cardValueLowValue)
     {
         $this->lowValue = $cardValueLowValue;
     }
     
-    public function setHighValue(float $cardValueHighValue)
+    public function setHighValue(?float $cardValueHighValue)
     {
         $this->highValue = $cardValueHighValue;
     }
     
-    public function setLastAppraisal(string $cardValueLastAppraisal)
+    public function setLastAppraisal(?string $cardValueLastAppraisal)
     {
         $this->lastAppraisal = $cardValueLastAppraisal;
     }
     
-    public function setLastAppraisalSource(string $cardValueLastAppraisalSource)
+    public function setLastAppraisalSource(?string $cardValueLastAppraisalSource)
     {
         $this->lastAppraisalSource = $cardValueLastAppraisalSource;
     }

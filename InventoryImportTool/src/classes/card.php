@@ -41,22 +41,22 @@ class Card
         return $this->ID;
     }
     
-    public function getCardNumber() : string
+    public function getCardNumber() : ?string
     {
         return $this->cardNumber;
     }
     
-    public function getTitle() : string
+    public function getTitle() : ?string
     {
         return $this->title;
     }
     
-    public function getComments() : string
+    public function getComments() : ?string
     {
         return $this->comments;
     }
     
-    public function getGradingModifier() : float
+    public function getGradingModifier() : ?float
     {
         return $this->gradingModifier;
     }
@@ -66,27 +66,27 @@ class Card
         return $this->cardSet;
     }
     
-    public function getSubset() : Subset
+    public function getSubset() : ?Subset
     {
         return $this->subset;
     }
     
-    public function getTeam() : Team
+    public function getTeam() : ?Team
     {
         return $this->team;
     }
     
-    public function getPlayerPosition() : PlayerPosition
+    public function getPlayerPosition() : ?PlayerPosition
     {
         return $this->playerPosition;
     }
     
-    public function getCardValue() : CardValue
+    public function getCardValue() : ?CardValue
     {
         return $this->cardValue;
     }
     
-    public function getAttributes() : array
+    public function getAttributes() : ?array
     {
         return $this->attributes;
     }
@@ -104,22 +104,22 @@ class Card
         $this->ID = $cardID;
     }
     
-    public function setCardNumber(string $cardNumber)
+    public function setCardNumber(?string $cardNumber)
     {
         $this->cardNumber = $cardNumber;
     }
    
-    public function setTitle(string $cardTitle)
+    public function setTitle(?string $cardTitle)
     {
         $this->title = $cardTitle;
     }
     
-    public function setComments(string $cardComments)
+    public function setComments(?string $cardComments)
     {
         $this->comments = $cardComments;
     }
     
-    public function setGradingModifier(float $cardGradingModifier)
+    public function setGradingModifier(?float $cardGradingModifier)
     {
         $this->gradingModifier = $cardGradingModifier;
     }
@@ -157,5 +157,16 @@ class Card
     public function setSingleCards(array $cardSingleCards)
     {
         $this->singleCards = $cardSingleCards;
+    }
+    
+    
+    
+    public function addSingleCard(SingleCard $newSingleCard)
+    {
+        if ($this->singleCards != null) {
+            $this->singleCards[$newSingleCard->getID()] = $newSingleCard;
+        } else {
+            $this->singleCards = array($newSingleCard->getID() => $newSingleCard);
+        }
     }
 }

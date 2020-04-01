@@ -48,9 +48,6 @@ try {
         $config = new Config($configFiles);        
     }
     
-    // Instantiate objects
-    $importer = new GmarrStandardCsvImporter();
-
     echo "$environment environment has been configured." . PHP_EOL;    
 } catch (Exception $ex) {
     trigger_error(
@@ -64,26 +61,10 @@ try {
 
 // Main Program
 try {
-    /* TEMPORARY TESTING AREA
-    $card = new Card();
-    $cardAttribute = new CardAttribute();
-    $cardSet = new CardSet();
-    $cardValue = new CardValue();
-    $gradingClass = new GradingClass();
-    $league = new League();
-    $manufacturer = new Manufacturer();
-    $playerPosition = new PlayerPosition();
-    $singleCard = new SingleCard();
-    $singleCardGrading = new SingleCardGrading();
-    $sport = new Sport();
-    $subset = new Subset();
-    $team = new Team();    
-    */
-    
     // Get list of files to import
     $localImportPath = __DIR__ . $config['data-files']['inventory']['importPath'];
     echo "Looking for files to process and import in $localImportPath ..." . PHP_EOL;
-    $filesToProcess = $importer->locateFilesToImport($localImportPath);
+    $filesToProcess = GmarrStandardCsvImporter::locateFilesToImport($localImportPath);
     $fileCount = count($filesToProcess);
     echo "Found and returning a list of $fileCount files to process" . PHP_EOL;
     
@@ -91,6 +72,9 @@ try {
     foreach ($filesToProcess as $file) {
         $fileFullPath = $localImportPath . $file;
         echo PHP_EOL . "Beginning to process the following file: $fileFullPath" . PHP_EOL;
+        
+        // Instantiate objects
+        $importer = new GmarrStandardCsvImporter();
         
         // read and validate the file
         $rejectionReason = "";
@@ -115,7 +99,7 @@ try {
                 // Insert the data into the database
                 $success = $importer->insertObjects();
                 if (!$success) {
-                    echo "Failure! An issue occured during database insertions: .". PHP_EOL;
+                    echo "Failure! An issue occured during database insertions: ." . PHP_EOL;
                     if ($importer->getParseError() != "") {
                         echo $importer->getParseError();
                     }

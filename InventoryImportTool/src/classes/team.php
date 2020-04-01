@@ -55,7 +55,7 @@ class Team
         $this->location = $teamLocation;
     }
     
-    public function setName(int $teamName)
+    public function setName(string $teamName)
     {
         $this->name = $teamName;
     }
