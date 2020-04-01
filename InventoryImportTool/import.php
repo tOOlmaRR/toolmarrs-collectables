@@ -61,22 +61,6 @@ try {
 
 // Main Program
 try {
-    /* TEMPORARY TESTING AREA
-    $card = new Card();
-    $cardAttribute = new CardAttribute();
-    $cardSet = new CardSet();
-    $cardValue = new CardValue();
-    $gradingClass = new GradingClass();
-    $league = new League();
-    $manufacturer = new Manufacturer();
-    $playerPosition = new PlayerPosition();
-    $singleCard = new SingleCard();
-    $singleCardGrading = new SingleCardGrading();
-    $sport = new Sport();
-    $subset = new Subset();
-    $team = new Team();    
-    */
-    
     // Get list of files to import
     $localImportPath = __DIR__ . $config['data-files']['inventory']['importPath'];
     echo "Looking for files to process and import in $localImportPath ..." . PHP_EOL;
@@ -115,7 +99,7 @@ try {
                 // Insert the data into the database
                 $success = $importer->insertObjects();
                 if (!$success) {
-                    echo "Failure! An issue occured during database insertions: .". PHP_EOL;
+                    echo "Failure! An issue occured during database insertions: ." . PHP_EOL;
                     if ($importer->getParseError() != "") {
                         echo $importer->getParseError();
                     }

@@ -9,6 +9,8 @@ use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\classes\Team;
 use GeoTradingCards\InventoryImportUtility\classes\PlayerPosition;
 use GeoTradingCards\InventoryImportUtility\classes\CardValue;
+use GeoTradingCards\InventoryImportUtility\classes\SingleCardGrading;
+use GeoTradingCards\InventoryImportUtility\classes\GradingClass;
 
 use GeoTradingCards\InventoryImportUtility\Helpers\StringHelpers;
 
@@ -381,7 +383,19 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($sellValueStringFromFile, $singles, $sellPrice);
                         break;
                         
-                        // For Condition, we'll need to create a SingleCardGrading object, look up the value in the GradingClass table in the database, retrieve and associated SingleCardGrading to it if it exist and otherwise, create a new GradingClass object and associate that to SingleCardGrading, and then associate the SingleCardGrading to the SingleCard object already associated to the Card object
+                    case 9: // Card.SingleCard.SingleCardGrading.GradingClass.Abbreviation
+                        // For Condition, create a SingleCardGrading object and a GradingClass object, find the single card (based on ID), assign the parsed value to GradingClass.Abbreviation and link up the two objects to the SingleCard. Let the DAL determine if it needs to be inserted or not.
+                        $singles = $newCard->getSingleCards();
+                        $conditionAbbreviation = strtoupper($trimmedCellValue);
+                        if ($conditionAbbreviation !== "") {
+                            $singleCardGrading = new SingleCardGrading();
+                            $gradingClass = new GradingClass();
+                            $gradingClass->setAbbreviation($conditionAbbreviation);
+                            $singleCardGrading->setGradingClass($gradingClass);
+                            $singles[$singleCardID]->setSingleCardGrading($singleCardGrading);
+                        }
+                        unset($singles, $singleCardGrading, $gradingClass);
+                        
                         // For Subset, if it's already associated to the CardSet, use that object and associated this card to that Subset; if it's not, create a new Subset object, set it's Subset.Name to this value, and associate it to both the Card object and the CardSet object
                         // For Rarity, we just put this into associated SingleCard.rarity field after stripping whitespace
                         // For Grading, if there just happens to be a value (they should all be empty), set the associated SingleCardGrading.Description field with it's value for now (if there's a value already, append)
