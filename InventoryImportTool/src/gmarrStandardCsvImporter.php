@@ -260,12 +260,12 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             $newCard = new Card();
             $newSingleCard = new SingleCard();
 
-            // customize how to handle each column
+            // Handle each column separately
             for ($columnNumber = 0; $columnNumber < count($currentRow); $columnNumber++) {
                 $cellValue = $currentRow[$columnNumber];
                 $trimmedCellValue = trim($cellValue);
                 switch ($columnNumber) {
-                    // For ID, we'll want to create a new SingleCard object and assign it to SingleCard.ID
+                    // ID:  assign this value to the ID field in the new SingleCard object and associate it to the Card now that we have an ID (which we are indexing on)
                     case 0: // Card.SingleCards.ID
                         $singleCardID = $trimmedCellValue;
                         $newSingleCard->setID($singleCardID);
@@ -273,28 +273,30 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($singleCardID);
                         break;
 
-                    // For #, if Card.cardNumber already exists in the newCards array, don't create a new Card - pull the ID of the existing one.
+                    // #: first check if we've already created a Card with this card number.
+                    // If we have, look up that Card object in memory and use that instead of the new one we just created
+                    // If we need the new Card object, assign this value to it's CardNumber field
                     case 1: // Card.CardNumber
                         $newCard->setCardNumber($trimmedCellValue);
-                        // check to see if this card has already been created and added to newcards array - if it has, retrieve and use it instead of the new one we're building
                         if (!empty($trimmedCellValue) && array_key_exists($trimmedCellValue, $newCards)) {
-                            // don't lose the single we already created in case 0 above
+                            // don't lose the SingleCard we already created in case 0 above
                             $singles = $newCard->getSingleCards();
                             $newCard = $newCards[$trimmedCellValue];
                             $newCard->addSingleCard($newSingleCard);
                         }
                         unset($singles);
                         break;
-                        
 
+                    // Description: just assign this to Card.Title after stripping whitespace
                     case 2: // Card.Title
-                        // For Description, we just put this into Card.title after stripping whitespace
                         $newCard->setTitle($trimmedCellValue);
                         unset($trimmedCellValue);
                         break;
                     
+                    // RC: build a CardAttribute object by hand and assign this value to it's Abbreviation field
+                    // also supports a space-delimited list of attributes, not just the RC attribute (adds more CardAttributes to the Card)
+                    // allow the DAL to determine if it needs to be inserted or not
                     case 3: // Card.Attributes
-                        // For RC, instead of pulling from the database, we'll build the object by hand and have the DAL determine if it needs to be inserted or not
                         if (!empty($trimmedCellValue)) {
                             $attributeObjects = array();
                             $attributes = array();
@@ -317,9 +319,10 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($attributeObjects, $attributes, $attribute, $newCardAttribute);
                         break;
-                        
-                    case 4: // Card.TeamID
-                        // For Team, we'll just build and associate the Team and then have the DAL determine if it needs to be inserted or not
+
+                    // Team: build a Team object, assign this value to it's Name field, and associate the Team to the Card
+                    // allow the DAL to determine if it needs to be inserted or not
+                    case 4: // Card.Team.Name
                         if (!empty($trimmedCellValue)) {
                             $newTeam = new Team();
                             $newTeam->setName($trimmedCellValue);
@@ -327,9 +330,10 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($newTeam);
                         break;
-                        
-                    case 5: // Card.PositionID
-                        // For Position, we'll just build and associate the PlayerPosition and then have the DAL determine if it needs to be inserted or not
+
+                    // Position: build a PlayerPosition object, assign this value to it's Abbreviation field, and associate the PlayerPosition to the Card
+                    // allow the DAL to determine if it needs to be inserted or not
+                    case 5: // Card.PlayerPosition.Abbreviation
                         if (!empty($trimmedCellValue)) {
                             $newPosition = new PlayerPosition();
                             $newPosition->setAbbreviation($trimmedCellValue);
@@ -337,9 +341,9 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($newPosition);
                         break;
-                        
+                    // LOW: build a CardValue object, strip the $ from this value, convert it to a float, assign this value to the LowValue field in this new object,
+                    // and associate this new CardValue object to the Card object
                     case 6: // Card.CardValue.LowValue
-                        // For LOW, we'll need to create a new CardValue object, convert the value to a plain old float value (strip the $), set CardValue.lowValue to this value, and associate this object to the Card object
                         $lowValueAsStringFromFile = ltrim($trimmedCellValue, "$");
                         $newCardValue = new CardValue();
                         if ($lowValueAsStringFromFile == "") {
@@ -354,9 +358,9 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         $newCard->setCardValue($newCardValue);
                         unset($lowValueAsStringFromFile, $newCardValue, $lowValue);
                         break;
-                        
+                    
+                    // HIGH: strip the $ from this value, convert it to a float, and assign this value to the HighValue property in the Card's CardValue object
                     case 7: // Card.CardValue.HighValue
-                        // For HIGH, convert the value to a float value (strip the $) and set the associated CardValue.highValue to this value
                         $highValueAsStringFromFile = ltrim($trimmedCellValue, "$");
                         if ($highValueAsStringFromFile == "") {
                             $newCard->getCardValue()->setHighValue(null);
@@ -369,9 +373,9 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($highValueAsStringFromFile, $highValue);
                         break;
-
-                    case 8: //Card.SingleCard.SellPrice
-                        // For SELL, convert the value to a float value (strip the $), find the single card (based on ID), and set the associated SingleCard.sellPrice to this value.
+                    
+                    // SELL: strip the $ from this value, convert it to a float, and assign this value to the SellPrice field in the SingleCard object
+                    case 8: // Card.SingleCard.SellPrice
                         $sellValueStringFromFile = ltrim($trimmedCellValue, "$");
                         if ($sellValueStringFromFile == "") {
                             $newSingleCard->setSellPrice(null);
@@ -384,9 +388,11 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($sellValueStringFromFile, $sellPrice);
                         break;
-                        
+
+                    // Condition: build a SingleCardGrading object and a GradingClass object, assign this value to the Abbreviation field in the GradingClass object,
+                    // and link these new objects up with the Card in a chain (Card -> SingleCardGrading -> GradingClass)
+                    // allow the DAL to determine if it needs to be inserted or not
                     case 9: // Card.SingleCard.SingleCardGrading.GradingClass.Abbreviation
-                        // For Condition, create a SingleCardGrading object and a GradingClass object, find the single card (based on ID), assign the parsed value to GradingClass.Abbreviation and link up the two objects to the SingleCard. Let the DAL determine if it needs to be inserted or not.
                         $conditionAbbreviation = strtoupper($trimmedCellValue);
                         if ($conditionAbbreviation !== "") {
                             $newSingleGrading = new SingleCardGrading();
@@ -397,9 +403,11 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($newSingleGrading, $newGradingClass);
                         break;
-                        
-                    case 10: // Card.Subset and CardSet.Subset
-                        // For Subset, create a new Subset object, set it's Subset.Name to this value, and associate it to the Card object. We'll deal with associating Subsets to CardSets later. Let the DAL determine if it needs to be inserted or not.
+
+                    // Subset: build a new Subset object, assign this value to it's Name field, and associate the Subset to the Card object
+                    // deal with associating Subsets to CardSets later
+                    // allow the DAL to determine if it needs to be inserted or not
+                    case 10: // Card.Subset.Name
                         if ($trimmedCellValue !== "") {
                             $newSubset = new Subset();
                             $newSubset->setName($trimmedCellValue);
@@ -407,14 +415,16 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($newSubset);
                         break;
-                        
+
+                    // Rarity: assign this value to the Rarity field in the SingleCard object
+                    // this is part of SingleCard instead of Card to allow for serial #ed cards
                     case 11: // Card.SingleCard.Rarity
-                        // For Rarity, we just put this into the associated field after stripping whitespace. This is part of SingleCard instead of Card to allow for serial #ed cards
                         $newSingleCard->setRarity($trimmedCellValue);
                         break;
-                        
-                    case 12: // Card.SingleCard.Comments
-                        // For Grading, if there just happens to be a value, ensure it can be converted into an float. If it can, set the OverallGrade property in the SingleCardGrading object. If it can't, but there IS a value, set it in the Comments property of the SingleCard, but make it explicit where this value is from
+                    
+                    // Grading: attempt to convert this value to a float. If we can, assign it to the OverallGrade field in the SingleCard's SingleCardGrading object
+                    // if it can't, but there IS a value here, assign it to the Comments field in the Card's SingleCard object and explicitly indicate what this value is
+                    case 12: // Card.SingleCard.SingleCardGrading.OverallGrade ~OR~ Card.SingleCard.Comments
                         if ($trimmedCellValue !== "") {
                             if (is_numeric($trimmedCellValue)) {
                                 $grade = floatval($trimmedCellValue);
@@ -427,9 +437,9 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($grade, $singleCardGrading, $gradingComments);
                         break;
-                        
+
+                    // Cost: strip the $ from this value, convert it to a float, and assign this value to the Cost field in the Card's SingleCard object
                     case 13: // Card.SingleCard.Cost
-                        // For Cost, convert the value to a float value (strip the $) and set the associated SingleCard.cost to this value.
                         $costStringFromFile = ltrim($trimmedCellValue, "$");
                         if ($costStringFromFile === "") {
                             $newSingleCard->setCost(null);
@@ -442,16 +452,16 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($costStringFromFile, $cost);
                         break;
-                        
+
+                    // Status: assign this value to the Status property in the Card's SingleCard object
                     case 14: // Card.SingleCard.Status
-                        // For Status, we just put this into associated SingleCard.status field after stripping whitespace
                         if ($trimmedCellValue !== "") {
                             $newSingleCard->setStatus($trimmedCellValue);
                         }
                         break;
-                        
+
+                    // Sold: strip the $ from this value, convert it to a float, and assign this value to the PriceSoldFor field in the Card's SingleCard object
                     case 15: // Card.SingleCard.PriceSoldFor
-                        // For Sold, if there happens to be a value, convert the value to a float value (strip the $) and set the associated SingleCard.PriceSoldFor field to it's value
                         $soldStringFromFile = ltrim($trimmedCellValue, "$");
                         if ($soldStringFromFile === "") {
                             $newSingleCard->setPriceSoldFor(null);
@@ -464,9 +474,10 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         }
                         unset($soldStringFromFile, $sold);
                         break;
-                        
+
+                    // Comments: assign this value to the Comments field in the Card's SingleCard object
+                    // if there's already a value there, append this value and include a explicit delimiter
                     case 16: // Card.SingleCard.Comments
-                        // For Comments, we just put this into associated SingleCard.Comments field after stripping whitespace (if there's a value already, append)
                         $existingComments = $newSingleCard->getComments();
                         if (!empty($existingComments)) {
                             $newSingleCard->setComments($existingComments . "; Comments: " . $trimmedCellValue);
