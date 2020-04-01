@@ -38,7 +38,7 @@ class SingleCard
         return $this->sellPrice;
     }
     
-    public function getCost() : float
+    public function getCost() : ?float
     {
         return $this->cost;
     }
@@ -86,7 +86,7 @@ class SingleCard
         $this->sellPrice = $singleCardSellPrice;
     }
     
-    public function setCost(float $singleCardCost)
+    public function setCost(?float $singleCardCost)
     {
         $this->cost = $singleCardCost;
     }
