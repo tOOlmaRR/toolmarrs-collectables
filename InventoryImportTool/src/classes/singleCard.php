@@ -58,7 +58,7 @@ class SingleCard
         return $this->status;
     }
     
-    public function getComments() : string
+    public function getComments() : ?string
     {
         return $this->comments;
     }
@@ -106,7 +106,7 @@ class SingleCard
         $this->status = $singleCardStatus;
     }
     
-    public function setComments(string $singleCardComments)
+    public function setComments(?string $singleCardComments)
     {
         $this->comments = $singleCardComments;
     }
