@@ -31,9 +31,18 @@ class EntityFactory
     {
         if (is_null($this->databaseConnection)) {
             // Get a connection to the database if we don't already have one
-            $db = new \PDO($this->dbHost, $this->dbUser, $this->dbPassword);
-            if ($db != null) {
-                $this->databaseConnection = $db;
+            $options = [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+            ];
+            try {
+                $db = new \PDO($this->dbHost, $this->dbUser, $this->dbPassword, $options);
+                if ($db != null) {
+                    $this->databaseConnection = $db;
+                }
+            } catch (\PDOException $e) {
+                 throw new \PDOException($e->getMessage(), (int)$e->getCode());
             }
         }
         return $this->databaseConnection;
