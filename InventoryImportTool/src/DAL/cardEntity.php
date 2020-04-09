@@ -6,48 +6,102 @@ use GeoTradingCards\InventoryImportUtility\DAL\BaseEntity;
 
 class CardEntity extends BaseEntity implements iEntity
 {
+    // private members
+    private $ID;
+    private $cardNumber;
+    private $title;
+    private $comments;
+    private $gradingModifier;
+    private $cardSet_ID;
+    private $subset_ID;
+    private $team_ID;
+    private $playerPosition_ID;
+
+
+
+    // methods
     public function get($card)
     {
-        //TODO: Complete this when I need it
-        
         // set up the query
-        /*$db = $this->getDB();
-        $sqlParamaters = array();
+        $db = $this->getDB();
+        $sqlParameters = array();
         
         // if we have an ID, query based on that alone
         if (!empty($card->getID())) {
             $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `Card` WHERE `ID` = :ID";
-            $sqlParamaters[] = ":ID" => $card->getID();
+            $sqlParameters[":ID"] = $card->getID();
         }
-        // if we don't have an ID, use the combination of CardNumnber and CardSet_ID
+        // if we don't have an ID, use the combination of CardNumber and CardSet_ID
+        // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
         else {
             $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `Card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID";
-            $sqlParamaters[] = ":cardNumber" => $card->getCardNumber();
+            $sqlParameters[":cardNumber"] = $card->getCardNumber();
             $cardSet = $card->getCardSet();
             if (empty($cardSet)) {
                 return null;
             } else {
-                $sqlParamaters[] = ":cardSetID" => $cardSet->getID();
+                $sqlParameters[":cardSetID"] = $cardSet->getID();
             }
         }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute($sqlParamaters);
+        $getStatement->execute($sqlParameters);
         $row = $getStatement->fetch();
         $cardFromDatabase = null;
         if ($row != false) {
-            return null;
-        } else {
-            // build and return an object
+            // build a business object based on the returned data
+            $cardFromDatabase = new Card;
+            $cardFromDatabase->setID($row["ID"]);
+            $cardFromDatabase->setCardNumber($row["CardNumber"]);
+            $cardFromDatabase->setTitle($row["Title"]);
+            $cardFromDatabase->setComments($row["Comments"]);
             
+            $gradingModifierFloat = floatval($row["GradingModifier"]);
+            if ($gradingModifierFloat == 0) {
+                $gradingModifierFloat = null;
+            }
+            $cardSetFromDatabase->setGradingModifier($gradingModifierFloat);
         }
-        return $cardFromDatabase*/
-        return null;
+        return $cardFromDatabase;
     }
+
+
     
     public function insert($objectToInsert)
     {
-        return null;
+        $newID = null;
+        
+        // build up this entity object with the given business object
+        $this->cardNumber = $objectToInsert->getCardNumber();
+        $this->title = $objectToInsert->getTitle();
+        $this->comments = $objectToInsert->getComments();
+        $this->gradingModifier = $objectToInsert->getGradingModifier();
+        $this->cardSet_ID = $objectToInsert->getCardSet()->getID();
+        //$subset_ID;
+        //$team_ID;
+        //$playerPosition_ID;
+        
+        // set up the query
+        $db = $this->getDB();
+        $sql = "INSERT INTO `Card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID)";
+        $insertStatement = $db->prepare($sql);
+        
+        // perform the insert
+        $insertStatement->execute(array(
+            ":cardNumber" => $this->cardNumber,
+            ":title" => $this->title ?? null,
+            ":comments" => $this->comments ?? null,
+            ":gradingModifier" => $this->gradingModifier ?? null,
+            ":cardSetID" => $this->cardSet_ID
+        ));
+        
+        // capture and return the new rows autoincremented ID
+        $newID = $db->lastInsertId();
+        if ($newID == 0) {
+            $newID = null;
+        }
+        
+        return $newID;
     }
 }

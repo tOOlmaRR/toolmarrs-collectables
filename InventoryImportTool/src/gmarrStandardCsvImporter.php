@@ -39,10 +39,6 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             if ($newCardSet != null) {
                 $this->setStopParsing(false);
                 $newCards = $this->parseCardsAndSinglesFromFile($fileResource, $fileRowNumber);
-                foreach ($newCards as $newCard) {
-                    var_dump($newCard);
-                }
-                
                 // now add the collection of Cards to the CardSet object
                 $newCardSet->setCards($newCards);
             }

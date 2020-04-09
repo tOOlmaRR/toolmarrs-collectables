@@ -129,7 +129,6 @@ class BaseImporter implements iImporter
             // MANUFACTURER
             if ($manufacturer != null) {
                 // If the manufaturer doesn't already exist, insert it
-                //$manufacturerEntity = new ManufacturerEntity();
                 $manufacturerEntity = $entityFactory->getEntity("manufacturer");
                 $existingManufacturer = $manufacturerEntity->get($manufacturer);
                 if (is_null($existingManufacturer)) {
@@ -151,16 +150,39 @@ class BaseImporter implements iImporter
             }
             
             // CARDSET
-            //$cardSetEntity = new CardSetEntity();
             $cardSetEntity = $entityFactory->getEntity("cardset");
             $existingCardSet = $cardSetEntity->get($cardSetToInsert);
             
             // If the CardSet doesn't already exist, insert it
             if (is_null($existingCardSet)) {
                 $newCardSetID = $cardSetEntity->insert($cardSetToInsert);
-                if ($newCardSetID !== false) {
+                if (!is_null($newCardSetID)) {
                     $cardSetToInsert->setID($newCardSetID);
                     $this->setParsedCardSet($cardSetToInsert);
+                    // CARDs
+                    $cardsToInsert = $cardSetToInsert->getCards();
+                    if (!is_null($cardsToInsert) && count($cardsToInsert) > 0) {
+                        foreach ($cardsToInsert as $cardToInsert) {
+                            $cardToInsert->setCardSet($cardSetToInsert);
+                            $cardEntity = $entityFactory->getEntity("card");
+                            $existingCard = $cardEntity->get($cardToInsert);
+                            if (is_null($existingCard)) {
+                                $newCardID = $cardEntity->insert($cardToInsert);
+                                if (!is_null($newCardID)) {
+                                    $cardToInsert->setID($newCardID);
+                                    $this->getParsedCardSet()->addCard($cardToInsert);
+                                    // TODO: insert any related objects that require CardID
+                                    //
+                                } else {
+                                    $this->setParseError("Database insert failure: Card");
+                                    return false;
+                                }
+                            } else {
+                                $this->setParseError("Card already exists; Updates via import files are not supported");
+                                return false;
+                            }
+                        }
+                    }
                 } else {
                     $this->setParseError("Database insert failure: Card Set");
                     return false;
