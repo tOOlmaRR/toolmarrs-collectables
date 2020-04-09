@@ -485,11 +485,18 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         break;
                 } // end switch
             } // end for
+            
+            // set other fields that we do not parse from the data file
+            $newCard->setGradingModifier(1.0);
+            $newCard->setComments("");
+            
+            // add this new Card to the collection
             $newCards[$newCard->getCardNumber()] = $newCard;
             // FOR TESTING ONLY
             /*if ($rowNumber == 1) {
                 break;
             }*/
+            // move on to the next row
             $currentRow = fgetcsv($fileResource, 0, $this->getFileDelimiter());
             $rowNumber++;
         } // end while
