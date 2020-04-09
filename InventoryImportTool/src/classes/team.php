@@ -22,7 +22,7 @@ class Team
     
     
     // public getters/accessors
-    public function getID() : int
+    public function getID() : ?int
     {
         return $this->ID;
     }

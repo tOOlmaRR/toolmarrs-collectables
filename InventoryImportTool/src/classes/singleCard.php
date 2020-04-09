@@ -28,7 +28,7 @@ class SingleCard
 
 
     // public getters/accessors
-    public function getID() : string
+    public function getID() : ?string
     {
         return $this->ID;
     }
