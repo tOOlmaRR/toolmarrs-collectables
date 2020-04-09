@@ -4,10 +4,9 @@ SELECT * FROM `tsc2020-dev`.cardset;
 SELECT * FROM `tsc2020-dev`.card;
 
 -- delete *
-delete from `tsc2020-dev`.card where id < 10;
+delete from `tsc2020-dev`.card where id < 1000;
 delete from `tsc2020-dev`.cardset where id < 10;
 delete from `tsc2020-dev`.manufacturer where id < 10;
-
 
 -- reset autoincrement index
 alter table `tsc2020-dev`.card AUTO_INCREMENT = 1;
