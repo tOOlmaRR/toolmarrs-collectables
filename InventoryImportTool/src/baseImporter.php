@@ -95,7 +95,9 @@ class BaseImporter implements iImporter
         return $files;
     }
     
-    // member functions
+    
+    
+    // public methods
     public function validateFile($fullFilePath, &$rejectionReason) : bool
     {
         $fileContent = file_get_contents($fullFilePath);
@@ -125,28 +127,11 @@ class BaseImporter implements iImporter
             $user = "usr_tsc2020_dev_importer";
             $password = "$=5SZEXjKbgF7#t%";
             $entityFactory = new EntityFactory($host, $user, $password);
-            $manufacturer = $cardSetToInsert->getManufacturer();
             
             // MANUFACTURER
-            if ($manufacturer != null) {
-                // If the manufaturer doesn't already exist, insert it
-                $manufacturerEntity = $entityFactory->getEntity("manufacturer");
-                $existingManufacturer = $manufacturerEntity->get($manufacturer);
-                if (is_null($existingManufacturer)) {
-                    $newManufacturerID = $manufacturerEntity->insert($manufacturer);
-                    if ($newManufacturerID !== false) {
-                        $manufacturer->setID($newManufacturerID);
-                        $cardSetToInsert->setManufacturer($manufacturer);
-                    } else {
-                        $this->setParseError("Database insert failure: Manufacturer");
-                        return false;
-                    }
-                } else {
-                    // If the manufacturer already exists, update the object associated to the Card Set
-                    $cardSetToInsert->setManufacturer($existingManufacturer);
-                }
-            } else {
-                $this->getParseError("Manufacturer must be defined");
+            $failedInsertion = "";
+            if (!$this->insertManufacturer($cardSetToInsert, $entityFactory, $failedInsertion)) {
+                $this->setParseError("Database insert failure: $failedInsertion");
                 return false;
             }
             
@@ -211,6 +196,34 @@ class BaseImporter implements iImporter
     }
     
     
+    
+    // private methods
+    private function insertManufacturer($cardSet, $entityFactory, &$failedInsertion)
+    {
+        $manufacturer = $cardSet->getManufacturer();
+        if ($manufacturer != null) {
+            // If the manufaturer doesn't already exist, insert it
+            $manufacturerEntity = $entityFactory->getEntity("manufacturer");
+            $existingManufacturer = $manufacturerEntity->get($manufacturer);
+            if (is_null($existingManufacturer)) {
+                $newManufacturerID = $manufacturerEntity->insert($manufacturer);
+                if ($newManufacturerID !== false) {
+                    $manufacturer->setID($newManufacturerID);
+                    $cardSet->setManufacturer($manufacturer);
+                } else {
+                    $failedInsertion = "Manufacturer";
+                    return false;
+                }
+            } else {
+                // If the manufacturer already exists, update the object associated to the Card Set
+                $cardSet->setManufacturer($existingManufacturer);
+            }
+        } else {
+            $failedInsertion = "Manufacturer (not defined)";
+            return false;
+        }
+        return true;
+    }
     
     private function insertAttributes($card, $entityFactory, &$failedInsertion)
     {
