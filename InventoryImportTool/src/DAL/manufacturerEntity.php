@@ -16,7 +16,7 @@ class ManufacturerEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sql = "SELECT `ID`, `Name` FROM `Manufacturer` WHERE `Name` = :name LIMIT 1";
+        $sql = "SELECT `ID`, `Name` FROM `manufacturer` WHERE `Name` = :name LIMIT 1";
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
@@ -39,7 +39,7 @@ class ManufacturerEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO Manufacturer (`Name`) VALUES (:name)";
+        $sql = "INSERT INTO manufacturer (`Name`) VALUES (:name)";
         $insertStatement = $db->prepare($sql);
         
         // perform the insert

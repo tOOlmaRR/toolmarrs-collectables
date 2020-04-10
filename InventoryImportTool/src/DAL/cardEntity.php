@@ -1,8 +1,10 @@
 <?php
 namespace GeoTradingCards\InventoryImportUtility\DAL;
 
+use GeoTradingCards\InventoryImportUtility\Classes\Card;
 use GeoTradingCards\InventoryImportUtility\DAL\iEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\BaseEntity;
+
 
 class CardEntity extends BaseEntity implements iEntity
 {
@@ -28,13 +30,13 @@ class CardEntity extends BaseEntity implements iEntity
         
         // if we have an ID, query based on that alone
         if (!empty($card->getID())) {
-            $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `Card` WHERE `ID` = :ID";
+            $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `ID` = :ID";
             $sqlParameters[":ID"] = $card->getID();
         }
         // if we don't have an ID, use the combination of CardNumber and CardSet_ID
         // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
         else {
-            $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `Card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID";
+            $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID";
             $sqlParameters[":cardNumber"] = $card->getCardNumber();
             $cardSet = $card->getCardSet();
             if (empty($cardSet)) {
@@ -84,7 +86,7 @@ class CardEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `Card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID)";
+        $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID)";
         $insertStatement = $db->prepare($sql);
         
         // perform the insert

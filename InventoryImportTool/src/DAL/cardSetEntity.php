@@ -29,7 +29,7 @@ class CardSetEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sql = "SELECT `ID`, `BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID` FROM `CardSet` WHERE `BaseSetName` = :baseSetName AND `InsertSetName` = :insertSetName AND `Season` = :season LIMIT 1";
+        $sql = "SELECT `ID`, `BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID` FROM `cardset` WHERE `BaseSetName` = :baseSetName AND `InsertSetName` = :insertSetName AND `Season` = :season LIMIT 1";
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
@@ -103,7 +103,7 @@ class CardSetEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `CardSet` (`BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID`) VALUES (:baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturer_ID)";
+        $sql = "INSERT INTO `cardset` (`BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID`) VALUES (:baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturer_ID)";
         $insertStatement = $db->prepare($sql);
         
         // perform the insert
