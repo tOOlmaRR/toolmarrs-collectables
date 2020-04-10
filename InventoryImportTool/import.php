@@ -99,7 +99,7 @@ try {
                 // Insert the data into the database
                 $success = $importer->insertObjects();
                 if (!$success) {
-                    echo "Failure! An issue occured during database insertions: ." . PHP_EOL;
+                    echo "Failure! An issue occured during database insertions: " . PHP_EOL;
                     if ($importer->getParseError() != "") {
                         echo $importer->getParseError();
                     }

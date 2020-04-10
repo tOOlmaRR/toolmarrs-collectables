@@ -185,28 +185,10 @@ class BaseImporter implements iImporter
                             }
                             
                             // CARD ATTRIBUTES
-                            $attributesToInsert = $cardToInsert->getAttributes();
-                            if (!is_null($attributesToInsert) && count($attributesToInsert) > 0) {
-                                foreach ($attributesToInsert as $attributeToInsert) {
-                                    $attributeEntity = $entityFactory->getEntity("attribute");
-                                    $existingAttribute = $attributeEntity->get($attributeToInsert);
-                                    if (is_null($existingAttribute)) {
-                                        // create and insert a new Attribute
-                                        $newAttributeID = $attributeEntity->insert($attributeToInsert);
-                                        if (is_null($newAttributeID)) {
-                                            $this->setParseError("Database insert failure: Attribute");
-                                            return false;
-                                        }
-                                        $existingAttribute = new CardAttribute();
-                                        $existingAttribute->setID($newAttributeID);
-                                    }
-                                    // associate it to the Card via CardHasAttributes
-                                    $cardHasAttributeEntity = $entityFactory->getEntity("cardhasattribute");
-                                    $cardHasAttributes = (object)['cardID' => $cardToInsert->getID(),'attributeID' => $existingAttribute->getID()];
-                                    if (is_null($cardHasAttributeEntity->insert($cardHasAttributes))) {
-                                        $this->setParseError("Database insert failure: Card Has Attributes");
-                                    }
-                                }
+                            $failedInsertion = "";
+                            if (!$this->insertAttributes($cardToInsert, $entityFactory, $failedInsertion)) {
+                                $this->setParseError("Database insert failure: $failedInsertion");
+                                return false;
                             }
                         }
                     }
@@ -225,6 +207,39 @@ class BaseImporter implements iImporter
         
         //TODO: Cards
         
+        return true;
+    }
+    
+    
+    
+    private function insertAttributes($card, $entityFactory, &$failedInsertion)
+    {
+        $attributesToInsert = $card->getAttributes();
+        if (!is_null($attributesToInsert) && count($attributesToInsert) > 0) {
+            foreach ($attributesToInsert as $attributeToInsert) {
+                $attributeEntity = $entityFactory->getEntity("attribute");
+                $existingAttribute = $attributeEntity->get($attributeToInsert);
+                if (is_null($existingAttribute)) {
+                    // create and insert a new Attribute
+                    $newAttributeID = $attributeEntity->insert($attributeToInsert);
+                    if (is_null($newAttributeID)) {
+                        $failedInsertion = "Attribute";
+                        return false;
+                    }
+                    $existingAttribute = new CardAttribute();
+                    $existingAttribute->setID($newAttributeID);
+                }
+                // associate it to the Card via CardHasAttributes
+                $cardHasAttributeEntity = $entityFactory->getEntity("cardhasattribute");
+                $cardHasAttributes = (object)['cardID' => $card->getID(),'attributeID' => $existingAttribute->getID()];
+                try {
+                    $cardHasAttributeEntity->insert($cardHasAttributes);
+                } catch (\PDOException $ex) {
+                    $failedInsertion = "Card Has Attributes - Exception: " . $ex;
+                    return false;
+                }
+            }
+        }
         return true;
     }
 }
