@@ -297,7 +297,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                             $attributeObjects = array();
                             $attributes = array();
                             if (!StringHelpers::contains($trimmedCellValue, " ")) {
-                                $attributes[] = "RC";
+                                $attributes[] = $trimmedCellValue;
                             } else {
                                 $attributes = explode(" ", $trimmedCellValue);
                             }
