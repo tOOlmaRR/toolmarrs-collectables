@@ -10,7 +10,7 @@ ini_set("display_errors", "1");
 ini_set("display_startup_errors", "1");
 error_reporting(-1);
 
-require 'vendor/autoload.php';
+require "vendor/autoload.php";
 
 use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;

@@ -3,6 +3,7 @@ namespace GeoTradingCards\InventoryImportUtility;
 
 use GeoTradingCards\InventoryImportUtility\iImporter;
 use GeoTradingCards\InventoryImportUtility\classes\CardSet;
+use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\DAL\EntityFactory;
 use GeoTradingCards\InventoryImportUtility\DAL\ManufacturerEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
@@ -156,13 +157,16 @@ class BaseImporter implements iImporter
             // If the CardSet doesn't already exist, insert it
             if (is_null($existingCardSet)) {
                 $newCardSetID = $cardSetEntity->insert($cardSetToInsert);
+                // If the CardSet insertion was successful, continue on
                 if (!is_null($newCardSetID)) {
                     $cardSetToInsert->setID($newCardSetID);
                     $this->setParsedCardSet($cardSetToInsert);
-                    // CARDs
+                    
+                    // Now start working through the Cards within the CardSet
                     $cardsToInsert = $cardSetToInsert->getCards();
                     if (!is_null($cardsToInsert) && count($cardsToInsert) > 0) {
                         foreach ($cardsToInsert as $cardToInsert) {
+                            // CARDs
                             $cardToInsert->setCardSet($cardSetToInsert);
                             $cardEntity = $entityFactory->getEntity("card");
                             $existingCard = $cardEntity->get($cardToInsert);
@@ -171,8 +175,6 @@ class BaseImporter implements iImporter
                                 if (!is_null($newCardID)) {
                                     $cardToInsert->setID($newCardID);
                                     $this->getParsedCardSet()->addCard($cardToInsert);
-                                    // TODO: insert any related objects that require CardID
-                                    //
                                 } else {
                                     $this->setParseError("Database insert failure: Card");
                                     return false;
@@ -180,6 +182,31 @@ class BaseImporter implements iImporter
                             } else {
                                 $this->setParseError("Card already exists; Updates via import files are not supported");
                                 return false;
+                            }
+                            
+                            // CARD ATTRIBUTES
+                            $attributesToInsert = $cardToInsert->getAttributes();
+                            if (!is_null($attributesToInsert) && count($attributesToInsert) > 0) {
+                                foreach ($attributesToInsert as $attributeToInsert) {
+                                    $attributeEntity = $entityFactory->getEntity("attribute");
+                                    $existingAttribute = $attributeEntity->get($attributeToInsert);
+                                    if (is_null($existingAttribute)) {
+                                        // create and insert a new Attribute
+                                        $newAttributeID = $attributeEntity->insert($attributeToInsert);
+                                        if (is_null($newAttributeID)) {
+                                            $this->setParseError("Database insert failure: Attribute");
+                                            return false;
+                                        }
+                                        $existingAttribute = new CardAttribute();
+                                        $existingAttribute->setID($newAttributeID);
+                                    }
+                                    // associate it to the Card via CardHasAttributes
+                                    $cardHasAttributeEntity = $entityFactory->getEntity("cardhasattribute");
+                                    $cardHasAttributes = (object)['cardID' => $cardToInsert->getID(),'attributeID' => $existingAttribute->getID()];
+                                    if (is_null($cardHasAttributeEntity->insert($cardHasAttributes))) {
+                                        $this->setParseError("Database insert failure: Card Has Attributes");
+                                    }
+                                }
                             }
                         }
                     }

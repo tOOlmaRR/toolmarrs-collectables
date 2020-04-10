@@ -54,19 +54,21 @@ class EntityFactory
         {
             case "manufacturer":
                 return new ManufacturerEntity($this->getDatabaseConnection());
-                break;
                 
             case "cardset":
                 return new CardSetEntity($this->getDatabaseConnection());
-                break;
                 
             case "card":
                 return new CardEntity($this->getDatabaseConnection());
-                break;
+                
+            case "attribute":
+                return new AttributeEntity($this->getDatabaseConnection());
+                
+            case "cardhasattribute":
+                return new CardHasAttributeEntity($this->getDatabaseConnection());
             
             default:
                 return null;
-                break;
         }
     }
 }
