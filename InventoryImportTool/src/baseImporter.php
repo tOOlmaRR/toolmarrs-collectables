@@ -170,6 +170,15 @@ class BaseImporter implements iImporter
                         $this->setParseError("Database insert failure: $failedInsertion");
                         return false;
                     }
+                    
+                    // TEAM
+                    $failedInsertion = "";
+                    if (!$this->insertTeam($cardToInsert, $entityFactory, $failedInsertion)) {
+                        $this->setParseError("Database insert failure: $failedInsertion");
+                        return false;
+                    }
+                    
+                    //TODO: Update the Card Object at the end with all of the FK ID's
                 }
             }
         }
@@ -181,20 +190,24 @@ class BaseImporter implements iImporter
     // private methods
     private function insertManufacturer($cardSet, $entityFactory, &$failedInsertion)
     {
+        // if there is no CardSet, we have a problem
         if (is_null($cardSet)) {
             $failedInsertion = "Manufacturer (CardSet is not defined)";
             return false;
         }
         
+        // If there us no Manufacturer defined in the CardSet object, we have a problem - every CardSet must have a Manufacturer
         $manufacturer = $cardSet->getManufacturer();
         if (is_null($manufacturer)) {
             $failedInsertion = "Manufacturer (Manufacturer is not defined)";
             return false;
         }
         
+        // If the Manufacturer already exists, retrieve it
         $manufacturerEntity = $entityFactory->getEntity("manufacturer");
         $existingManufacturer = $manufacturerEntity->get($manufacturer);
         
+        // If the Manufacturer doesn't exist yet, insert it
         if (is_null($existingManufacturer)) {
             try {
                 $newManufacturerID = $manufacturerEntity->insert($manufacturer);
@@ -205,18 +218,19 @@ class BaseImporter implements iImporter
                 return false;
             }
         } else {
-            // If the manufacturer already exists, update the object associated to the Card Set
+            // If the Manufacturer already exists, update the object associated to the Card Set
             $cardSet->setManufacturer($existingManufacturer);
         }
         return true;
     }
     
     private function insertCardSet($cardSet, $entityFactory, &$failedInsertion) {
+        // if there is no CardSet, we have a problem
         if (is_null($cardSet)) {
             $failedInsertion = "Card Set (CardSet is not defined)";
             return false;
         }
-        
+        // If the CardSet already exists, this is a problem - program doesn't currently support updates to existing Card Sets
         $cardSetEntity = $entityFactory->getEntity("cardset");
         $existingCardSet = $cardSetEntity->get($cardSet);
         if (!is_null($existingCardSet)) {
@@ -224,7 +238,7 @@ class BaseImporter implements iImporter
             return false;
         }
         
-        // if we have a CardSet and it doesn't already exist, proceed with the insertion
+        // if the CardSet doesn't exist yet, insert it and ensure we keep it in memory
         try {
             $newCardSetID = $cardSetEntity->insert($cardSet);
             $cardSet->setID($newCardSetID);
@@ -239,30 +253,74 @@ class BaseImporter implements iImporter
     private function insertAttributes($card, $entityFactory, &$failedInsertion)
     {
         $attributesToInsert = $card->getAttributes();
-        if (!is_null($attributesToInsert) && count($attributesToInsert) > 0) {
-            foreach ($attributesToInsert as $attributeToInsert) {
-                $attributeEntity = $entityFactory->getEntity("attribute");
-                $existingAttribute = $attributeEntity->get($attributeToInsert);
-                if (is_null($existingAttribute)) {
-                    // create and insert a new Attribute
-                    $newAttributeID = $attributeEntity->insert($attributeToInsert);
-                    if (is_null($newAttributeID)) {
-                        $failedInsertion = "Attribute";
-                        return false;
-                    }
-                    $existingAttribute = new CardAttribute();
-                    $existingAttribute->setID($newAttributeID);
-                }
-                // associate it to the Card via CardHasAttributes
-                $cardHasAttributeEntity = $entityFactory->getEntity("cardhasattribute");
-                $cardHasAttributes = (object)['cardID' => $card->getID(),'attributeID' => $existingAttribute->getID()];
+        
+        // if there are no Attributes, there's nothing to do
+        if (is_null($attributesToInsert) || count($attributesToInsert) === 0) {
+            return true;
+        }
+        
+        foreach ($attributesToInsert as $attributeToInsert) {
+            // If the Attribute already exists, retrieve it
+            $attributeEntity = $entityFactory->getEntity("attribute");
+            $existingAttribute = $attributeEntity->get($attributeToInsert);
+            
+            // If the Attribute doesn't exist yet, insert it
+            if (is_null($existingAttribute)) {
                 try {
-                    $cardHasAttributeEntity->insert($cardHasAttributes);
+                    $newAttributeID = $attributeEntity->insert($attributeToInsert);
+                    $attributeToInsert->setID($newAttributeID);
                 } catch (\PDOException $ex) {
-                    $failedInsertion = "Card Has Attributes - Exception: " . $ex;
+                    $failedInsertion = "Attribute - Exception: " . $ex;
                     return false;
                 }
+            } else {
+                // If the Attribute already exists, update the object associated to the Card
+                $attributeToInsert = $existingAttribute;
             }
+            
+            // Now relate this Card to the Attribute in the database by inserting a 'CardHasAttributes' record
+            $cardHasAttributeEntity = $entityFactory->getEntity("cardhasattribute");
+            $cardHasAttributes = (object)['cardID' => $card->getID(),'attributeID' => $attributeToInsert->getID()];
+            try {
+                $cardHasAttributeEntity->insert($cardHasAttributes);
+            } catch (\PDOException $ex) {
+                $failedInsertion = "Card Has Attributes - Exception: " . $ex;
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private function insertTeam($card, $entityFactory, &$failedInsertion)
+    {
+        // if no Card was provided, we have a problem
+        if (is_null($card)) {
+            $failedInsertion = "Team (Card is not defined)";
+            return false;
+        }
+        
+        // if no team was provided, there is nothing to do
+        $teamToInsert = $card->getTeam();
+        if (is_null($teamToInsert)) {
+            return true;
+        }
+        
+        // If this team exists, retrieve it
+        $teamEntity = $entityFactory->getEntity("team");
+        $existingTeam = $teamEntity->get($teamToInsert);
+
+        // if the Team does not exist yet, insert it
+        if (is_null($existingTeam)) {
+            try {
+                $newTeamID = $teamEntity->insert($teamToInsert);
+                $teamToInsert->setID($newTeamID);
+            } catch (\PDOException $ex) {
+                $failedInsertion = "Team - Exception: " . $ex;
+                return false;
+            }
+        } else {
+            // If the Team already exists, update the object associated to the Card
+            $card->setTeam($existingTeam);
         }
         return true;
     }

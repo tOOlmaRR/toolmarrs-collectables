@@ -4,6 +4,9 @@ namespace GeoTradingCards\InventoryImportUtility\DAL;
 use GeoTradingCards\InventoryImportUtility\DAL\ManufacturerEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\AttributeEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\CardHasAttributeEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\TeamEntity;
 use PDO;
 
 class EntityFactory
@@ -66,6 +69,9 @@ class EntityFactory
                 
             case "cardhasattribute":
                 return new CardHasAttributeEntity($this->getDatabaseConnection());
+                
+            case "team":
+                return new TeamEntity($this->getDatabaseConnection());
             
             default:
                 return null;
