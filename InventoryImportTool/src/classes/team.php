@@ -27,7 +27,7 @@ class Team
         return $this->ID;
     }
     
-    public function getLocation() : string
+    public function getLocation() : ?string
     {
         return $this->location;
     }
@@ -50,7 +50,7 @@ class Team
         $this->ID = $teamID;
     }
 
-    public function setLocation(string $teamLocation)
+    public function setLocation(?string $teamLocation)
     {
         $this->location = $teamLocation;
     }
