@@ -170,4 +170,13 @@ class Card
             $this->singleCards = array($newSingleCard->getID() => $newSingleCard);
         }
     }
+    
+    public function addAttribute(CardAttribute $newAttribute)
+    {
+        if ($this->attributes!= null) {
+            $this->attributes[$newAttribute->getID()] = $newAttribute;
+        } else {
+            $this->attributes = array($newAttribute->getID() => $newAttribute);
+        }
+    }
 }
