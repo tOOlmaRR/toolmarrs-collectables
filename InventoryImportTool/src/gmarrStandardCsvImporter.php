@@ -7,6 +7,8 @@ use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\classes\Team;
+use GeoTradingCards\InventoryImportUtility\classes\League;
+use GeoTradingCards\InventoryImportUtility\classes\Sport;
 use GeoTradingCards\InventoryImportUtility\classes\PlayerPosition;
 use GeoTradingCards\InventoryImportUtility\classes\CardValue;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCardGrading;
@@ -322,6 +324,18 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         if (!empty($trimmedCellValue)) {
                             $newTeam = new Team();
                             $newTeam->setName($trimmedCellValue);
+                            
+                            // TODO: Support Leagues other than the NHL, and cases where NHL may not be ID=1 in the database
+                            $nhlLeague = new League();
+                            $nhlLeague->setID(1);
+                            $nhlLeague->setName('National Hockey League');
+                            $nhlLeague->setAbbreviation('NHL');
+                            $hockeySport = new Sport();
+                            $hockeySport->setID(1);
+                            $hockeySport->setName("Hockey");
+                            $nhlLeague->setSport($hockeySport);
+                            
+                            $newTeam->setLeague($nhlLeague);
                             $newCard->setTeam($newTeam);
                         }
                         unset($newTeam);
