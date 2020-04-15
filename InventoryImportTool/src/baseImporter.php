@@ -178,6 +178,13 @@ class BaseImporter implements iImporter
                         return false;
                     }
                     
+                    // PLAYER POSITION
+                    $failedInsertion = "";
+                    if (!$this->insertPosition($cardToInsert, $entityFactory, $failedInsertion)) {
+                        $this->setParseError("Database insert failure: $failedInsertion");
+                        return false;
+                    }
+                    
                     //TODO: Update the Card Object at the end with all of the FK ID's
                 }
             }
@@ -299,13 +306,13 @@ class BaseImporter implements iImporter
             return false;
         }
         
-        // if no team was provided, there is nothing to do
+        // if no Team was provided, there is nothing to do
         $teamToInsert = $card->getTeam();
         if (is_null($teamToInsert)) {
             return true;
         }
         
-        // If this team exists, retrieve it
+        // If this Team exists, retrieve it
         $teamEntity = $entityFactory->getEntity("team");
         $existingTeam = $teamEntity->get($teamToInsert);
 
@@ -321,6 +328,39 @@ class BaseImporter implements iImporter
         } else {
             // If the Team already exists, update the object associated to the Card
             $card->setTeam($existingTeam);
+        }
+        return true;
+    }
+    
+    private function insertPosition($card, $entityFactory, &$failedInsertion) {
+        // if no Card was provided, we have a problem
+        if (is_null($card)) {
+            $failedInsertion = "Player Position (Card is not defined)";
+            return false;
+        }
+        
+        // if no PlayerPosition was provided, there is nothing to do
+        $positionToInsert = $card->getPlayerPosition();
+        if (is_null($positionToInsert)) {
+            return true;
+        }
+        
+        // If this PlayerPosition exists, retrieve it
+        $positionEntity = $entityFactory->getEntity("position");
+        $existingPosition = $positionEntity->get($positionToInsert);
+        
+        // if the PlayerPosition does not exist yet, insert it
+        if (is_null($existingPosition)) {
+            try {
+                $newPositionID = $positionEntity->insert($positionToInsert);
+                $positionToInsert->setID($newPositionID);
+            } catch (\PDOException $ex) {
+                $failedInsertion = "Position - Exception: " . $ex;
+                return false;
+            }
+        } else {
+            // If the PlayerPosition already exists, update the object associated to the Card
+            $card->setPlayerPosition($existingPosition);
         }
         return true;
     }

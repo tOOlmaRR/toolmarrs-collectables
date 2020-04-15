@@ -14,8 +14,9 @@ class TeamEntity extends BaseEntity implements iEntity
     private $location;
     private $name;
     private $league_ID;
-    
-    
+
+
+
     // methods
     public function get($team)
     {
