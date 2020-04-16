@@ -1,6 +1,8 @@
 <?php
 namespace GeoTradingCards\InventoryImportUtility\Classes;
 
+use GeoTradingCards\InventoryImportUtility\classes\Card;
+
 class CardValue
 {
     // private members
@@ -9,6 +11,7 @@ class CardValue
     private $highValue;
     private $lastAppraisal;
     private $lastAppraisalSource;
+    private $card;
     
     
     
@@ -46,6 +49,11 @@ class CardValue
         return $this->lastAppraisalSource;
     }
     
+    public function getCard() : Card
+    {
+        return $this->card;
+    }
+    
     
     
     // public setters
@@ -72,5 +80,10 @@ class CardValue
     public function setLastAppraisalSource(?string $cardValueLastAppraisalSource)
     {
         $this->lastAppraisalSource = $cardValueLastAppraisalSource;
+    }
+    
+    public function setCard(Card $card)
+    {
+        $this->card = $card;
     }
 }

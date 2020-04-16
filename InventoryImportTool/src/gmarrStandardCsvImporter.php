@@ -356,6 +356,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     case 6: // Card.CardValue.LowValue
                         $lowValueAsStringFromFile = ltrim($trimmedCellValue, "$");
                         $newCardValue = new CardValue();
+                        $newCardValue->setCard($newCard);
                         if (empty($lowValueAsStringFromFile)) {
                             $newCardValue->setLowValue(null);
                         } elseif (is_numeric($lowValueAsStringFromFile)) {
