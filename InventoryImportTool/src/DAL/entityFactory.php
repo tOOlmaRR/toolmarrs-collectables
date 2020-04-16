@@ -7,7 +7,8 @@ use GeoTradingCards\InventoryImportUtility\DAL\CardEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\AttributeEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardHasAttributeEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\TeamEntity;
-use GeoTradingCards\InventoryImportUtility\DAL\PlayerPosition;
+use GeoTradingCards\InventoryImportUtility\DAL\PlayerPositionEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\CardValueEntity;
 use PDO;
 
 class EntityFactory
@@ -76,6 +77,9 @@ class EntityFactory
                 
             case "position":
                 return new PlayerPositionEntity($this->getDatabaseConnection());
+                
+            case "cardvalue":
+                return new CardValueEntity($this->getDatabaseConnection());
             
             default:
                 return null;

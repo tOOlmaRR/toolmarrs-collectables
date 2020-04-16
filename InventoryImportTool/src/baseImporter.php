@@ -185,6 +185,14 @@ class BaseImporter implements iImporter
                         return false;
                     }
                     
+                    // CARD VALUE
+                    $failedInsertion = "";
+                    if (!$this->insertCardValue($cardToInsert, $entityFactory, $failedInsertion)) {
+                        $this->setParseError("Database insert failure: $failedInsertion");
+                        return false;
+                    }
+                    
+                    //var_dump($cardToInsert);
                     //TODO: Update the Card Object at the end with all of the FK ID's
                 }
             }
@@ -361,6 +369,31 @@ class BaseImporter implements iImporter
         } else {
             // If the PlayerPosition already exists, update the object associated to the Card
             $card->setPlayerPosition($existingPosition);
+        }
+        return true;
+    }
+    
+    private function insertCardValue($card, $entityFactory, &$failedInsertion) {
+        // if no Card was provided, we have a problem
+        if (is_null($card)) {
+            $failedInsertion = "Card Value (Card is not defined)";
+            return false;
+        }
+        
+        // If no CardValue object was provided, there is nothing to do
+        $cardValueToInsert = $card->getCardValue();
+        if (is_null($cardValueToInsert)) {
+            return true;
+        }
+        
+        // Insert the new CardValue object
+        try {
+            $cardValueEntity = $entityFactory->getEntity("cardvalue");
+            $newCardValueID = $cardValueEntity->insert($cardValueToInsert);
+            $cardValueToInsert->setID($newCardValueID);
+        } catch (\PDOException $ex) {
+            $failedInsertion = "Position - Exception: " . $ex;
+            return false;
         }
         return true;
     }
