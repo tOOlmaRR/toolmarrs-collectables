@@ -48,14 +48,14 @@ class PlayerPositionEntity extends BaseEntity implements iEntity
         return $positionFromDatabase;
     }
     
-    public function insert($objectToInsert)
+    public function insert($position)
     {
         $newID = null;
 
         // build up this entity object with the given business object
-        $this->ID = $objectToInsert->getID();
-        $this->abbreviation = $objectToInsert->getAbbreviation();
-        $this->name = $objectToInsert->getName();
+        $this->ID = $position->getID();
+        $this->abbreviation = $position->getAbbreviation();
+        $this->name = $position->getName();
 
         
         // set up the query

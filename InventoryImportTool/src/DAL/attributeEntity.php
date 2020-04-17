@@ -50,15 +50,15 @@ class AttributeEntity extends BaseEntity implements iEntity
         return $cardAttributeFromDatabase;
     }
     
-    public function insert($objectToInsert)
+    public function insert($cardAttribute)
     {
         $newID = null;
         
         // build up this entity object with the given business object
-        $this->ID = $objectToInsert->getID();
-        $this->abbreviation = $objectToInsert->getAbbreviation();
-        $this->fullName = $objectToInsert->getFullName();
-        $this->comments = $objectToInsert->getComments();
+        $this->ID = $cardAttribute->getID();
+        $this->abbreviation = $cardAttribute->getAbbreviation();
+        $this->fullName = $cardAttribute->getFullName();
+        $this->comments = $cardAttribute->getComments();
         
         // set up the query
         $db = $this->getDB();

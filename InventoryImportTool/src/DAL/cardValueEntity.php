@@ -25,17 +25,17 @@ class CardValueEntity extends BaseEntity implements iEntity
         throw new Exception("CardHasAttributeEntity->get() should never be called");
     }
     
-    public function insert($objectToInsert)
+    public function insert($cardValue)
     {
         $newID = null;
 
         // build up this entity object with the given business object
-        $this->ID = $objectToInsert->getID();
-        $this->lowValue = $objectToInsert->getLowValue();
-        $this->highValue = $objectToInsert->getHighValue();
-        $this->lastAppraisal = $objectToInsert->getLastAppraisal();
-        $this->lastAppraisalSource = $objectToInsert->getLastAppraisalSource();
-        $this->card_ID = $objectToInsert->getCard()->getID();
+        $this->ID = $cardValue->getID();
+        $this->lowValue = $cardValue->getLowValue();
+        $this->highValue = $cardValue->getHighValue();
+        $this->lastAppraisal = $cardValue->getLastAppraisal();
+        $this->lastAppraisalSource = $cardValue->getLastAppraisalSource();
+        $this->card_ID = $cardValue->getCard()->getID();
         
         // set up the query
         $db = $this->getDB();

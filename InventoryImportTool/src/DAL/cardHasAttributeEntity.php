@@ -13,17 +13,17 @@ class CardHasAttributeEntity extends BaseEntity implements iEntity
     
     
     // methods
-    public function get($card)
+    public function get($cardHasAttributes)
     {
         // We should never have to call this function
         throw new Exception("CardHasAttributeEntity->get() should never be called");
     }
     
-    public function insert($objectToInsert)
+    public function insert($cardHasAttributes)
     {
         // build up this entity object with the given business object
-        $this->card_ID = $objectToInsert->cardID;
-        $this->attributes_ID = $objectToInsert->attributeID;
+        $this->card_ID = $cardHasAttributes->cardID;
+        $this->attributes_ID = $cardHasAttributes->attributeID;
 
         // set up the query
         $db = $this->getDB();

@@ -70,16 +70,16 @@ class CardEntity extends BaseEntity implements iEntity
 
 
     
-    public function insert($objectToInsert)
+    public function insert($card)
     {
         $newID = null;
         
         // build up this entity object with the given business object
-        $this->cardNumber = $objectToInsert->getCardNumber();
-        $this->title = $objectToInsert->getTitle();
-        $this->comments = $objectToInsert->getComments();
-        $this->gradingModifier = $objectToInsert->getGradingModifier();
-        $this->cardSet_ID = $objectToInsert->getCardSet()->getID();
+        $this->cardNumber = $card->getCardNumber();
+        $this->title = $card->getTitle();
+        $this->comments = $card->getComments();
+        $this->gradingModifier = $card->getGradingModifier();
+        $this->cardSet_ID = $card->getCardSet()->getID();
         //$subset_ID;
         //$team_ID;
         //$playerPosition_ID;

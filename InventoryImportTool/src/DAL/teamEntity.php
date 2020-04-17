@@ -63,17 +63,17 @@ class TeamEntity extends BaseEntity implements iEntity
         return $teamFromDatabase;
     }
     
-    public function insert($objectToInsert)
+    public function insert($team)
     {
         $newID = null;
         
         // build up this entity object with the given business object
-        $this->ID = $objectToInsert->getID();
-        $this->location = $objectToInsert->getLocation();
-        $this->name = $objectToInsert->getName();
+        $this->ID = $team->getID();
+        $this->location = $team->getLocation();
+        $this->name = $team->getName();
         
         // TODO: Support Leagues other than the NHL, and support cases where NHL isn't ID=1
-        $this->league_ID = $objectToInsert->getLeague()->getID();
+        $this->league_ID = $team->getLeague()->getID();
         
         // set up the query
         $db = $this->getDB();
