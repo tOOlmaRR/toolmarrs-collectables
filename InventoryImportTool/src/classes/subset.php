@@ -8,6 +8,7 @@ class Subset
     private $name;
     private $size;
     private $gradingModifier;
+    private $cardSet;
     private $cards;
     
     // constructor(s)
@@ -39,7 +40,12 @@ class Subset
         return $this->gradingModifier;
     }
     
-    public function getCards() : array
+    public function getCardSet() : ?CardSet
+    {
+        return $this->cardSet;
+    }
+    
+    public function getCards() : ?array
     {
         return $this->cards;
     }
@@ -67,7 +73,12 @@ class Subset
         $this->gradingModifier = $subsetGradingModifier;
     }
     
-    public function setCards(array $subsetCards)
+    public function setCardSet(?CardSet $cardSet)
+    {
+        $this->cardSet = $cardSet;
+    }
+    
+    public function setCards(?array $subsetCards)
     {
         $this->cards = $subsetCards;
     }
