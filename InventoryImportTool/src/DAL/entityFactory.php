@@ -9,6 +9,7 @@ use GeoTradingCards\InventoryImportUtility\DAL\CardHasAttributeEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\TeamEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\PlayerPositionEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardValueEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\SubsetEntity;
 use PDO;
 
 class EntityFactory
@@ -80,6 +81,9 @@ class EntityFactory
                 
             case "cardvalue":
                 return new CardValueEntity($this->getDatabaseConnection());
+                
+            case "subset":
+                return new SubsetEntity($this->getDatabaseConnection());
             
             default:
                 return null;

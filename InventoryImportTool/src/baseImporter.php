@@ -192,7 +192,15 @@ class BaseImporter implements iImporter
                         return false;
                     }
                     
-                    //var_dump($cardToInsert);
+                    // SUBSET
+                    $failedInsertion = "";
+                    if (!$this->insertSubset($cardSetToInsert, $cardToInsert, $entityFactory, $failedInsertion)) {
+                        $this->setParseError("Database insert failure: $failedInsertion");
+                        return false;
+                    }
+                    
+                   
+                    
                     //TODO: Update the Card Object at the end with all of the FK ID's
                 }
             }
@@ -392,8 +400,50 @@ class BaseImporter implements iImporter
             $newCardValueID = $cardValueEntity->insert($cardValueToInsert);
             $cardValueToInsert->setID($newCardValueID);
         } catch (\PDOException $ex) {
-            $failedInsertion = "Position - Exception: " . $ex;
+            $failedInsertion = "Card Value - Exception: " . $ex;
             return false;
+        }
+        return true;
+    }
+    
+    private function insertSubset($cardSet, $card, $entityFactory, &$failedInsertion) {
+        // if no Cardset was provided, we have a problem
+        if (is_null($cardSet)) {
+            $failedInsertion = "Subset (Cardset is not defined)";
+            return false;
+        }
+        
+        // if no Card was provided, we have a problem
+        if (is_null($card)) {
+            $failedInsertion = "Subset (Card is not defined)";
+            return false;
+        }
+        
+        // if no Subset object was provided, there is nothing to do
+        $subsetToInsert = $card->getSubset();
+        if (is_null($subsetToInsert)) {
+            return true;
+        }
+
+        // Now that we know there's a Subset, and the CardSet has been inserted already, associate this Subset to it's CardSet
+        $subsetToInsert->setCardSet($cardSet);
+        
+        // If this Subset exists, retrieve it
+        $subsetEntity = $entityFactory->getEntity("subset");
+        $existingSubset = $subsetEntity->get($subsetToInsert);
+        
+        // if the Subset does not exist yet, insert it
+        if (is_null($existingSubset)) {
+            try {
+                $newSubsetID = $subsetEntity->insert($subsetToInsert);
+                $subsetToInsert->setID($newSubsetID);
+            } catch (\PDOException $ex) {
+                $failedInsertion = "Subset - Exception: " . $ex;
+                return false;
+            }
+        } else {
+            // If the Subset already exists, update the object associated to the Card
+            $card->setSubset($existingSubset);
         }
         return true;
     }

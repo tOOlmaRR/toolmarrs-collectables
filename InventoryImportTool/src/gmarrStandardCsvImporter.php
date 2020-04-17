@@ -422,6 +422,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         if (!empty($trimmedCellValue)) {
                             $newSubset = new Subset();
                             $newSubset->setName($trimmedCellValue);
+                            $newSubset->setGradingModifier(1.0);
                             $newCard->setSubset($newSubset);
                         }
                         unset($newSubset);
