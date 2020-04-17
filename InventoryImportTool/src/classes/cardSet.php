@@ -184,4 +184,12 @@ class CardSet
             $this->cards = array($newCard->getID() => $newCard);
         }
     }
+    
+    public function addSubset(Subset $newSubset) {
+        if ($this->subsets != null) {
+            $this->subsets[$newSubset->getID()] = $newSubset;
+        } else {
+            $this->subsets = array($newSubset->getID() => $newSubset);
+        }
+    }
 }
