@@ -7,6 +7,8 @@ use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCard;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\classes\Team;
+use GeoTradingCards\InventoryImportUtility\classes\League;
+use GeoTradingCards\InventoryImportUtility\classes\Sport;
 use GeoTradingCards\InventoryImportUtility\classes\PlayerPosition;
 use GeoTradingCards\InventoryImportUtility\classes\CardValue;
 use GeoTradingCards\InventoryImportUtility\classes\SingleCardGrading;
@@ -39,10 +41,6 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             if ($newCardSet != null) {
                 $this->setStopParsing(false);
                 $newCards = $this->parseCardsAndSinglesFromFile($fileResource, $fileRowNumber);
-                foreach ($newCards as $newCard) {
-                    var_dump($newCard);
-                }
-                
                 // now add the collection of Cards to the CardSet object
                 $newCardSet->setCards($newCards);
             }
@@ -69,8 +67,8 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
 
     private function parseCardSetDataFromFile($fileResource, &$fileRowNumber) : CardSet
     {
-        //$currentFileSection = "cardset";
-        $currentRow = fgetcsv($fileResource, 0, $this->getFileDelimiter());
+        // get the next record
+        $currentRow = $this->readNextCsvRecord($fileResource);
         $newCardSet = null;
         while (!$this->getStopParsing() && $currentRow !== false) {
             switch ($fileRowNumber) {
@@ -231,7 +229,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             
             // If there isn't a flag to stop parsing, get the next row
             if (!$this->getStopParsing()) {
-                $currentRow = fgetcsv($fileResource, 0, $this->getFileDelimiter());
+                $currentRow = $this->readNextCsvRecord($fileResource);
                 $fileRowNumber++;
             }
         } // end while
@@ -242,7 +240,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
     private function parseCardsAndSinglesFromFile($fileResource, &$fileRowNumber) : array
     {
         // read the first row in the cards grid
-        $currentRow = fgetcsv($fileResource, 0, $this->getFileDelimiter());
+        $currentRow = $this->readNextCsvRecord($fileResource);
         
         // loop through rows in the data file one-at-a-time until:
         // 1) EOF is reached (or we receive a 'false' value when trying to read the file, which is generally only at the end of a File
@@ -284,6 +282,8 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                             $newCard = $newCards[$trimmedCellValue];
                             $newCard->addSingleCard($newSingleCard);
                         }
+                        // associate the Card to the SingleCard
+                        $newSingleCard->setCard($newCard);
                         unset($singles);
                         break;
 
@@ -301,7 +301,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                             $attributeObjects = array();
                             $attributes = array();
                             if (!StringHelpers::contains($trimmedCellValue, " ")) {
-                                $attributes[] = "RC";
+                                $attributes[] = $trimmedCellValue;
                             } else {
                                 $attributes = explode(" ", $trimmedCellValue);
                             }
@@ -326,6 +326,18 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         if (!empty($trimmedCellValue)) {
                             $newTeam = new Team();
                             $newTeam->setName($trimmedCellValue);
+                            
+                            // TODO: Support Leagues other than the NHL, and cases where NHL may not be ID=1 in the database
+                            $nhlLeague = new League();
+                            $nhlLeague->setID(1);
+                            $nhlLeague->setName('National Hockey League');
+                            $nhlLeague->setAbbreviation('NHL');
+                            $hockeySport = new Sport();
+                            $hockeySport->setID(1);
+                            $hockeySport->setName("Hockey");
+                            $nhlLeague->setSport($hockeySport);
+                            
+                            $newTeam->setLeague($nhlLeague);
                             $newCard->setTeam($newTeam);
                         }
                         unset($newTeam);
@@ -346,6 +358,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     case 6: // Card.CardValue.LowValue
                         $lowValueAsStringFromFile = ltrim($trimmedCellValue, "$");
                         $newCardValue = new CardValue();
+                        $newCardValue->setCard($newCard);
                         if (empty($lowValueAsStringFromFile)) {
                             $newCardValue->setLowValue(null);
                         } elseif (is_numeric($lowValueAsStringFromFile)) {
@@ -399,6 +412,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                             $newGradingClass = new GradingClass();
                             $newGradingClass->setAbbreviation($conditionAbbreviation);
                             $newSingleGrading->setGradingClass($newGradingClass);
+                            $newSingleGrading->setSingleCard($newSingleCard);
                             $newSingleCard->setSingleCardGrading($newSingleGrading);
                         }
                         unset($newSingleGrading, $newGradingClass);
@@ -411,6 +425,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         if (!empty($trimmedCellValue)) {
                             $newSubset = new Subset();
                             $newSubset->setName($trimmedCellValue);
+                            $newSubset->setGradingModifier(1.0);
                             $newCard->setSubset($newSubset);
                         }
                         unset($newSubset);
@@ -453,9 +468,11 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         unset($costStringFromFile, $cost);
                         break;
 
-                    // Status: assign this value to the Status property in the Card's SingleCard object
+                    // Status: assign this value to the Status property in the Card's SingleCard object and replace bigger dashes with smaller ones
                     case 14: // Card.SingleCard.Status
-                        $newSingleCard->setStatus($trimmedCellValue);
+                        $singleCardStatusFromFile = $trimmedCellValue;
+                        $singleCardStatusFromFile = str_replace("–", "-", $singleCardStatusFromFile);
+                        $newSingleCard->setStatus($singleCardStatusFromFile);
                         break;
 
                     // Sold: strip the $ from this value, convert it to a float, and assign this value to the PriceSoldFor field in the Card's SingleCard object
@@ -489,12 +506,19 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                         break;
                 } // end switch
             } // end for
+            
+            // set other fields that we do not parse from the data file
+            $newCard->setGradingModifier(1.0);
+            $newCard->setComments("");
+            
+            // add this new Card to the collection
             $newCards[$newCard->getCardNumber()] = $newCard;
             // FOR TESTING ONLY
             /*if ($rowNumber == 1) {
                 break;
             }*/
-            $currentRow = fgetcsv($fileResource, 0, $this->getFileDelimiter());
+            // move on to the next row
+            $currentRow = $this->readNextCsvRecord($fileResource);
             $rowNumber++;
         } // end while
         return $newCards;

@@ -10,7 +10,7 @@ ini_set("display_errors", "1");
 ini_set("display_startup_errors", "1");
 error_reporting(-1);
 
-require 'vendor/autoload.php';
+require "vendor/autoload.php";
 
 use GeoTradingCards\InventoryImportUtility\classes\Card;
 use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
@@ -99,12 +99,12 @@ try {
                 // Insert the data into the database
                 $success = $importer->insertObjects();
                 if (!$success) {
-                    echo "Failure! An issue occured during database insertions: ." . PHP_EOL;
+                    echo "Failure! An issue occured during database insertions: " . PHP_EOL;
                     if ($importer->getParseError() != "") {
                         echo $importer->getParseError();
                     }
                 } else {
-                    var_dump($importer->getParsedCardSet());
+                    //var_dump($importer->getParsedCardSet());
                 }
             } else {
                 echo "Failure! An issue was encountered during parsing: ." . $importer->getParseError() . PHP_EOL;

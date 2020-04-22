@@ -4,6 +4,16 @@ namespace GeoTradingCards\InventoryImportUtility\DAL;
 use GeoTradingCards\InventoryImportUtility\DAL\ManufacturerEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\AttributeEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\CardHasAttributeEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\TeamEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\PlayerPositionEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\CardValueEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\SubsetEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\SingleCardEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\SingleCardGradingEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\GradingClassEntity;
+
 use PDO;
 
 class EntityFactory
@@ -31,9 +41,18 @@ class EntityFactory
     {
         if (is_null($this->databaseConnection)) {
             // Get a connection to the database if we don't already have one
-            $db = new \PDO($this->dbHost, $this->dbUser, $this->dbPassword);
-            if ($db != null) {
-                $this->databaseConnection = $db;
+            $options = [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+            ];
+            try {
+                $db = new \PDO($this->dbHost, $this->dbUser, $this->dbPassword, $options);
+                if ($db != null) {
+                    $this->databaseConnection = $db;
+                }
+            } catch (\PDOException $e) {
+                 throw new \PDOException($e->getMessage(), (int)$e->getCode());
             }
         }
         return $this->databaseConnection;
@@ -45,19 +64,42 @@ class EntityFactory
         {
             case "manufacturer":
                 return new ManufacturerEntity($this->getDatabaseConnection());
-                break;
                 
             case "cardset":
                 return new CardSetEntity($this->getDatabaseConnection());
-                break;
                 
             case "card":
                 return new CardEntity($this->getDatabaseConnection());
-                break;
+                
+            case "attribute":
+                return new AttributeEntity($this->getDatabaseConnection());
+                
+            case "cardhasattribute":
+                return new CardHasAttributeEntity($this->getDatabaseConnection());
+                
+            case "team":
+                return new TeamEntity($this->getDatabaseConnection());
+                
+            case "position":
+                return new PlayerPositionEntity($this->getDatabaseConnection());
+                
+            case "cardvalue":
+                return new CardValueEntity($this->getDatabaseConnection());
+                
+            case "subset":
+                return new SubsetEntity($this->getDatabaseConnection());
+                
+            case "single":
+                return new SingleCardEntity($this->getDatabaseConnection());
+                
+            case "grading":
+                return new SingleCardGradingEntity($this->getDatabaseConnection());
+                
+            case "gradingclass":
+                return new GradingClassEntity($this->getDatabaseConnection());
             
             default:
                 return null;
-                break;
         }
     }
 }

@@ -31,7 +31,7 @@ class CardSet
     
     
     // public getters/accessors
-    public function getID() : int
+    public function getID() : ?int
     {
         return $this->ID;
     }
@@ -172,5 +172,24 @@ class CardSet
     public function setSubsets(array $cardSetSubsets)
     {
         $this->subsets = $cardSetSubsets;
+    }
+    
+    
+    
+    // methods
+    public function addCard(Card $newCard) {
+        if ($this->cards != null) {
+            $this->cards[$newCard->getID()] = $newCard;
+        } else {
+            $this->cards = array($newCard->getID() => $newCard);
+        }
+    }
+    
+    public function addSubset(Subset $newSubset) {
+        if ($this->subsets != null) {
+            $this->subsets[$newSubset->getID()] = $newSubset;
+        } else {
+            $this->subsets = array($newSubset->getID() => $newSubset);
+        }
     }
 }
