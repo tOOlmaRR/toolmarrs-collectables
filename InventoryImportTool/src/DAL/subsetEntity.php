@@ -29,7 +29,7 @@ class SubsetEntity extends BaseEntity implements iEntity
         
         // if we don't have an ID, use the Name of the Subset
         else {
-            $sql = "SELECT`ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `Name` = :name";
+            $sql = "SELECT `ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `Name` = :name";
             $sqlParameters[":name"] = $subset->getName();
         }
         $getStatement = $db->prepare($sql);

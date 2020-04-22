@@ -8,6 +8,9 @@ SELECT * FROM `tsc2020-dev`.playerposition;
 SELECT * FROM `tsc2020-dev`.team;
 SELECT * FROM `tsc2020-dev`.cardvalue;
 SELECT * FROM `tsc2020-dev`.subset;
+SELECT * FROM `tsc2020-dev`.singlecard;
+SELECT * FROM `tsc2020-dev`.singlecardgrading;
+SELECT * FROM `tsc2020-dev`.gradingclass;
 
 -- delete *
 delete from `tsc2020-dev`.card_has_attributes where Card_ID < 1000;
@@ -16,6 +19,9 @@ delete from `tsc2020-dev`.team where ID >= 1;
 delete from `tsc2020-dev`.playerposition where ID >= 1;
 delete from `tsc2020-dev`.cardvalue where ID >= 1;
 delete from `tsc2020-dev`.subset where ID >= 1;
+delete from `tsc2020-dev`.singlecardgrading where ID >= 1;
+delete from `tsc2020-dev`.gradingclass where ID >= 1;
+delete from `tsc2020-dev`.singlecard where ID <> '';
 delete from `tsc2020-dev`.card where id < 1000;
 delete from `tsc2020-dev`.cardset where id < 10;
 delete from `tsc2020-dev`.manufacturer where id < 10;
@@ -29,6 +35,9 @@ alter table `tsc2020-dev`.cardvalue AUTO_INCREMENT = 1;
 alter table `tsc2020-dev`.card AUTO_INCREMENT = 1;
 alter table `tsc2020-dev`.manufacturer AUTO_INCREMENT = 1;
 alter table `tsc2020-dev`.cardset AUTO_INCREMENT = 1;
+alter table `tsc2020-dev`.subset AUTO_INCREMENT = 1;
+alter table `tsc2020-dev`.gradingclass AUTO_INCREMENT = 1;
+alter table `tsc2020-dev`.singlecardgrading AUTO_INCREMENT = 1;
 
 -- card set details
 select set.Season, manufacturer.Name as `Manufacturer`, set.BaseSetName, set.InsertSetName, set.FullName, set.Size, set.Rarity, set.GradingModifier, set.Comments, set.LastInventoryCheck

@@ -10,6 +10,10 @@ use GeoTradingCards\InventoryImportUtility\DAL\TeamEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\PlayerPositionEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardValueEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\SubsetEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\SingleCardEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\SingleCardGradingEntity;
+use GeoTradingCards\InventoryImportUtility\DAL\GradingClassEntity;
+
 use PDO;
 
 class EntityFactory
@@ -84,6 +88,15 @@ class EntityFactory
                 
             case "subset":
                 return new SubsetEntity($this->getDatabaseConnection());
+                
+            case "single":
+                return new SingleCardEntity($this->getDatabaseConnection());
+                
+            case "grading":
+                return new SingleCardGradingEntity($this->getDatabaseConnection());
+                
+            case "gradingclass":
+                return new GradingClassEntity($this->getDatabaseConnection());
             
             default:
                 return null;

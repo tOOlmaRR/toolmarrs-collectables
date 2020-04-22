@@ -22,7 +22,7 @@ class CardValueEntity extends BaseEntity implements iEntity
     public function get($cardValue)
     {
         // We should never have to call this function
-        throw new Exception("CardHasAttributeEntity->get() should never be called");
+        throw new Exception("CardValueEntity->get() should never be called");
     }
     
     public function insert($cardValue)

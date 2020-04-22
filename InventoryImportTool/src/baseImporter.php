@@ -199,9 +199,26 @@ class BaseImporter implements iImporter
                         return false;
                     }
                     
-                   
+                    // SINGLE CARDS
+                    $singleCardsToinsert = $cardToInsert->getSingleCards();
+                    if (!is_null($singleCardsToinsert) && count($singleCardsToinsert) > 0) {
+                        foreach ($singleCardsToinsert as $singleCardToInsert) {
+                            $failedInsertion = "";
+                            if (!$this->insertSingle($singleCardToInsert, $entityFactory, $failedInsertion)) {
+                                $this->setParseError("Database insert failure: $failedInsertion");
+                                return false;
+                            }
+                            
+                            // GRADING and GRADING CLASS
+                            $failedInsertion = "";
+                            if (!$this->insertGradingData($singleCardToInsert, $entityFactory, $failedInsertion)) {
+                                $this->setParseError("Database insert failure: $failedInsertion");
+                                return false;
+                            }
+                        }
+                   }
                     
-                    //TODO: Update the Card Object at the end with all of the FK ID's
+                   //TODO: Update the Card Object at the end with all of the FK ID's
                 }
             }
         }
@@ -444,6 +461,73 @@ class BaseImporter implements iImporter
         } else {
             // If the Subset already exists, update the object associated to the Card
             $card->setSubset($existingSubset);
+        }
+        return true;
+    }
+    
+    private function insertSingle($singleCard, $entityFactory, &$failedInsertion) {
+        // if no SingleCard was provided, we have a problem
+        if (is_null($singleCard)) {
+            $failedInsertion = "Single Card (Single Card is not defined)";
+            return false;
+        }
+        
+        // Insert the new SingleCard record - they should never already exist
+        $singleCardEntity = $entityFactory->getEntity("single");
+        try {
+            $singleCardEntity->insert($singleCard);
+        } catch (\PDOException $ex) {
+            $failedInsertion = "Single Card - Exception: " . $ex;
+            return false;
+        }
+        return true;
+    }
+    
+    private function insertGradingData($singleCard, $entityFactory, &$failedInsertion) {
+        // if no SingleCard was provided, we have a problem
+        if (is_null($singleCard)) {
+            $failedInsertion = "Grading (Single Card is not defined)";
+            return false;
+        }
+        
+        // if there is no SingleCardGrading object, there's nothing to do
+        $gradingToInsert = $singleCard->getSingleCardGrading();
+        if (is_null($gradingToInsert)) {
+            return true;
+        }
+        
+        // If there is a GradingClass provided continue on to insert it if needed
+        $gradingClassToInsert = $gradingToInsert->getGradingClass();
+        if (!is_null($gradingClassToInsert)) {
+            // If this GradingClass exists, retrieve it
+            $gradingClassEntity = $entityFactory->getEntity("gradingclass");
+            $existingGradingClass = $gradingClassEntity->get($gradingClassToInsert);
+            
+            // if the GradingClass does not exist yet, insert it
+            if (is_null($existingGradingClass)) {
+                try {
+                    $newGradingClassID = $gradingClassEntity->insert($gradingClassToInsert);
+                    $gradingClassToInsert->setID($newGradingClassID);
+                } catch (\PDOException $ex) {
+                    $failedInsertion = "Grading Class - Exception: " . $ex;
+                    return false;
+                }
+            } else {
+                // If the GradingClass already exists, update the Grading object
+                $gradingToInsert->setGradingClass($existingGradingClass);
+            }
+        }
+        
+        
+        // Now insert the new SingleCardGrading record for the SingleCard
+        $gradingEntity = $entityFactory->getEntity("grading");
+        try {
+            $newGradingID = $gradingEntity->insert($gradingToInsert);
+            $gradingToInsert->setID($newGradingID);
+            $singleCard->setSingleCardGrading($gradingToInsert);
+        } catch (\PDOException $ex) {
+            $failedInsertion = "Single Card Grading - Exception: " . $ex;
+            return false;
         }
         return true;
     }
