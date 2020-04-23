@@ -103,8 +103,6 @@ try {
                     if ($importer->getParseError() != "") {
                         echo $importer->getParseError();
                     }
-                } else {
-                    //var_dump($importer->getParsedCardSet());
                 }
             } else {
                 echo "Failure! An issue was encountered during parsing: ." . $importer->getParseError() . PHP_EOL;

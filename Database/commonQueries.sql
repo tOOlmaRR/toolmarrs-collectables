@@ -46,23 +46,23 @@ left join `tsc2020-dev`.`manufacturer` as `manufacturer` on `set`.`Manufacturer_
 order by season;
 
 -- cards grid
-select CAST(card.CardNumber AS UNSIGNED) as cardNumber, card.Title, attributes.Abbreviation as Attributes, team.Name, position.Abbreviation as position, 
-	value.LowValue, value.HighValue, subset.Name as Subset, card.GradingModifier, value.LastAppraisal, value.LastAppraisalSource
-from `tsc2020-dev`.`card` as card
-left join `tsc2020-dev`.`card_has_attributes` as `cardAttributes` on cardAttributes.Card_ID = card.ID
-left join `tsc2020-dev`.`attributes` as attributes on attributes.ID = cardAttributes.Attributes_ID
-left join `tsc2020-dev`.`team` as team on team.ID = card.Team_ID
-left join `tsc2020-dev`.`playerposition` as position on position.ID = card.PlayerPosition_ID
-left join `tsc2020-dev`.`cardvalue` as `value` on value.Card_ID = card.ID
-left join `tsc2020-dev`.`subset` as subset on subset.ID = card.Subset_ID
+select CAST(Card.CardNumber AS UNSIGNED) as `CardNumber`, Card.Title, Attributes.Abbreviation as `Attributes`, Team.Name, Position.Abbreviation as `Position`, 
+	Value.LowValue, Value.HighValue, Subset.Name as `Subset`, Card.GradingModifier, Value.LastAppraisal, Value.LastAppraisalSource
+from `tsc2020-dev`.`card` as `Card`
+left join `tsc2020-dev`.`card_has_attributes` as `CardAttributes` on CardAttributes.Card_ID = card.ID
+left join `tsc2020-dev`.`attributes` as `Attributes` on Attributes.ID = cardAttributes.Attributes_ID
+left join `tsc2020-dev`.`team` as `Team` on Team.ID = card.Team_ID
+left join `tsc2020-dev`.`playerposition` as `Position` on Position.ID = card.PlayerPosition_ID
+left join `tsc2020-dev`.`cardvalue` as `Value` on Value.Card_ID = card.ID
+left join `tsc2020-dev`.`subset` as `Subset` on Subset.ID = card.Subset_ID
 where card.CardSet_ID = 1
 order by card.CardNumber;
 
 -- single cards grid
-select single.ID, single.SellPrice, single.Cost, single.PriceSoldFor, single.Rarity, single.Comments, condition.Abbreviation
-from `tsc2020-dev`.`singlecard` as single
-left join `tsc2020-dev`.`singlecardgrading` as grading on grading.SingleCard_ID = single.ID
-left join `tsc2020-dev`.`gradingclass` as `condition` on condition.ID = grading.GradingClass_ID
+select Single.ID, Single.SellPrice, Single.Cost, Single.PriceSoldFor, Single.Rarity, Single.Comments, Condition.Abbreviation
+from `tsc2020-dev`.`singlecard` as `Single`
+left join `tsc2020-dev`.`singlecardgrading` as `Grading` on Grading.SingleCard_ID = single.ID
+left join `tsc2020-dev`.`gradingclass` as `Condition` on Condition.ID = grading.GradingClass_ID
 where single.Card_ID = 1
 order by ID;
 

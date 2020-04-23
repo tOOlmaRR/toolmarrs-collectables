@@ -64,6 +64,35 @@ class CardEntity extends BaseEntity implements iEntity
                 $gradingModifierFloat = null;
             }
             $cardSetFromDatabase->setGradingModifier($gradingModifierFloat);
+            
+            $cardSet = new CardSet();
+            $cardSet->setID($row["CardSet_ID"]);
+            $cardFromDatabase->setCardSet($cardSet);
+            
+            if (!is_null($row["Subset_ID"])) {
+                $subset = new Subset();
+                $subset->setID($row["Subset_ID"]);
+                $cardFromDatabase->setSubset($subset);
+            }
+            
+            if (!is_null($row["Team_ID"])) {
+                $nhlLeague = new League();
+                $nhlLeague->setID(1);
+                $nhlLeague->setName('National Hockey League');
+                $nhlLeague->setAbbreviation('NHL');
+                $hockeySport = new Sport();
+                $hockeySport->setID(1);
+                $hockeySport->setName("Hockey");
+                $nhlLeague->setSport($hockeySport);
+                $team = new Team();
+                $team->setID($row["Team_ID"]);
+                $team->setLeague($nhlLeague);
+            }
+            
+            if (!is_null($row["PlayerPosition_ID"])) {
+                $position = new PlayerPosition();
+                $position->setID($row["PlayerPosition_ID"]);
+            }
         }
         return $cardFromDatabase;
     }
@@ -80,22 +109,25 @@ class CardEntity extends BaseEntity implements iEntity
         $this->comments = $card->getComments();
         $this->gradingModifier = $card->getGradingModifier();
         $this->cardSet_ID = $card->getCardSet()->getID();
-        //$subset_ID;
-        //$team_ID;
-        //$playerPosition_ID;
+        $this->subset_ID = !is_null($card->getSubset()) ? $card->getSubset()->getID() : null;
+        $this->team_ID = !is_null($card->getTeam()) ? $card->getTeam()->getID() : null;
+        $this->playerPosition_ID = !is_null($card->getPlayerPosition()) ? $card->getPlayerPosition()->getID() : null;
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID)";
+        $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID)";
         $insertStatement = $db->prepare($sql);
         
         // perform the insert
         $insertStatement->execute(array(
             ":cardNumber" => $this->cardNumber,
-            ":title" => $this->title ?? null,
-            ":comments" => $this->comments ?? null,
-            ":gradingModifier" => $this->gradingModifier ?? null,
-            ":cardSetID" => $this->cardSet_ID
+            ":title" => $this->title,
+            ":comments" => $this->comments,
+            ":gradingModifier" => $this->gradingModifier,
+            ":cardSetID" => $this->cardSet_ID,
+            ":subsetID" => $this->subset_ID,
+            ":teamID" => $this->team_ID,
+            ":positionID" => $this->playerPosition_ID,
         ));
         
         // capture and return the new rows autoincremented ID

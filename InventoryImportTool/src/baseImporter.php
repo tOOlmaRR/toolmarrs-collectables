@@ -120,7 +120,6 @@ class BaseImporter implements iImporter
     public function insertObjects() : bool
     {
         $cardSetToInsert = $this->getParsedCardSet();
-
         if ($cardSetToInsert != null) {
             //TODO: Get the DB connection details from configuration
             $host = "mysql:host=127.0.0.1;dbname=tsc2020-dev";
@@ -146,30 +145,7 @@ class BaseImporter implements iImporter
             $cardsToInsert = $cardSetToInsert->getCards();
             if (!is_null($cardsToInsert) && count($cardsToInsert) > 0) {
                 foreach ($cardsToInsert as $cardToInsert) {
-                    // CARDs
                     $cardToInsert->setCardSet($cardSetToInsert);
-                    $cardEntity = $entityFactory->getEntity("card");
-                    $existingCard = $cardEntity->get($cardToInsert);
-                    if (is_null($existingCard)) {
-                        $newCardID = $cardEntity->insert($cardToInsert);
-                        if (!is_null($newCardID)) {
-                            $cardToInsert->setID($newCardID);
-                            $this->getParsedCardSet()->addCard($cardToInsert);
-                        } else {
-                            $this->setParseError("Database insert failure: Card");
-                            return false;
-                        }
-                    } else {
-                        $this->setParseError("Card already exists; Updates via import files are not supported");
-                        return false;
-                    }
-                    
-                    // CARD ATTRIBUTES
-                    $failedInsertion = "";
-                    if (!$this->insertAttributes($cardToInsert, $entityFactory, $failedInsertion)) {
-                        $this->setParseError("Database insert failure: $failedInsertion");
-                        return false;
-                    }
                     
                     // TEAM
                     $failedInsertion = "";
@@ -185,16 +161,31 @@ class BaseImporter implements iImporter
                         return false;
                     }
                     
-                    // CARD VALUE
+                    // SUBSET
                     $failedInsertion = "";
-                    if (!$this->insertCardValue($cardToInsert, $entityFactory, $failedInsertion)) {
+                    if (!$this->insertSubset($cardSetToInsert, $cardToInsert, $entityFactory, $failedInsertion)) {
                         $this->setParseError("Database insert failure: $failedInsertion");
                         return false;
                     }
                     
-                    // SUBSET
+                    // CARDs
+                    $cardEntity = $entityFactory->getEntity("card");
                     $failedInsertion = "";
-                    if (!$this->insertSubset($cardSetToInsert, $cardToInsert, $entityFactory, $failedInsertion)) {
+                    if (!$this->insertCard($cardToInsert, $entityFactory, $failedInsertion)) {
+                        $this->setParseError("Database insert failure: $failedInsertion");
+                        return false;
+                    }
+                    
+                    // CARD ATTRIBUTES
+                    $failedInsertion = "";
+                    if (!$this->insertAttributes($cardToInsert, $entityFactory, $failedInsertion)) {
+                        $this->setParseError("Database insert failure: $failedInsertion");
+                        return false;
+                    }
+                    
+                    // CARD VALUE
+                    $failedInsertion = "";
+                    if (!$this->insertCardValue($cardToInsert, $entityFactory, $failedInsertion)) {
                         $this->setParseError("Database insert failure: $failedInsertion");
                         return false;
                     }
@@ -217,8 +208,6 @@ class BaseImporter implements iImporter
                             }
                         }
                    }
-                    
-                   //TODO: Update the Card Object at the end with all of the FK ID's
                 }
             }
         }
@@ -290,47 +279,6 @@ class BaseImporter implements iImporter
         return true;
     }
     
-    private function insertAttributes($card, $entityFactory, &$failedInsertion)
-    {
-        $attributesToInsert = $card->getAttributes();
-        
-        // if there are no Attributes, there's nothing to do
-        if (is_null($attributesToInsert) || count($attributesToInsert) === 0) {
-            return true;
-        }
-        
-        foreach ($attributesToInsert as $attributeToInsert) {
-            // If the Attribute already exists, retrieve it
-            $attributeEntity = $entityFactory->getEntity("attribute");
-            $existingAttribute = $attributeEntity->get($attributeToInsert);
-            
-            // If the Attribute doesn't exist yet, insert it
-            if (is_null($existingAttribute)) {
-                try {
-                    $newAttributeID = $attributeEntity->insert($attributeToInsert);
-                    $attributeToInsert->setID($newAttributeID);
-                } catch (\PDOException $ex) {
-                    $failedInsertion = "Attribute - Exception: " . $ex;
-                    return false;
-                }
-            } else {
-                // If the Attribute already exists, update the object associated to the Card
-                $attributeToInsert = $existingAttribute;
-            }
-            
-            // Now relate this Card to the Attribute in the database by inserting a 'CardHasAttributes' record
-            $cardHasAttributeEntity = $entityFactory->getEntity("cardhasattribute");
-            $cardHasAttributes = (object)['cardID' => $card->getID(),'attributeID' => $attributeToInsert->getID()];
-            try {
-                $cardHasAttributeEntity->insert($cardHasAttributes);
-            } catch (\PDOException $ex) {
-                $failedInsertion = "Card Has Attributes - Exception: " . $ex;
-                return false;
-            }
-        }
-        return true;
-    }
-    
     private function insertTeam($card, $entityFactory, &$failedInsertion)
     {
         // if no Card was provided, we have a problem
@@ -398,31 +346,6 @@ class BaseImporter implements iImporter
         return true;
     }
     
-    private function insertCardValue($card, $entityFactory, &$failedInsertion) {
-        // if no Card was provided, we have a problem
-        if (is_null($card)) {
-            $failedInsertion = "Card Value (Card is not defined)";
-            return false;
-        }
-        
-        // If no CardValue object was provided, there is nothing to do
-        $cardValueToInsert = $card->getCardValue();
-        if (is_null($cardValueToInsert)) {
-            return true;
-        }
-        
-        // Insert the new CardValue object
-        try {
-            $cardValueEntity = $entityFactory->getEntity("cardvalue");
-            $newCardValueID = $cardValueEntity->insert($cardValueToInsert);
-            $cardValueToInsert->setID($newCardValueID);
-        } catch (\PDOException $ex) {
-            $failedInsertion = "Card Value - Exception: " . $ex;
-            return false;
-        }
-        return true;
-    }
-    
     private function insertSubset($cardSet, $card, $entityFactory, &$failedInsertion) {
         // if no Cardset was provided, we have a problem
         if (is_null($cardSet)) {
@@ -461,6 +384,100 @@ class BaseImporter implements iImporter
         } else {
             // If the Subset already exists, update the object associated to the Card
             $card->setSubset($existingSubset);
+        }
+        return true;
+    }
+    
+    private function insertCard($card, $entityFactory, &$failedInsertion)
+    {
+        // if no Card was provided, we have a problem
+        if (is_null($card)) {
+            $failedInsertion = "Card (Card is not defined)";
+            return false;
+        }
+        
+        // If the Card already exists, this is a problem - program doesn't currently support updates to existing Cards
+        $cardEntity = $entityFactory->getEntity("card");
+        $existingCard = $cardEntity->get($card);
+        if (!is_null($existingCard)) {
+            $failedInsertion = "Card (Card already exists)";
+            return false;
+        }
+        
+        // if the Card doesn't exist yet, insert it and add it to the CardSet object
+        try {
+            $newCardID = $cardEntity->insert($card);
+            $card->setID($newCardID);
+            $this->getParsedCardSet()->addCard($card);
+        } catch (\PDOException $ex) {
+            $failedInsertion = "Card - Exception: " . $ex;
+            return false;
+        }
+        return true;
+    }
+    
+    private function insertAttributes($card, $entityFactory, &$failedInsertion)
+    {
+        $attributesToInsert = $card->getAttributes();
+        
+        // if there are no Attributes, there's nothing to do
+        if (is_null($attributesToInsert) || count($attributesToInsert) === 0) {
+            return true;
+        }
+        
+        foreach ($attributesToInsert as $attributeToInsert) {
+            // If the Attribute already exists, retrieve it
+            $attributeEntity = $entityFactory->getEntity("attribute");
+            $existingAttribute = $attributeEntity->get($attributeToInsert);
+            
+            // If the Attribute doesn't exist yet, insert it
+            if (is_null($existingAttribute)) {
+                try {
+                    $newAttributeID = $attributeEntity->insert($attributeToInsert);
+                    $attributeToInsert->setID($newAttributeID);
+                } catch (\PDOException $ex) {
+                    $failedInsertion = "Attribute - Exception: " . $ex;
+                    return false;
+                }
+            } else {
+                // If the Attribute already exists, update the object associated to the Card
+                $attributeToInsert = $existingAttribute;
+            }
+            
+            // Now relate this Card to the Attribute in the database by inserting a 'CardHasAttributes' record
+            $cardHasAttributeEntity = $entityFactory->getEntity("cardhasattribute");
+            $cardHasAttributes = (object)['cardID' => $card->getID(),'attributeID' => $attributeToInsert->getID()];
+            try {
+                $cardHasAttributeEntity->insert($cardHasAttributes);
+            } catch (\PDOException $ex) {
+                $failedInsertion = "Card Has Attributes - Exception: " . $ex;
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private function insertCardValue($card, $entityFactory, &$failedInsertion) {
+        // if no Card was provided, we have a problem
+        if (is_null($card)) {
+            $failedInsertion = "Card Value (Card is not defined)";
+            return false;
+        }
+        
+        // If no CardValue object was provided, there is nothing to do
+        $cardValueToInsert = $card->getCardValue();
+        if (is_null($cardValueToInsert)) {
+            return true;
+        }
+        
+        // Insert the new CardValue object
+        try {
+            $cardValueEntity = $entityFactory->getEntity("cardvalue");
+            $newCardValueID = $cardValueEntity->insert($cardValueToInsert);
+            $cardValueToInsert->setID($newCardValueID);
+        } catch (\PDOException $ex) {
+            $failedInsertion = "Card Value - Exception: " . $ex;
+            return false;
         }
         return true;
     }
@@ -517,7 +534,6 @@ class BaseImporter implements iImporter
                 $gradingToInsert->setGradingClass($existingGradingClass);
             }
         }
-        
         
         // Now insert the new SingleCardGrading record for the SingleCard
         $gradingEntity = $entityFactory->getEntity("grading");
