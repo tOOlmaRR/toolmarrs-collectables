@@ -36,13 +36,17 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             // parse out the Card Set from the first section of the data file and build a CardSet object
             $newCardSet = $this->parseCardSetDataFromFile($fileResource, $fileRowNumber);
             
-            // parse out all cards from the second section (grid) of the data file and build a collection of Card objects
             $newCards = null;
             if ($newCardSet != null) {
+                // parse out all cards from the second section (grid) of the data file and build a collection of Card objects
                 $this->setStopParsing(false);
                 $newCards = $this->parseCardsAndSinglesFromFile($fileResource, $fileRowNumber);
+                
                 // now add the collection of Cards to the CardSet object
                 $newCardSet->setCards($newCards);
+                
+                // parse out details from the "Statistics" section at the bottom of the file and add to existing data objects
+                $this->parseStatsSection($fileResource, $newCardSet, $fileRowNumber);
             }
 
             // close the file now... we're done with it
@@ -241,6 +245,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
     {
         // read the first row in the cards grid
         $currentRow = $this->readNextCsvRecord($fileResource);
+        $fileRowNumber++;
         
         // loop through rows in the data file one-at-a-time until:
         // 1) EOF is reached (or we receive a 'false' value when trying to read the file, which is generally only at the end of a File
@@ -519,9 +524,98 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             }*/
             // move on to the next row
             $currentRow = $this->readNextCsvRecord($fileResource);
+            $fileRowNumber++;
             $rowNumber++;
         } // end while
         return $newCards;
     } // end function
 
+    private function parseStatsSection($fileResource, $cardSet, &$fileRowNumber)
+    {
+        $lastValueUpdate = null;
+        $pricingSource = null;
+        do {
+            // read the first row in the stats section
+            $currentRow = $this->readNextCsvRecord($fileResource);
+            $fileRowNumber++;
+            
+            // skip empty rows, or if it looks like we're at the end of the file
+            if ($currentRow == "" || count(array_filter($currentRow)) == 0) {
+                continue;
+            }
+            
+            $label = $currentRow[0];
+            $label = trim($label);
+            
+            // Card.CardValue.LastAppraisal
+            if (strcasecmp($label, "Last Value Update") === 0) {
+                $lastValueUpdate = $this->parseStatValue($currentRow, 3);
+            }
+
+            // CardSet.LastInventoryCheck            
+            elseif (strcasecmp($label, "Last Inventory Check") === 0) {
+                $lastInventoryCheck = $this->parseStatValue($currentRow, 3);
+                $cardSet->setLastInventoryCheck(trim($lastInventoryCheck));
+            }
+
+            // Card.CardValue.LastAppraisalSource
+            elseif (strcasecmp($label, "Pricing Source") === 0) {
+                $pricingSource = $this->parseStatValue($currentRow, 3);
+            }
+
+            // CardsSet.LastBeckettUpdate
+            elseif (strcasecmp($label, "Beckett.com Last Update") === 0) {
+                $beckettLastUpdate = $this->parseStatValue($currentRow, 3);
+                $cardSet->setLastBeckettUpdate(trim($lastInventoryCheck));
+            }
+
+            // Ignore other rows
+            else {
+                continue;
+            }
+        } while (!$this->getStopParsing() && $currentRow !== false && $currentRow != "");
+        
+        // if there are no values to update in Cards, skip this
+        if (is_null($lastValueUpdate) && is_null($pricingSource)) {
+            return;
+        }
+        
+        // if there are no cards, throw an error
+        $cards = $cardSet->getCards();
+        if (is_null($cards) || count($cards) === 0) {
+            $this->setParseError("No cards found in the current CardSet");
+            return;
+        }
+        
+        // Update all Cards with the data parsed above
+        foreach ($cards as $card) {
+            $cardValue = $card->getCardValue();
+            
+            // If this Card has no CardValue object, skip it
+            if (is_null($cardValue)) {
+                continue;
+            }
+            
+            // set the appropriate values in the CardValue object
+            $cardValue->setLastAppraisal(trim($lastValueUpdate));
+            $cardValue->setLastAppraisalSource(trim($pricingSource));
+        }
+    }
+    
+    private function parseStatValue($currentRow, $expectedColumn) : string {
+        // first, look at the expected column for the value
+        if (isset($currentRow[$expectedColumn]) && $currentRow[$expectedColumn] != "") {
+            return trim($currentRow[$expectedColumn]);
+        }
+        // if there's nothing where we expect it to be, look at all other columns and stop once we find something
+        else {
+            for ($i = 1; $i <= count($currentRow); $i++) {
+                if ($currentRow[$i] != "") {
+                    return trim($currentRow[$i]);
+                }
+            }
+        }
+        // if we never found a value, set it to empty (since we at least found the key)
+        return "";
+    }
 }

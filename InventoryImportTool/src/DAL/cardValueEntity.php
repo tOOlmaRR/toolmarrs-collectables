@@ -4,6 +4,7 @@ namespace GeoTradingCards\InventoryImportUtility\DAL;
 use GeoTradingCards\InventoryImportUtility\classes\CardValue;
 use GeoTradingCards\InventoryImportUtility\DAL\iEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\BaseEntity;
+use GeoTradingCards\InventoryImportUtility\Helpers\DateTimeHelpers;
 
 class CardValueEntity extends BaseEntity implements iEntity
 {
@@ -33,7 +34,7 @@ class CardValueEntity extends BaseEntity implements iEntity
         $this->ID = $cardValue->getID();
         $this->lowValue = $cardValue->getLowValue();
         $this->highValue = $cardValue->getHighValue();
-        $this->lastAppraisal = $cardValue->getLastAppraisal();
+        $this->lastAppraisal = DateTimeHelpers::convertToDbFriendlyString($cardValue->getLastAppraisal(), "F j, Y");
         $this->lastAppraisalSource = $cardValue->getLastAppraisalSource();
         $this->card_ID = $cardValue->getCard()->getID();
         

@@ -103,6 +103,13 @@ try {
                     if ($importer->getParseError() != "") {
                         echo $importer->getParseError();
                     }
+                } else {
+                    echo "Success! Data has been successfully inserted into the database" . PHP_EOL;
+                    $processedFileFullPath = __DIR__ . $config['data-files']['inventory']['processedPath'] . $file;
+                    echo "Moving $fileFullPath to $processedFileFullPath" . PHP_EOL;
+                    if (!rename($fileFullPath, $processedFileFullPath)) {
+                        echo "*** Failed to move processed file out of the import folder!" . PHP_EOL;
+                    }
                 }
             } else {
                 echo "Failure! An issue was encountered during parsing: ." . $importer->getParseError() . PHP_EOL;
