@@ -91,14 +91,8 @@ class CardSetEntity extends BaseEntity implements iEntity
         $this->rarity = $cardSet->getRarity();
         $this->gradingModifier = $cardSet->getGradingModifier();
         $this->comments = $cardSet->getComments();
-        
-        if (is_null($cardSet->getLastBeckettUpdate())) {
-            $this->lastBeckettUpdate = null;
-        } elseif (DateTimeHelpers::validateDateTime($this->lastBeckettUpdate, "l j, Y")) {
-            $this->lastBeckettUpdate = $cardSet->getLastBeckettUpdate();
-        } else {
-            $this->lastBeckettUpdate = null;
-        }
+        $this->lastBeckettUpdate = DateTimeHelpers::convertToDbFriendlyString($cardSet->getLastBeckettUpdate(), "F j, Y");
+        $this->lastInventoryCheck = DateTimeHelpers::convertToDbFriendlyString($cardSet->getLastInventoryCheck(), "F j, Y");
         $this->manufacturerID = $cardSet->getManufacturer()->getID();
         
         // set up the query
@@ -114,10 +108,10 @@ class CardSetEntity extends BaseEntity implements iEntity
             ":season" => $this->season,
             ":size" => $this->size ?? null,
             ":rarity" => $this->rarity,
-            ":gradingModifier" => $this->gradingModifier ?? null,
+            ":gradingModifier" => $this->gradingModifier,
             ":comments" => $this->comments,
-            ":lastBeckettUpdate" => $this->lastBeckettUpdate ?? null,
-            ":lastInventoryCheck" => $this->lastInventoryCheck ?? null,
+            ":lastBeckettUpdate" => $this->lastBeckettUpdate,
+            ":lastInventoryCheck" => $this->lastInventoryCheck,
             ":manufacturer_ID" => $this->manufacturerID
         ));
         
