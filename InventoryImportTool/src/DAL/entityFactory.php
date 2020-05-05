@@ -19,7 +19,9 @@ use PDO;
 class EntityFactory
 {
     // private members
-    private $dbHost;
+    private $dbInfo;
+    private $dbType;
+    private $dbDSN;
     private $dbUser;
     private $dbPassword;
     private $databaseConnection;
@@ -27,11 +29,12 @@ class EntityFactory
     
     
     // constructor(s)
-    public function __construct(string $host, string $user, string $password)
+    public function __construct(array $databaseInfo)
     {
-        $this->dbHost = $host;
-        $this->dbUser = $user;
-        $this->dbPassword = $password;
+        $this->dbInfo = $databaseInfo;
+        $this->dbType = $databaseInfo['type'];
+        $this->dbUser = $databaseInfo['user'];
+        $this->dbPassword = $databaseInfo['password'];
         $this->getDatabaseConnection();
     }
     
@@ -40,6 +43,15 @@ class EntityFactory
     public function getDatabaseConnection() : PDO
     {
         if (is_null($this->databaseConnection)) {
+            // Determine DSN based on DB Type, Host, and DB Name
+            if ($this->dbType == "mysql") {
+                $this->dbDSN = "mysql:host=" . $this->dbInfo['host'] . ";dbname=" . $this->dbInfo['name'];
+            } elseif ($this->dbType == "mssql") {
+                $this->dbDSN = "odbc:Driver={SQL Server Native Client 11.0};Server=" . $this->dbInfo['host'] . ";Database=" . $this->dbInfo['name'];
+            } else {
+                throw new \Exception("Database Type Configuration Error");
+            }
+            
             // Get a connection to the database if we don't already have one
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -47,7 +59,7 @@ class EntityFactory
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ];
             try {
-                $db = new \PDO($this->dbHost, $this->dbUser, $this->dbPassword, $options);
+                $db = new \PDO($this->dbDSN, $this->dbUser, $this->dbPassword, $options);
                 if ($db != null) {
                     $this->databaseConnection = $db;
                 }

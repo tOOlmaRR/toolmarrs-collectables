@@ -37,7 +37,7 @@ $configPath = __DIR__ . "\\config\\";
 // Bootstapping, Configuration, and Setup
 try {
     echo "Configuring the $environment environment... ";
-    
+
     // Load configuration files
     $configFiles = array(
         $configPath . "config-shared.yml",
@@ -48,7 +48,7 @@ try {
         $config = new Config($configFiles);        
     }
     
-    echo "$environment environment has been configured." . PHP_EOL;    
+    echo "$environment environment has been configured." . PHP_EOL;
 } catch (Exception $ex) {
     trigger_error(
         "Inventory Import - Exception - Bootstrap - " . $ex->getMessage()
@@ -74,7 +74,7 @@ try {
         echo PHP_EOL . "Beginning to process the following file: $fileFullPath" . PHP_EOL;
         
         // Instantiate objects
-        $importer = new GmarrStandardCsvImporter();
+        $importer = new GmarrStandardCsvImporter($config);
         
         // read and validate the file
         $rejectionReason = "";

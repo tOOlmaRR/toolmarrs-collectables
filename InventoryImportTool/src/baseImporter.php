@@ -7,6 +7,7 @@ use GeoTradingCards\InventoryImportUtility\classes\CardAttribute;
 use GeoTradingCards\InventoryImportUtility\DAL\EntityFactory;
 use GeoTradingCards\InventoryImportUtility\DAL\ManufacturerEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
+use Noodlehaus\Config as Config;
 
 /**
 * Base Inventory Importer
@@ -16,13 +17,20 @@ use GeoTradingCards\InventoryImportUtility\DAL\CardSetEntity;
 class BaseImporter implements iImporter
 {
     // private members
+    private $parserConfig;
     private $parsedCardSet;
     private $parseError = "";
     private $dataFileDelimiter;
     private $stopParsing;
+    
 
 
     // accessors
+    public function getParserConfig() : Config
+    {
+        return $this->parserConfig;
+    }
+
     public function getParsedCardSet() : ?CardSet
     {
         return $this->parsedCardSet ?? null;
@@ -46,6 +54,10 @@ class BaseImporter implements iImporter
     
 
     // setters
+    protected function setParserConfig(Config $config) {
+        $this->parserConfig = $config;
+    }
+
     protected function setParsedCardSet(CardSet $cardSet)
     {
         $this->parsedCardSet = $cardSet;
@@ -70,9 +82,10 @@ class BaseImporter implements iImporter
     
     
     // constructor(s)
-    public function __construct()
+    public function __construct($config)
     {
         $this->setStopParsing(false);
+        $this->setParserConfig($config);
     }
     
     
@@ -121,11 +134,7 @@ class BaseImporter implements iImporter
     {
         $cardSetToInsert = $this->getParsedCardSet();
         if ($cardSetToInsert != null) {
-            //TODO: Get the DB connection details from configuration
-            $host = "mysql:host=127.0.0.1;dbname=tsc2020-dev";
-            $user = "usr_tsc2020_dev_importer";
-            $password = "$=5SZEXjKbgF7#t%";
-            $entityFactory = new EntityFactory($host, $user, $password);
+            $entityFactory = new EntityFactory($this->getParserConfig()['database']);
             
             // MANUFACTURER
             $failedInsertion = "";

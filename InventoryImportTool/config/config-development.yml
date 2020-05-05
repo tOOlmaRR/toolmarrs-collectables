@@ -1,5 +1,13 @@
 database:
-    host: ""
-    name: ""
-    user: ""
-    password: ""
+    type: "mysql"
+    host: "127.0.0.1"
+    name: "tsc2020-dev"
+    user: "usr_tsc2020_dev_importer"
+    password: "$=5SZEXjKbgF7#t%"
+
+# database:
+#     type: "mssql"
+#     host: "MARR2\\GMARRMSSQL1"
+#     name: "GeosTradingCards"
+#     user: "Urgele1"
+#     password: "goldmOOn78!"
