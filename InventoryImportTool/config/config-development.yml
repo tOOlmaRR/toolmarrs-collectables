@@ -18,5 +18,7 @@ database:
 #     SPROCS:
 #         select:
 #             manufacturer: "Manufacturer.Select"
+#             cardset: "CardSet.Select"
 #         insert:
 #             manufacturer: "Manufacturer.Insert"
+#             cardset: "CardSet.Insert"

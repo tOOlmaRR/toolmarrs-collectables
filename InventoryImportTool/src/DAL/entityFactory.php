@@ -86,7 +86,7 @@ class EntityFactory
                 return new ManufacturerEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "cardset":
-                return new CardSetEntity($this->getDatabaseConnection());
+                return new CardSetEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "card":
                 return new CardEntity($this->getDatabaseConnection());
