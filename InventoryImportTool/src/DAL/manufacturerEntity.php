@@ -18,7 +18,7 @@ class ManufacturerEntity extends BaseEntity implements iEntity
         $db = $this->getDB();
         if ($this->getUseSPROCs()) {
             $sproc = $this->getSPROCs()["select"]["manufacturer"];
-            $sql = "exec [$sproc] @ID=:id, @name=:name";
+            $sql = "EXEC [$sproc] @ID=:id, @name=:name";
             $sqlParams = [":id" => $manufacturer->getID(), ":name" => $manufacturer->getName()];
         } else {
             $sql = "SELECT `ID`, `Name` FROM `manufacturer` WHERE `Name` = :name LIMIT 1";
@@ -46,14 +46,24 @@ class ManufacturerEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO manufacturer (`Name`) VALUES (:name)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["manufacturer"];
+            $sql = "EXEC [$sproc] :id, :name";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO manufacturer (`Name`) VALUES (:name)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":name", $this->name);
         
         // perform the insert
-        $insertStatement->execute(array(":name" => $this->name));
+        $insertStatement->execute();
         
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }

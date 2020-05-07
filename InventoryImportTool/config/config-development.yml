@@ -18,3 +18,5 @@ database:
 #     SPROCS:
 #         select:
 #             manufacturer: "Manufacturer.Select"
+#         insert:
+#             manufacturer: "Manufacturer.Insert"
