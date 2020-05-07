@@ -5,9 +5,16 @@ database:
     user: "usr_tsc2020_dev_importer"
     password: "$=5SZEXjKbgF7#t%"
 
+
+
+
 # database:
 #     type: "mssql"
 #     host: "MARR2\\GMARRMSSQL1"
 #     name: "GeosTradingCards"
 #     user: "Urgele1"
 #     password: "goldmOOn78!"
+#     useSPROCS: true
+#     SPROCS:
+#         select:
+#             manufacturer: "Manufacturer.Select"

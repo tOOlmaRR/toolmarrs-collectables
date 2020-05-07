@@ -16,11 +16,18 @@ class ManufacturerEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sql = "SELECT `ID`, `Name` FROM `manufacturer` WHERE `Name` = :name LIMIT 1";
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["manufacturer"];
+            $sql = "exec [$sproc] @ID=:id, @name=:name";
+            $sqlParams = [":id" => $manufacturer->getID(), ":name" => $manufacturer->getName()];
+        } else {
+            $sql = "SELECT `ID`, `Name` FROM `manufacturer` WHERE `Name` = :name LIMIT 1";
+            $sqlParams = [":name" => $manufacturer->getName()];
+        }
         $getStatement = $db->prepare($sql);
+        $getStatement->execute($sqlParams);
         
         // perform the select and retrieve the data
-        $getStatement->execute(array(":name" => $manufacturer->getName()));
         $row = $getStatement->fetch();
         $manufacturerFromDatabase = null;
         if ($row != false) {

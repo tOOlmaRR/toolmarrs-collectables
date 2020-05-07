@@ -25,6 +25,8 @@ class EntityFactory
     private $dbUser;
     private $dbPassword;
     private $databaseConnection;
+    private $useSPROCs;
+    private $SPROCS;
     
     
     
@@ -36,6 +38,12 @@ class EntityFactory
         $this->dbUser = $databaseInfo['user'];
         $this->dbPassword = $databaseInfo['password'];
         $this->getDatabaseConnection();
+        $useSPROCs = isset($databaseInfo['useSPROCS']) ? $databaseInfo['useSPROCS'] : false;
+        $this->useSPROCs = $useSPROCs;
+        $this->SPROCS = [];
+        if ($useSPROCs) {
+            $this->SPROCS = $databaseInfo["SPROCS"];
+        }
     }
     
     
@@ -75,7 +83,7 @@ class EntityFactory
         switch ($entityType)
         {
             case "manufacturer":
-                return new ManufacturerEntity($this->getDatabaseConnection());
+                return new ManufacturerEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "cardset":
                 return new CardSetEntity($this->getDatabaseConnection());
