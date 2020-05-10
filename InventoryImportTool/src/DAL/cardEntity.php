@@ -26,33 +26,41 @@ class CardEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sqlParameters = array();
-        
-        // if we have an ID, query based on that alone
-        if (!empty($card->getID())) {
-            $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `ID` = :ID";
-            $sqlParameters[":ID"] = $card->getID();
-        }
-        // if we don't have an ID, use the combination of CardNumber and CardSet_ID
-        // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
-        else {
-            $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID";
-            $sqlParameters[":cardNumber"] = $card->getCardNumber();
-            $cardSet = $card->getCardSet();
-            if (empty($cardSet)) {
-                return null;
-            } else {
-                $sqlParameters[":cardSetID"] = $cardSet->getID();
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["card"];
+            $sql = "EXEC [$sproc] @ID=:id, @cardNumber=:cardNumber, @cardSet_ID=:cardSetID";
+            $sqlParams = [":id" => $card->getID(),
+                ":cardNumber" => $card->getCardNumber(),
+                ":cardSetID" => $card->getCardSet()->getID()
+            ];
+        } else {
+            // if we have an ID, query based on that alone
+            if (!empty($card->getID())) {
+                $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `ID` = :id";
+                $sqlParams[":id"] = $card->getID();
+            }
+            // if we don't have an ID, use the combination of CardNumber and CardSet_ID
+            // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
+            else {
+                $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID";
+                $sqlParams[":cardNumber"] = $card->getCardNumber();
+                $cardSet = $card->getCardSet();
+                if (empty($cardSet)) {
+                    return null;
+                } else {
+                    $sqlParams[":cardSetID"] = $cardSet->getID();
+                }
             }
         }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute($sqlParameters);
+        $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
+        
+        // build/return a business object based on the returned data
         $cardFromDatabase = null;
         if ($row != false) {
-            // build a business object based on the returned data
             $cardFromDatabase = new Card;
             $cardFromDatabase->setID($row["ID"]);
             $cardFromDatabase->setCardNumber($row["CardNumber"]);
@@ -115,23 +123,31 @@ class CardEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["card"];
+            $sql = "EXEC [$sproc] :id, :cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":cardNumber", $this->cardNumber);
+        $insertStatement->bindParam(":title", $this->title);
+        $insertStatement->bindParam(":comments", $this->comments);
+        $insertStatement->bindParam(":gradingModifier", $this->gradingModifier);
+        $insertStatement->bindParam(":cardSetID", $this->cardSet_ID);
+        $insertStatement->bindParam(":subsetID", $this->subset_ID);
+        $insertStatement->bindParam(":teamID", $this->team_ID);
+        $insertStatement->bindParam(":positionID", $this->playerPosition_ID);
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":cardNumber" => $this->cardNumber,
-            ":title" => $this->title,
-            ":comments" => $this->comments,
-            ":gradingModifier" => $this->gradingModifier,
-            ":cardSetID" => $this->cardSet_ID,
-            ":subsetID" => $this->subset_ID,
-            ":teamID" => $this->team_ID,
-            ":positionID" => $this->playerPosition_ID,
-        ));
-        
+        $insertStatement->execute();
+
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }

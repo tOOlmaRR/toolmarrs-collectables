@@ -19,6 +19,13 @@ database:
 #         select:
 #             manufacturer: "Manufacturer.Select"
 #             cardset: "CardSet.Select"
+#             card: "Card.Select"
+#             team: "Team.Select"
+#             playerposition: "PlayerPosition.Select"
 #         insert:
 #             manufacturer: "Manufacturer.Insert"
 #             cardset: "CardSet.Insert"
+#             card: "Card.Insert"
+#             team: "Team.Insert"
+#             playerposition: "PlayerPosition.Insert"
+

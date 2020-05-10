@@ -22,28 +22,35 @@ class TeamEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sqlParameters = array();
-        
-        // if we have an ID, query based on that alone
-        if (!empty($team->getID())) {
-            $sql = "SELECT `ID`, `Location`, `Name`, `League_ID` FROM `team` WHERE `ID` = :ID";
-            $sqlParameters[":ID"] = $team->getID();
-        }
-        
-        // if we don't have an ID, use the Name of the team
-        // TODO: Take League into consideration - for now we assume that the first result we get is correct
-        else {
-            $sql = "SELECT `ID`, `Location`, `Name`, `League_ID` FROM `team` WHERE `Name` = :name";
-            $sqlParameters[":name"] = $team->getName();
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["team"];
+            $sql = "EXEC [$sproc] @ID=:id, @name=:name";
+            $sqlParams = [":id" => $team->getID(),
+                ":name" => $team->getName()
+            ];
+        } else {
+            // if we have an ID, query based on that alone
+            if (!empty($team->getID())) {
+                $sql = "SELECT `ID`, `Location`, `Name`, `League_ID` FROM `team` WHERE `ID` = :id";
+                $sqlParams[":id"] = $team->getID();
+            }
+            
+            // if we don't have an ID, use the Name of the team
+            // TODO: Take League into consideration - for now we assume that the first result we get is correct
+            else {
+                $sql = "SELECT `ID`, `Location`, `Name`, `League_ID` FROM `team` WHERE `Name` = :name";
+                $sqlParams[":name"] = $team->getName();
+            }
         }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute($sqlParameters);
+        $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
+
+        // build/return a business object based on the returned data
         $teamFromDatabase = null;
         if ($row != false) {
-            // build a business object based on the returned data
             $teamFromDatabase = new Team;
             $teamFromDatabase->setID($row["ID"]);
             $teamFromDatabase->setLocation($row["Location"]);
@@ -77,18 +84,26 @@ class TeamEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `team` (`Location`, `Name`, `League_ID`) VALUES (:location, :name, :leagueID)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["team"];
+            $sql = "EXEC [$sproc] :id, :location, :name, :leagueID";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `team` (`Location`, `Name`, `League_ID`) VALUES (:location, :name, :leagueID)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":location", $this->location);
+        $insertStatement->bindParam(":name", $this->name);
+        $insertStatement->bindParam(":leagueID", $this->league_ID);
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":location" => $this->location,
-            ":name" => $this->name,
-            ":leagueID" => $this->league_ID
-        ));
+        $insertStatement->execute();
         
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }

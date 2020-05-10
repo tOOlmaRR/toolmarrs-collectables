@@ -89,7 +89,7 @@ class EntityFactory
                 return new CardSetEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "card":
-                return new CardEntity($this->getDatabaseConnection());
+                return new CardEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "attribute":
                 return new AttributeEntity($this->getDatabaseConnection());
@@ -98,10 +98,10 @@ class EntityFactory
                 return new CardHasAttributeEntity($this->getDatabaseConnection());
                 
             case "team":
-                return new TeamEntity($this->getDatabaseConnection());
+                return new TeamEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "position":
-                return new PlayerPositionEntity($this->getDatabaseConnection());
+                return new PlayerPositionEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "cardvalue":
                 return new CardValueEntity($this->getDatabaseConnection());

@@ -19,27 +19,34 @@ class PlayerPositionEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sqlParameters = array();
-        
-        // if we have an ID, query based on that alone
-        if (!empty($position->getID())) {
-            $sql = "SELECT `ID`, `Abbreviation`, `Name` FROM `playerposition` WHERE `ID` = :ID";
-            $sqlParameters[":ID"] = $position->getID();
-        }
-        
-        // if we don't have an ID, use the Abbreviation of the PlayerPosition
-        else {
-            $sql = "SELECT`ID`, `Abbreviation`, `Name` FROM `playerposition` WHERE `Abbreviation` = :abbreviation";
-            $sqlParameters[":abbreviation"] = $position->getAbbreviation();
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["playerposition"];
+            $sql = "EXEC [$sproc] @ID=:id, @abbreviation=:abbreviation";
+            $sqlParams = [":id" => $position->getID(),
+                ":abbreviation" => $position->getAbbreviation()
+            ];
+        } else {
+            // if we have an ID, query based on that alone
+            if (!empty($position->getID())) {
+                $sql = "SELECT `ID`, `Abbreviation`, `Name` FROM `playerposition` WHERE `ID` = :ID";
+                $sqlParams[":id"] = $position->getID();
+            }
+            
+            // if we don't have an ID, use the Abbreviation of the PlayerPosition
+            else {
+                $sql = "SELECT `ID`, `Abbreviation`, `Name` FROM `playerposition` WHERE `Abbreviation` = :abbreviation";
+                $sqlParams[":abbreviation"] = $position->getAbbreviation();
+            }
         }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute($sqlParameters);
+        $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
+        
+        // build/return a business object based on the returned data
         $positionFromDatabase = null;
         if ($row != false) {
-            // build a business object based on the returned data
             $positionFromDatabase = new PlayerPosition();
             $positionFromDatabase->setID($row["ID"]);
             $positionFromDatabase->setAbbreviation($row["Abbreviation"]);
@@ -60,17 +67,25 @@ class PlayerPositionEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `playerposition` (`Abbreviation`, `Name`) VALUES (:abbreviation, :name)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["playerposition"];
+            $sql = "EXEC [$sproc] :id, :abbreviation, :name";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `playerposition` (`Abbreviation`, `Name`) VALUES (:abbreviation, :name)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":abbreviation", $this->abbreviation);
+        $insertStatement->bindParam(":name", $this->name);
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":abbreviation" => $this->abbreviation,
-            ":name" => $this->name
-        ));
+        $insertStatement->execute();
         
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }
