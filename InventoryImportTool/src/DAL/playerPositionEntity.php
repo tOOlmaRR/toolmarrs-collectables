@@ -28,7 +28,7 @@ class PlayerPositionEntity extends BaseEntity implements iEntity
         } else {
             // if we have an ID, query based on that alone
             if (!empty($position->getID())) {
-                $sql = "SELECT `ID`, `Abbreviation`, `Name` FROM `playerposition` WHERE `ID` = :ID";
+                $sql = "SELECT `ID`, `Abbreviation`, `Name` FROM `playerposition` WHERE `ID` = :id";
                 $sqlParams[":id"] = $position->getID();
             }
             
