@@ -49,9 +49,9 @@ class CardSetEntity extends BaseEntity implements iEntity
         // perform the select and retrieve the data
         $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
-        $cardSetFromDatabase = null;
 
         // build/return a business object based on the returned data
+        $cardSetFromDatabase = null;
         if ($row != false) {
             $cardSetFromDatabase = new CardSet;
             $cardSetFromDatabase->setID(intval($row["ID"]));
@@ -131,19 +131,6 @@ class CardSetEntity extends BaseEntity implements iEntity
         
         // perform the insert
         $insertStatement->execute();
-        // $insertStatement->execute(array(
-        //     ":baseSetName" => $this->baseSetName,
-        //     ":insertSetName" => $this->insertSetName,
-        //     ":fullName" => $this->fullName,
-        //     ":season" => $this->season,
-        //     ":size" => $this->size ?? null,
-        //     ":rarity" => $this->rarity,
-        //     ":gradingModifier" => $this->gradingModifier,
-        //     ":comments" => $this->comments,
-        //     ":lastBeckettUpdate" => $this->lastBeckettUpdate,
-        //     ":lastInventoryCheck" => $this->lastInventoryCheck,
-        //     ":manufacturer_ID" => $this->manufacturerID
-        // ));
         
         // capture and return the new rows autoincremented ID
         if (!$this->getUseSPROCs()) {

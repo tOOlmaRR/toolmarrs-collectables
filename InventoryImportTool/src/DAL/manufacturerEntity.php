@@ -29,9 +29,9 @@ class ManufacturerEntity extends BaseEntity implements iEntity
         // perform the select and retrieve the data
         $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
-        $manufacturerFromDatabase = null;
 
         // build/return a business object based on the returned data
+        $manufacturerFromDatabase = null;
         if ($row != false) {
             $manufacturerFromDatabase = new Manufacturer;
             $manufacturerFromDatabase->setID(intval($row["ID"]));
