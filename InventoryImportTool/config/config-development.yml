@@ -22,10 +22,12 @@ database:
 #             card: "Card.Select"
 #             team: "Team.Select"
 #             playerposition: "PlayerPosition.Select"
+#             attributes: "Attributes.Select"
 #         insert:
 #             manufacturer: "Manufacturer.Insert"
 #             cardset: "CardSet.Insert"
 #             card: "Card.Insert"
 #             team: "Team.Insert"
 #             playerposition: "PlayerPosition.Insert"
-
+#             attributes: "Attributes.Insert"
+#             card_has_attributes: "Card_Has_Attributes.Insert"
