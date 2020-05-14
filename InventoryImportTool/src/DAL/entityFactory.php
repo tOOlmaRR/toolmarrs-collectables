@@ -104,7 +104,7 @@ class EntityFactory
                 return new PlayerPositionEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "cardvalue":
-                return new CardValueEntity($this->getDatabaseConnection());
+                return new CardValueEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "subset":
                 return new SubsetEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);

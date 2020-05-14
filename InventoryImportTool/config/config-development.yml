@@ -31,3 +31,4 @@ database:
 #             playerposition: "PlayerPosition.Insert"
 #             attributes: "Attributes.Insert"
 #             card_has_attributes: "Card_Has_Attributes.Insert"
+#             cardvalue: "CardValue.Insert"
