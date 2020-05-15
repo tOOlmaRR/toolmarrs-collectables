@@ -110,13 +110,13 @@ class EntityFactory
                 return new SubsetEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "single":
-                return new SingleCardEntity($this->getDatabaseConnection());
+                return new SingleCardEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "grading":
-                return new SingleCardGradingEntity($this->getDatabaseConnection());
+                return new SingleCardGradingEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "gradingclass":
-                return new GradingClassEntity($this->getDatabaseConnection());
+                return new GradingClassEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
             
             default:
                 return null;
