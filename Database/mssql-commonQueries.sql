@@ -27,16 +27,16 @@ delete from [GeosTradingCards].[dbo].[cardset] where id < 10;
 delete from [GeosTradingCards].[dbo].[manufacturer] where id < 10;
 
 -- reset autoincrement indexes
-DBCC CHECKIDENT([attributes], RESEED, 2)
-DBCC CHECKIDENT([team], RESEED, 1)
-DBCC CHECKIDENT([playerposition], RESEED, 1)
-DBCC CHECKIDENT([cardvalue], RESEED, 1)
-DBCC CHECKIDENT([card], RESEED, 1)
-DBCC CHECKIDENT([manufacturer], RESEED, 1)
-DBCC CHECKIDENT([cardset], RESEED, 1)
-DBCC CHECKIDENT([subset], RESEED, 1)
-DBCC CHECKIDENT([gradingclass], RESEED, 1)
-DBCC CHECKIDENT([singlecardgrading], RESEED, 1)
+DBCC CHECKIDENT([attributes], RESEED, 1)
+DBCC CHECKIDENT([team], RESEED, 0)
+DBCC CHECKIDENT([playerposition], RESEED, 0)
+DBCC CHECKIDENT([cardvalue], RESEED, 0)
+DBCC CHECKIDENT([card], RESEED, 0)
+DBCC CHECKIDENT([manufacturer], RESEED, 0)
+DBCC CHECKIDENT([cardset], RESEED, 0)
+DBCC CHECKIDENT([subset], RESEED, 0)
+DBCC CHECKIDENT([gradingclass], RESEED, 0)
+DBCC CHECKIDENT([singlecardgrading], RESEED, 0)
 
 -- card set details
 select [cardset].Season, manufacturer.Name, [cardset].BaseSetName, [cardset].InsertSetName, [cardset].FullName, [cardset].Size, [cardset].Rarity,
