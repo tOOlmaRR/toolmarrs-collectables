@@ -27,14 +27,19 @@ class CardHasAttributeEntity extends BaseEntity implements iEntity
 
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `card_has_attributes` (`Card_ID`, `Attributes_ID`) VALUES (:cardID, :attributeID)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["card_has_attributes"];
+            $sql = "EXEC [$sproc] :cardID, :attributeID";
+            $insertStatement = $db->prepare($sql);
+        } else {
+            $sql = "INSERT INTO `card_has_attributes` (`Card_ID`, `Attributes_ID`) VALUES (:cardID, :attributeID)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":cardID", $this->card_ID);
+        $insertStatement->bindParam(":attributeID", $this->attributes_ID);
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":cardID" => $this->card_ID,
-            ":attributeID" => $this->attributes_ID
-        ));
+        $insertStatement->execute();
         
         return true;
     }

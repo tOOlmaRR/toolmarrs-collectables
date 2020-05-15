@@ -29,19 +29,30 @@ class CardSetEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sql = "SELECT `ID`, `BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID` FROM `cardset` WHERE `BaseSetName` = :baseSetName AND `InsertSetName` = :insertSetName AND `Season` = :season LIMIT 1";
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["cardset"];
+            $sql = "EXEC [$sproc] @ID=:id, @baseSetName=:baseSetName, @insertSetName=:insertSetName, @season=:season";
+            $sqlParams = [":id" => $cardSet->getID(),
+                ":baseSetName" => $cardSet->getBaseSetName(),
+                ":insertSetName" => $cardSet->getInsertSetName(),
+                ":season" => $cardSet->getSeason(),
+            ];
+        } else {
+            $sql = "SELECT `ID`, `BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID` FROM `cardset` WHERE `BaseSetName` = :baseSetName AND `InsertSetName` = :insertSetName AND `Season` = :season LIMIT 1";
+            $sqlParams = [":baseSetName" => $cardSet->getBaseSetName(),
+                ":insertSetName" => $cardSet->getInsertSetName(),
+                ":season" => $cardSet->getSeason(),
+            ];
+        }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute(array(
-            ":baseSetName" => $cardSet->getBaseSetName(),
-            ":insertSetName" => $cardSet->getInsertSetName(),
-            ":season" => $cardSet->getSeason()
-        ));
+        $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
+
+        // build/return a business object based on the returned data
         $cardSetFromDatabase = null;
         if ($row != false) {
-            // build a business object based on the returned data
             $cardSetFromDatabase = new CardSet;
             $cardSetFromDatabase->setID(intval($row["ID"]));
             $cardSetFromDatabase->setBaseSetName($row["BaseSetName"] != null ? $row["BaseSetName"] : '');
@@ -97,26 +108,34 @@ class CardSetEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `cardset` (`BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID`) VALUES (:baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturer_ID)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["cardset"];
+            $sql = "EXEC [$sproc] :id, :baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturer_ID";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `cardset` (`BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID`) VALUES (:baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturer_ID)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":baseSetName", $this->baseSetName);
+        $insertStatement->bindParam(":insertSetName", $this->insertSetName);
+        $insertStatement->bindParam(":fullName", $this->fullName);
+        $insertStatement->bindParam(":season", $this->season);
+        $insertStatement->bindParam(":size", $this->size);
+        $insertStatement->bindParam(":rarity", $this->rarity);
+        $insertStatement->bindParam(":gradingModifier", $this->gradingModifier);
+        $insertStatement->bindParam(":comments", $this->comments);
+        $insertStatement->bindParam(":lastBeckettUpdate", $this->lastBeckettUpdate);
+        $insertStatement->bindParam(":lastInventoryCheck", $this->lastInventoryCheck);
+        $insertStatement->bindParam(":manufacturer_ID", $this->manufacturerID);        
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":baseSetName" => $this->baseSetName,
-            ":insertSetName" => $this->insertSetName,
-            ":fullName" => $this->fullName,
-            ":season" => $this->season,
-            ":size" => $this->size ?? null,
-            ":rarity" => $this->rarity,
-            ":gradingModifier" => $this->gradingModifier,
-            ":comments" => $this->comments,
-            ":lastBeckettUpdate" => $this->lastBeckettUpdate,
-            ":lastInventoryCheck" => $this->lastInventoryCheck,
-            ":manufacturer_ID" => $this->manufacturerID
-        ));
+        $insertStatement->execute();
         
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }

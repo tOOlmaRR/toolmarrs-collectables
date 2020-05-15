@@ -19,27 +19,36 @@ class SubsetEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sqlParameters = array();
-        
-        // if we have an ID, query based on that alone
-        if (!empty($subset->getID())) {
-            $sql = "SELECT `ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `ID` = :ID";
-            $sqlParameters[":ID"] = $subset->getID();
-        }
-        
-        // if we don't have an ID, use the Name of the Subset
-        else {
-            $sql = "SELECT `ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `Name` = :name";
-            $sqlParameters[":name"] = $subset->getName();
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["subset"];
+            $sql = "EXEC [$sproc] @ID=:id, @name=:name, @cardSet_ID=:cardSetID";
+            $sqlParams = [":id" => $subset->getID(),
+                ":name" => $subset->getName(),
+                ":cardSetID" => $subset->getCardSet()->getID()
+            ];
+        } else {
+            // if we have an ID, query based on that alone
+            if (!empty($subset->getID())) {
+                $sql = "SELECT `ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `ID` = :id";
+                $sqlParams[":id"] = $subset->getID();
+            }
+            
+            // if we don't have an ID, use the Name of the Subset
+            // TODO: This is not sufficient to uniquely identify a SubSet - we need CardSet_ID as well...
+            else {
+                $sql = "SELECT `ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `Name` = :name";
+                $sqlParams[":name"] = $subset->getName();
+            }
         }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute($sqlParameters);
+        $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
+
+        // build/return a business object based on the returned data
         $subsetFromDatabase = null;
         if ($row != false) {
-            // build a business object based on the returned data
             $subsetFromDatabase = new Subset;
             $subsetFromDatabase->setID($row["ID"]);
             $subsetFromDatabase->setName($row["Name"]);
@@ -72,19 +81,27 @@ class SubsetEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `subset` (`Name`, `Size`, `GradingModifier`, `CardSet_ID`) VALUES (:name, :size, :gradingModifier, :cardSetID)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["subset"];
+            $sql = "EXEC [$sproc] :id, :name, :size, :gradingModifier, :cardSetID";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `subset` (`Name`, `Size`, `GradingModifier`, `CardSet_ID`) VALUES (:name, :size, :gradingModifier, :cardSetID)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":name", $this->name);
+        $insertStatement->bindParam(":size", $this->size);
+        $insertStatement->bindParam(":gradingModifier", $this->gradingModifier);
+        $insertStatement->bindParam(":cardSetID", $this->cardSet_ID);
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":name" => $this->name,
-            ":size" => $this->size,
-            ":gradingModifier" => $this->gradingModifier,
-            ":cardSetID" => $this->cardSet_ID,
-        ));
+        $insertStatement->execute();
         
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }

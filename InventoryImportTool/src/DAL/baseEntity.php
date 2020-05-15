@@ -7,11 +7,15 @@ use PDO;
 class BaseEntity implements iEntity
 {
     private $db;
+    private $useSPROCs;
+    private $SPROCS;
     
     // constructor(s)
-    public function __construct($db)
+    public function __construct($db, $useSPROCs = false, $SPROCS = [])
     {
         $this->db = $db;
+        $this->useSPROCs = $useSPROCs;
+        $this->SPROCS = $SPROCS;
     }
     
     
@@ -23,7 +27,16 @@ class BaseEntity implements iEntity
         } else {
             throw new \Exception("Found no database connection: ManufacturerEntity->getDB method");
         }
-        
+    }
+
+    protected function getUseSPROCs()
+    {
+        return $this->useSPROCs;
+    }
+
+    protected function getSPROCs()
+    {
+        return $this->SPROCS;
     }
     
     

@@ -19,20 +19,31 @@ use PDO;
 class EntityFactory
 {
     // private members
-    private $dbHost;
+    private $dbInfo;
+    private $dbType;
+    private $dbDSN;
     private $dbUser;
     private $dbPassword;
     private $databaseConnection;
+    private $useSPROCs;
+    private $SPROCS;
     
     
     
     // constructor(s)
-    public function __construct(string $host, string $user, string $password)
+    public function __construct(array $databaseInfo)
     {
-        $this->dbHost = $host;
-        $this->dbUser = $user;
-        $this->dbPassword = $password;
+        $this->dbInfo = $databaseInfo;
+        $this->dbType = $databaseInfo['type'];
+        $this->dbUser = $databaseInfo['user'];
+        $this->dbPassword = $databaseInfo['password'];
         $this->getDatabaseConnection();
+        $useSPROCs = isset($databaseInfo['useSPROCS']) ? $databaseInfo['useSPROCS'] : false;
+        $this->useSPROCs = $useSPROCs;
+        $this->SPROCS = [];
+        if ($useSPROCs) {
+            $this->SPROCS = $databaseInfo["SPROCS"];
+        }
     }
     
     
@@ -40,6 +51,15 @@ class EntityFactory
     public function getDatabaseConnection() : PDO
     {
         if (is_null($this->databaseConnection)) {
+            // Determine DSN based on DB Type, Host, and DB Name
+            if ($this->dbType == "mysql") {
+                $this->dbDSN = "mysql:host=" . $this->dbInfo['host'] . ";dbname=" . $this->dbInfo['name'];
+            } elseif ($this->dbType == "mssql") {
+                $this->dbDSN = "odbc:Driver={SQL Server Native Client 11.0};Server=" . $this->dbInfo['host'] . ";Database=" . $this->dbInfo['name'];
+            } else {
+                throw new \Exception("Database Type Configuration Error");
+            }
+            
             // Get a connection to the database if we don't already have one
             $options = [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -47,7 +67,7 @@ class EntityFactory
                 PDO::ATTR_EMULATE_PREPARES   => false,
             ];
             try {
-                $db = new \PDO($this->dbHost, $this->dbUser, $this->dbPassword, $options);
+                $db = new \PDO($this->dbDSN, $this->dbUser, $this->dbPassword, $options);
                 if ($db != null) {
                     $this->databaseConnection = $db;
                 }
@@ -63,40 +83,40 @@ class EntityFactory
         switch ($entityType)
         {
             case "manufacturer":
-                return new ManufacturerEntity($this->getDatabaseConnection());
+                return new ManufacturerEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "cardset":
-                return new CardSetEntity($this->getDatabaseConnection());
+                return new CardSetEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "card":
-                return new CardEntity($this->getDatabaseConnection());
+                return new CardEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "attribute":
-                return new AttributeEntity($this->getDatabaseConnection());
+                return new AttributeEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "cardhasattribute":
-                return new CardHasAttributeEntity($this->getDatabaseConnection());
+                return new CardHasAttributeEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "team":
-                return new TeamEntity($this->getDatabaseConnection());
+                return new TeamEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "position":
-                return new PlayerPositionEntity($this->getDatabaseConnection());
+                return new PlayerPositionEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "cardvalue":
-                return new CardValueEntity($this->getDatabaseConnection());
+                return new CardValueEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "subset":
-                return new SubsetEntity($this->getDatabaseConnection());
+                return new SubsetEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "single":
-                return new SingleCardEntity($this->getDatabaseConnection());
+                return new SingleCardEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "grading":
-                return new SingleCardGradingEntity($this->getDatabaseConnection());
+                return new SingleCardGradingEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
                 
             case "gradingclass":
-                return new GradingClassEntity($this->getDatabaseConnection());
+                return new GradingClassEntity($this->getDatabaseConnection(), $this->useSPROCs, $this->SPROCS);
             
             default:
                 return null;

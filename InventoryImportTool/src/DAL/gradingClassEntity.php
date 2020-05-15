@@ -21,26 +21,34 @@ class GradingClassEntity extends BaseEntity implements iEntity
         // set up the query
         $db = $this->getDB();
         $sqlParameters = array();
-        
-        // if we have an ID, query based on that alone
-        if (!empty($gradingClass->getID())) {
-            $sql = "SELECT `ID`, `Abbreviation`, `Name`, `Description` FROM `gradingclass` WHERE `ID` = :ID";
-            $sqlParameters[":ID"] = $gradingClass->getID();
-        }
-        
-        // if we don't have an ID, use the Abbreviation
-        else {
-            $sql = "SELECT `ID`, `Abbreviation`, `Name`, `Description` FROM `gradingclass` WHERE `Abbreviation` = :abbreviation";
-            $sqlParameters[":abbreviation"] = $gradingClass->getAbbreviation();
+        if ($this->getSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["gradingclass"];
+            $sql = "EXEC [$sproc] @ID=:id, @abbreviation=:abbreviation";
+            $sqlParams = [":id" => $gradingClass->getID(),
+                ":abbreviation" => $gradingClass->getAbbreviation()
+            ];
+        } else {
+            // if we have an ID, query based on that alone
+            if (!empty($gradingClass->getID())) {
+                $sql = "SELECT `ID`, `Abbreviation`, `Name`, `Description` FROM `gradingclass` WHERE `ID` = :id";
+                $sqlParams[":id"] = $gradingClass->getID();
+            }
+            
+            // if we don't have an ID, use the Abbreviation
+            else {
+                $sql = "SELECT `ID`, `Abbreviation`, `Name`, `Description` FROM `gradingclass` WHERE `Abbreviation` = :abbreviation";
+                $sqlParams[":abbreviation"] = $gradingClass->getAbbreviation();
+            }
         }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute($sqlParameters);
+        $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
+
+        // build/return a business object based on the returned data
         $gradingClassFromDatabase = null;
         if ($row != false) {
-            // build a business object based on the returned data
             $gradingClassFromDatabase = new GradingClass;
             $gradingClassFromDatabase->setID($row["ID"]);
             $gradingClassFromDatabase->setAbbreviation($row["Abbreviation"]);
@@ -61,18 +69,26 @@ class GradingClassEntity extends BaseEntity implements iEntity
 
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `gradingclass` (`Abbreviation`, `Name`, `Description`) VALUES (:abbreviation, :name, :description)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["gradingclass"];
+            $sql = "EXEC [$sproc] :id, :abbreviation, :name, :description";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `gradingclass` (`Abbreviation`, `Name`, `Description`) VALUES (:abbreviation, :name, :description)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":abbreviation", $this->abbreviation);
+        $insertStatement->bindParam(":name", $this->name);
+        $insertStatement->bindParam(":description", $this->description);
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":abbreviation" => $this->abbreviation,
-            ":name" => $this->name,
-            ":description" => $this->description,
-        ));
+        $insertStatement->execute();
         
         // capture and return the new row's autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }

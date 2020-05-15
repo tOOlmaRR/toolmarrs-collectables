@@ -40,20 +40,25 @@ class SingleCardEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `singlecard` (`ID`, `SellPrice`, `Cost`, `PriceSoldFor`, `Rarity`, `Status`, `Comments`, `Card_ID`) 
-            VALUES (:ID, :sellPrice, :cost, :priceSoldFor, :rarity, :status, :comments, :cardID)";
-        $insertStatement = $db->prepare($sql);
-            
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["singlecard"];
+            $sql = "EXEC [$sproc] :id, :sellPrice, :cost, :priceSoldFor, :rarity, :status, :comments, :cardID";
+            $insertStatement = $db->prepare($sql);
+        } else {
+            $sql = "INSERT INTO `singlecard` (`ID`, `SellPrice`, `Cost`, `PriceSoldFor`, `Rarity`, `Status`, `Comments`, `Card_ID`) 
+                VALUES (:id, :sellPrice, :cost, :priceSoldFor, :rarity, :status, :comments, :cardID)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":id", $this->ID);
+        $insertStatement->bindParam(":sellPrice", $this->sellPrice);
+        $insertStatement->bindParam(":cost", $this->cost);
+        $insertStatement->bindParam(":priceSoldFor", $this->priceSoldFor);
+        $insertStatement->bindParam(":rarity", $this->rarity);
+        $insertStatement->bindParam(":status", $this->status);
+        $insertStatement->bindParam(":comments", $this->comments);
+        $insertStatement->bindParam(":cardID", $this->card_ID);
+
         // perform the insert
-        $insertStatement->execute(array(
-            ":ID" => $this->ID,
-            ":sellPrice" => $this->sellPrice,
-            ":cost" => $this->cost,
-            ":priceSoldFor" => $this->priceSoldFor,
-            ":rarity" => $this->rarity,
-            ":status" => $this->status,
-            ":comments" => $this->comments,
-            ":cardID" => $this->card_ID
-        ));
+        $insertStatement->execute();
     }
 }

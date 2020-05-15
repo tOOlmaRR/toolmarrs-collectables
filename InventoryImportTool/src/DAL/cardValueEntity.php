@@ -40,20 +40,28 @@ class CardValueEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `cardvalue` (`LowValue`, `HighValue`, `LastAppraisal`, `LastAppraisalSource`, `Card_ID`) VALUES (:lowValue, :highValue, :lastAppraisal, :lastAppraisalSource, :cardID)";
-        $insertStatement = $db->prepare($sql);
-        
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["cardvalue"];
+            $sql = "EXEC [$sproc] :id, :lowValue, :highValue, :lastAppraisal, :lastAppraisalSource, :cardID";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `cardvalue` (`LowValue`, `HighValue`, `LastAppraisal`, `LastAppraisalSource`, `Card_ID`) VALUES (:lowValue, :highValue, :lastAppraisal, :lastAppraisalSource, :cardID)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":lowValue", $this->lowValue);
+        $insertStatement->bindParam(":highValue", $this->highValue);
+        $insertStatement->bindParam(":lastAppraisal", $this->lastAppraisal);
+        $insertStatement->bindParam(":lastAppraisalSource", $this->lastAppraisalSource);
+        $insertStatement->bindParam(":cardID", $this->card_ID);
+
         // perform the insert
-        $insertStatement->execute(array(
-            ":lowValue" => $this->lowValue,
-            ":highValue" => $this->highValue,
-            ":lastAppraisal" => $this->lastAppraisal,
-            ":lastAppraisalSource" => $this->lastAppraisalSource,
-            ":cardID" => $this->card_ID
-        ));
+        $insertStatement->execute();
         
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }

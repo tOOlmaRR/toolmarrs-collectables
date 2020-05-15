@@ -9,9 +9,9 @@ namespace GeoTradingCards\InventoryImportUtility;
 class CsvImporter extends BaseImporter implements iImporter
 {
     // constructor(s)
-    public function __construct()
+    public function __construct($config)
     {
-        parent::__construct();
+        parent::__construct($config);
         $this->setFileDelimiter(",");
     }
     

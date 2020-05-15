@@ -20,27 +20,34 @@ class AttributeEntity extends BaseEntity implements iEntity
     {
         // set up the query
         $db = $this->getDB();
-        $sqlParameters = array();
-        
-        // if we have an ID, query based on that alone
-        if (!empty($cardAttribute->getID())) {
-            $sql = "SELECT `ID`, `Abbreviation`, `FullName`, `Comments` FROM `attributes` WHERE `ID` = :ID";
-            $sqlParameters[":ID"] = $card->getID();
-        }
-        // if we don't have an ID, use the abbreviation
-        // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
-        else {
-            $sql = "SELECT `ID`, `Abbreviation`, `FullName`, `Comments` FROM `attributes` WHERE `Abbreviation` = :abbreviation";
-            $sqlParameters[":abbreviation"] = $cardAttribute->getAbbreviation();
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["select"]["attributes"];
+            $sql = "EXEC [$sproc] @ID=:id, @abbreviation=:abbreviation";
+            $sqlParams = [":id" => $cardAttribute->getID(),
+                ":abbreviation" => $cardAttribute->getAbbreviation()
+            ];
+        } else {
+            // if we have an ID, query based on that alone
+            if (!empty($cardAttribute->getID())) {
+                $sql = "SELECT `ID`, `Abbreviation`, `FullName`, `Comments` FROM `attributes` WHERE `ID` = :id";
+                $sqlParams[":id"] = $card->getID();
+            }
+            // if we don't have an ID, use the abbreviation
+            // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
+            else {
+                $sql = "SELECT `ID`, `Abbreviation`, `FullName`, `Comments` FROM `attributes` WHERE `Abbreviation` = :abbreviation";
+                $sqlParams[":abbreviation"] = $cardAttribute->getAbbreviation();
+            }
         }
         $getStatement = $db->prepare($sql);
         
         // perform the select and retrieve the data
-        $getStatement->execute($sqlParameters);
+        $getStatement->execute($sqlParams);
         $row = $getStatement->fetch();
+
+        // build/return a business object based on the returned data
         $cardAttributeFromDatabase = null;
         if ($row != false) {
-            // build a business object based on the returned data
             $cardAttributeFromDatabase = new CardAttribute;
             $cardAttributeFromDatabase->setID($row["ID"]);
             $cardAttributeFromDatabase->setAbbreviation($row["Abbreviation"]);
@@ -53,7 +60,7 @@ class AttributeEntity extends BaseEntity implements iEntity
     public function insert($cardAttribute)
     {
         $newID = null;
-        
+
         // build up this entity object with the given business object
         $this->ID = $cardAttribute->getID();
         $this->abbreviation = $cardAttribute->getAbbreviation();
@@ -62,18 +69,26 @@ class AttributeEntity extends BaseEntity implements iEntity
         
         // set up the query
         $db = $this->getDB();
-        $sql = "INSERT INTO `attributes` (`Abbreviation`, `FullName`, `Comments`) VALUES (:abbreviation, :fullName, :comments)";
-        $insertStatement = $db->prepare($sql);
+        if ($this->getUseSPROCs()) {
+            $sproc = $this->getSPROCs()["insert"]["attributes"];
+            $sql = "EXEC [$sproc] :id, :abbreviation, :fullName, :comments";
+            $insertStatement = $db->prepare($sql);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+        } else {
+            $sql = "INSERT INTO `attributes` (`Abbreviation`, `FullName`, `Comments`) VALUES (:abbreviation, :fullName, :comments)";
+            $insertStatement = $db->prepare($sql);
+        }
+        $insertStatement->bindParam(":abbreviation", $this->abbreviation);
+        $insertStatement->bindParam(":fullName", $this->fullName);
+        $insertStatement->bindParam(":comments", $this->comments);
         
         // perform the insert
-        $insertStatement->execute(array(
-            ":abbreviation" => $this->abbreviation,
-            ":fullName" => $this->fullName,
-            ":comments" => $this->comments
-        ));
+        $insertStatement->execute();
         
         // capture and return the new rows autoincremented ID
-        $newID = $db->lastInsertId();
+        if (!$this->getUseSPROCs()) {
+            $newID = $db->lastInsertId();
+        }
         if ($newID == 0) {
             $newID = null;
         }
