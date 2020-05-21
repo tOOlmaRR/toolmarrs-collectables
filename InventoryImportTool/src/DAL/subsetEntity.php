@@ -36,8 +36,9 @@ class SubsetEntity extends BaseEntity implements iEntity
             // if we don't have an ID, use the Name of the Subset
             // TODO: This is not sufficient to uniquely identify a SubSet - we need CardSet_ID as well...
             else {
-                $sql = "SELECT `ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `Name` = :name";
+                $sql = "SELECT `ID`, `Name`, `Size`, `GradingModifier`, `CardSet_ID` FROM `subset` WHERE `Name` = :name AND `CardSet_ID` = :cardSetID";
                 $sqlParams[":name"] = $subset->getName();
+                $sqlParams[":cardSetID"] = $subset->getCardSet()->getID();
             }
         }
         $getStatement = $db->prepare($sql);
