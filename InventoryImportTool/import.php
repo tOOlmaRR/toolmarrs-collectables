@@ -1,7 +1,7 @@
 <?php
 /**
 * Inventory Import Tool
-* This tool is designed to import card inventory from flat files into the GeoTradingCards database.
+* This tool was designed to import card inventory from flat files into the GeoTradingCards database.
 * @author    George U. Marr
 */
 
