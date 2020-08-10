@@ -127,7 +127,7 @@ class CardEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["card"];
             $sql = "EXEC [$sproc] :id, :cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID)";
             $insertStatement = $db->prepare($sql);
@@ -140,7 +140,7 @@ class CardEntity extends BaseEntity implements iEntity
         $insertStatement->bindParam(":subsetID", $this->subset_ID);
         $insertStatement->bindParam(":teamID", $this->team_ID);
         $insertStatement->bindParam(":positionID", $this->playerPosition_ID);
-        
+
         // perform the insert
         $insertStatement->execute();
 
