@@ -86,7 +86,7 @@ class SubsetEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["subset"];
             $sql = "EXEC [$sproc] :id, :name, :size, :gradingModifier, :cardSetID";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `subset` (`Name`, `Size`, `GradingModifier`, `CardSet_ID`) VALUES (:name, :size, :gradingModifier, :cardSetID)";
             $insertStatement = $db->prepare($sql);

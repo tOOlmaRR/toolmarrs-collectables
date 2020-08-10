@@ -73,7 +73,7 @@ class AttributeEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["attributes"];
             $sql = "EXEC [$sproc] :id, :abbreviation, :fullName, :comments";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `attributes` (`Abbreviation`, `FullName`, `Comments`) VALUES (:abbreviation, :fullName, :comments)";
             $insertStatement = $db->prepare($sql);

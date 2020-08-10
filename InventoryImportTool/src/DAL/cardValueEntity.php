@@ -44,7 +44,7 @@ class CardValueEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["cardvalue"];
             $sql = "EXEC [$sproc] :id, :lowValue, :highValue, :lastAppraisal, :lastAppraisalSource, :cardID";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `cardvalue` (`LowValue`, `HighValue`, `LastAppraisal`, `LastAppraisalSource`, `Card_ID`) VALUES (:lowValue, :highValue, :lastAppraisal, :lastAppraisalSource, :cardID)";
             $insertStatement = $db->prepare($sql);
