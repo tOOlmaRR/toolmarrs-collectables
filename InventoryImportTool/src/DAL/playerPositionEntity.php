@@ -71,7 +71,7 @@ class PlayerPositionEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["playerposition"];
             $sql = "EXEC [$sproc] :id, :abbreviation, :name";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `playerposition` (`Abbreviation`, `Name`) VALUES (:abbreviation, :name)";
             $insertStatement = $db->prepare($sql);

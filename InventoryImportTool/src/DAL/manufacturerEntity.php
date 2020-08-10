@@ -51,7 +51,7 @@ class ManufacturerEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["manufacturer"];
             $sql = "EXEC [$sproc] :id, :name";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO manufacturer (`Name`) VALUES (:name)";
             $insertStatement = $db->prepare($sql);

@@ -73,7 +73,7 @@ class GradingClassEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["gradingclass"];
             $sql = "EXEC [$sproc] :id, :abbreviation, :name, :description";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `gradingclass` (`Abbreviation`, `Name`, `Description`) VALUES (:abbreviation, :name, :description)";
             $insertStatement = $db->prepare($sql);

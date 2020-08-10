@@ -50,7 +50,7 @@ class SingleCardGradingEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["singlecardgrading"];
             $sql = "EXEC [$sproc] :id, :edges, :surfaces, :corners, :alignment, :overallGrade, :BCGSerialNumber, :BCGGrade, :gradingClassID, :singleCardID";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `singlecardgrading` (`Edges`, `Surfaces`, `Corners`, `Alignment`, `OverallGrade`, `BCG_SerialNumber`, `BCG_Grade`, `GradingClass_ID`, `SingleCard_ID`) 
                 VALUES (:edges, :surfaces, :corners, :alignment, :overallGrade, :BCGSerialNumber, :BCGGrade, :gradingClassID, :singleCardID)";

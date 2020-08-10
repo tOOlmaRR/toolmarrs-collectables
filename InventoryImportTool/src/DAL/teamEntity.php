@@ -88,7 +88,7 @@ class TeamEntity extends BaseEntity implements iEntity
             $sproc = $this->getSPROCs()["insert"]["team"];
             $sql = "EXEC [$sproc] :id, :location, :name, :leagueID";
             $insertStatement = $db->prepare($sql);
-            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 4);
+            $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
             $sql = "INSERT INTO `team` (`Location`, `Name`, `League_ID`) VALUES (:location, :name, :leagueID)";
             $insertStatement = $db->prepare($sql);
