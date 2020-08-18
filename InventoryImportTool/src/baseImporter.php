@@ -136,6 +136,8 @@ class BaseImporter implements iImporter
         $cardSetToInsert = $this->getParsedCardSet();
         if ($cardSetToInsert != null) {
             $entityFactory = new EntityFactory($this->getParserConfig()['database']);
+            $db = $entityFactory->getDatabaseConnection();
+            $db->beginTransaction();
             
             // MANUFACTURER
             $failedInsertion = "";
@@ -218,10 +220,12 @@ class BaseImporter implements iImporter
                                 return false;
                             }
                         }
-                   }
+                    }
                 }
             }
         }
+        // if we got this far, we should be good to commit the transaction!
+        $db->commit();
         return true;
     }
     
@@ -285,8 +289,8 @@ class BaseImporter implements iImporter
             try {
                 $newCardSetID = $cardSetEntity->insert($cardSet);
                 $cardSet->setID($newCardSetID);
-            $this->setParsedCardSet($cardSet);
-        } catch (\PDOException $ex) {
+                $this->setParsedCardSet($cardSet);
+            } catch (\PDOException $ex) {
                 $failedInsertion = "Card Set - Exception: " . $ex;
                 return false;
             }
@@ -425,8 +429,8 @@ class BaseImporter implements iImporter
             try {
                 $newCardID = $cardEntity->insert($card);
                 $card->setID($newCardID);
-            $this->getParsedCardSet()->addCard($card);
-        } catch (\PDOException $ex) {
+                $this->getParsedCardSet()->addCard($card);
+            } catch (\PDOException $ex) {
                 $failedInsertion = "Card - Exception: " . $ex;
                 return false;
             }
