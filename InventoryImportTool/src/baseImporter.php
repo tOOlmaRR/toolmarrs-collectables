@@ -22,6 +22,7 @@ class BaseImporter implements iImporter
     private $parseError = "";
     private $dataFileDelimiter;
     private $stopParsing;
+    private $cardExistsinDB = false;
     
 
 
@@ -135,6 +136,8 @@ class BaseImporter implements iImporter
         $cardSetToInsert = $this->getParsedCardSet();
         if ($cardSetToInsert != null) {
             $entityFactory = new EntityFactory($this->getParserConfig()['database']);
+            $db = $entityFactory->getDatabaseConnection();
+            $db->beginTransaction();
             
             // MANUFACTURER
             $failedInsertion = "";
@@ -154,6 +157,7 @@ class BaseImporter implements iImporter
             $cardsToInsert = $cardSetToInsert->getCards();
             if (!is_null($cardsToInsert) && count($cardsToInsert) > 0) {
                 foreach ($cardsToInsert as $cardToInsert) {
+                    $this->cardExistsinDB = false;
                     $cardToInsert->setCardSet($cardSetToInsert);
                     
                     // TEAM
@@ -178,25 +182,26 @@ class BaseImporter implements iImporter
                     }
                     
                     // CARDs
-                    $cardEntity = $entityFactory->getEntity("card");
                     $failedInsertion = "";
                     if (!$this->insertCard($cardToInsert, $entityFactory, $failedInsertion)) {
                         $this->setParseError("Database insert failure: $failedInsertion");
                         return false;
                     }
                     
-                    // CARD ATTRIBUTES
-                    $failedInsertion = "";
-                    if (!$this->insertAttributes($cardToInsert, $entityFactory, $failedInsertion)) {
-                        $this->setParseError("Database insert failure: $failedInsertion");
-                        return false;
-                    }
-                    
-                    // CARD VALUE
-                    $failedInsertion = "";
-                    if (!$this->insertCardValue($cardToInsert, $entityFactory, $failedInsertion)) {
-                        $this->setParseError("Database insert failure: $failedInsertion");
-                        return false;
+                    // only insert card attributes and card value records if the current card doesn't already exist in the database
+                    if (!$this->cardExistsinDB) {
+                        // CARD ATTRIBUTES
+                        $failedInsertion = "";
+                        if (!$this->insertAttributes($cardToInsert, $entityFactory, $failedInsertion)) {
+                            $this->setParseError("Database insert failure: $failedInsertion");
+                            return false;
+                        }
+                        // CARD VALUE
+                        $failedInsertion = "";
+                        if (!$this->insertCardValue($cardToInsert, $entityFactory, $failedInsertion)) {
+                            $this->setParseError("Database insert failure: $failedInsertion");
+                            return false;
+                        }
                     }
                     
                     // SINGLE CARDS
@@ -216,10 +221,12 @@ class BaseImporter implements iImporter
                                 return false;
                             }
                         }
-                   }
+                    }
                 }
             }
         }
+        // if we got this far, we should be good to commit the transaction!
+        $db->commit();
         return true;
     }
     
@@ -268,22 +275,26 @@ class BaseImporter implements iImporter
             $failedInsertion = "Card Set (CardSet is not defined)";
             return false;
         }
-        // If the CardSet already exists, this is a problem - program doesn't currently support updates to existing Card Sets
+
+        // check if this card set already exists in the database
         $cardSetEntity = $entityFactory->getEntity("cardset");
         $existingCardSet = $cardSetEntity->get($cardSet);
+
+        // If the CardSet already exists, grab it's ID and use that for proceeding inserts (note: card set details will not be updated)
         if (!is_null($existingCardSet)) {
-            $failedInsertion = "Card Set (CardSet already exists)";
-            return false;
-        }
-        
-        // if the CardSet doesn't exist yet, insert it and ensure we keep it in memory
-        try {
-            $newCardSetID = $cardSetEntity->insert($cardSet);
-            $cardSet->setID($newCardSetID);
+            $cardSet->setID($existingCardSet->getID());
             $this->setParsedCardSet($cardSet);
-        } catch (\PDOException $ex) {
-            $failedInsertion = "Card Set - Exception: " . $ex;
-            return false;
+        }
+        // if the CardSet doesn't exist yet, insert it and ensure we keep it in memory
+        else {
+            try {
+                $newCardSetID = $cardSetEntity->insert($cardSet);
+                $cardSet->setID($newCardSetID);
+                $this->setParsedCardSet($cardSet);
+            } catch (\PDOException $ex) {
+                $failedInsertion = "Card Set - Exception: " . $ex;
+                return false;
+            }
         }
         return true;
     }
@@ -405,22 +416,25 @@ class BaseImporter implements iImporter
             return false;
         }
         
-        // If the Card already exists, this is a problem - program doesn't currently support updates to existing Cards
+        // Check to see if the Card already exists in the database
         $cardEntity = $entityFactory->getEntity("card");
         $existingCard = $cardEntity->get($card);
-        if (!is_null($existingCard)) {
-            $failedInsertion = "Card (Card already exists)";
-            return false;
-        }
         
+        // If this Card already exists, make a note of that, and use the Card found in the database (note: the existing card details will not be updated)
+        if (!is_null($existingCard)) {
+            $card->setID($existingCard->getID());
+            $this->cardExistsinDB = true;
+        }
         // if the Card doesn't exist yet, insert it and add it to the CardSet object
-        try {
-            $newCardID = $cardEntity->insert($card);
-            $card->setID($newCardID);
-            $this->getParsedCardSet()->addCard($card);
-        } catch (\PDOException $ex) {
-            $failedInsertion = "Card - Exception: " . $ex;
-            return false;
+        else {
+            try {
+                $newCardID = $cardEntity->insert($card);
+                $card->setID($newCardID);
+                $this->getParsedCardSet()->addCard($card);
+            } catch (\PDOException $ex) {
+                $failedInsertion = "Card - Exception: " . $ex;
+                return false;
+            }
         }
         return true;
     }
