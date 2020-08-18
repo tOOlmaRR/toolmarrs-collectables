@@ -294,8 +294,23 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
 
                     // Description: just assign this to Card.Title after stripping whitespace
                     case 2: // Card.Title
-                        $newCard->setTitle($trimmedCellValue);
-                        unset($trimmedCellValue);
+                        $cardNumber = $newCard->getCardNumber();
+                        // Special Case: card with no card number already exists (indexed by title)
+                        if (empty($cardNumber) && array_key_exists($trimmedCellValue, $newCards)) {
+                            // don't lose the SingleCard we already created in case 0 above
+                            $singles = $newCard->getSingleCards();
+                            $newCard = $newCards[$trimmedCellValue];
+                            $newCard->addSingleCard($newSingleCard);
+                            // associate the Card to the SingleCard
+                            $newSingleCard->setCard($newCard);
+                            unset($singles);
+                        }
+                        // Normal Casecls
+
+                        else {
+                            $newCard->setTitle($trimmedCellValue);
+                            unset($trimmedCellValue);
+                        }
                         break;
                     
                     // RC: build a CardAttribute object by hand and assign this value to it's Abbreviation field
@@ -516,8 +531,15 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             $newCard->setGradingModifier(1.0);
             $newCard->setComments("");
             
-            // add this new Card to the collection
-            $newCards[$newCard->getCardNumber()] = $newCard;
+            // add this new Card to the collection - include special case for cards with no card number (use title as the key)
+            $cardNumber = $newCard->getCardNumber();
+            if (empty($cardNumber)) {
+                $newCardsKey = $newCard->getTitle();
+            } else {
+                $newCardsKey = $cardNumber;
+            }
+            $newCards[$newCardsKey] = $newCard;
+
             // FOR TESTING ONLY
             /*if ($rowNumber == 1) {
                 break;
