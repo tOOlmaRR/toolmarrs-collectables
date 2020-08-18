@@ -2,8 +2,15 @@
 namespace GeoTradingCards\InventoryImportUtility\DAL;
 
 use GeoTradingCards\InventoryImportUtility\Classes\Card;
+use GeoTradingCards\InventoryImportUtility\Classes\CardSet;
+use GeoTradingCards\InventoryImportUtility\Classes\Subset;
+use GeoTradingCards\InventoryImportUtility\Classes\League;
+use GeoTradingCards\InventoryImportUtility\Classes\Sport;
+use GeoTradingCards\InventoryImportUtility\Classes\Team;
+use GeoTradingCards\InventoryImportUtility\Classes\PlayerPosition;
 use GeoTradingCards\InventoryImportUtility\DAL\iEntity;
 use GeoTradingCards\InventoryImportUtility\DAL\BaseEntity;
+
 
 
 class CardEntity extends BaseEntity implements iEntity
@@ -71,7 +78,7 @@ class CardEntity extends BaseEntity implements iEntity
             if ($gradingModifierFloat == 0) {
                 $gradingModifierFloat = null;
             }
-            $cardSetFromDatabase->setGradingModifier($gradingModifierFloat);
+            $cardFromDatabase->setGradingModifier($gradingModifierFloat);
             
             $cardSet = new CardSet();
             $cardSet->setID($row["CardSet_ID"]);
