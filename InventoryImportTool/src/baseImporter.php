@@ -157,6 +157,7 @@ class BaseImporter implements iImporter
             $cardsToInsert = $cardSetToInsert->getCards();
             if (!is_null($cardsToInsert) && count($cardsToInsert) > 0) {
                 foreach ($cardsToInsert as $cardToInsert) {
+                    $this->cardExistsinDB = false;
                     $cardToInsert->setCardSet($cardSetToInsert);
                     
                     // TEAM
