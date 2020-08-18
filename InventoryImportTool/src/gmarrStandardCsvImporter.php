@@ -305,7 +305,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                             $newSingleCard->setCard($newCard);
                             unset($singles);
                         }
-                        // Normal Casecls
+                        // Normal Case
 
                         else {
                             $newCard->setTitle($trimmedCellValue);
