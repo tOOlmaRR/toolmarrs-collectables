@@ -35,9 +35,10 @@ class CardEntity extends BaseEntity implements iEntity
         $db = $this->getDB();
         if ($this->getUseSPROCs()) {
             $sproc = $this->getSPROCs()["select"]["card"];
-            $sql = "EXEC [$sproc] @ID=:id, @cardNumber=:cardNumber, @cardSet_ID=:cardSetID";
+            $sql = "EXEC [$sproc] @ID=:id, @cardNumber=:cardNumber, @title=:title, @cardSet_ID=:cardSetID";
             $sqlParams = [":id" => $card->getID(),
                 ":cardNumber" => $card->getCardNumber(),
+                ":title" => $card->getTitle(),
                 ":cardSetID" => $card->getCardSet()->getID()
             ];
         } else {
@@ -48,6 +49,7 @@ class CardEntity extends BaseEntity implements iEntity
             }
             // if we don't have an ID, use the combination of CardNumber and CardSet_ID
             // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
+            // TODO: Handle no card number like we do in the SPROC
             else {
                 $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID";
                 $sqlParams[":cardNumber"] = $card->getCardNumber();
