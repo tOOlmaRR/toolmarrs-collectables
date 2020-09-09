@@ -22,10 +22,10 @@ const morgan = require('morgan');
 
 
 
-// Connect to DB
+// TODO: Connect to DB
 
 
-// Bring in routes
+// Bring in route files
 const testRoutes = require('./routes/test');
 const cardSetRoutes = require('./routes/cardset');
 
@@ -34,9 +34,12 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(expressValidator());
 
-// set up endpoints: Controllers act as a middleware
+// set up Controllers as middleware
 //app.use(`/${process.env.VERSION}/test`, testRoutes);
-app.use(`/v1/test`, testRoutes);
-app.use(`/v1/cardset`, cardSetRoutes);
+const apiVersion = process.env.VERSION || 'v1';
+console.log(`API version: ${apiVersion}`);
+app.use(`/${apiVersion}/test`, testRoutes);
+app.use(`/${apiVersion}/cardset`, cardSetRoutes);
 
+// export app to server
 module.exports = app;
