@@ -28,21 +28,27 @@ GET: /v1/test/
 
 ### View Card Set Seasons
 ```
-GET: /v1/{sportID}/cardset/seasons
+GET: /v1/cardsets/test
+```
+- Just a "test" endpoint that can be used for monitoring and confirming that the cardset API group resolves correctly
+
+### View Card Set Seasons
+```
+GET: /v1/cardsets/seasons
 ```
 - Returns a list of all seasons for which card sets exists within the database
 - Used primarily to populate a dropdown in the website
 
 ### View Base Set Listing
 ```
-GET: /v1/{sportID}/cardset/{season}/base_sets
+GET: /v1/cardsets/{season}/base_sets
 ```
-- Returns a list of all base set names for card sets in the database for the given sport
+- Returns a list of all base set names for card sets in the database
 - Used primarily to populate a dropdown in the website
 
 ### View Insert Set Listing
 ```
-GET: /v1/{sportID}/cardset/{base_set}/insert_sets
+GET: /v1/cardsets/{base_set}/insert_sets
 ```
 - Returns a list of all insert sets with the given base set name
 - Used primarily to populate a drop down in the website
@@ -53,3 +59,5 @@ GET: /v1/{sportID}/cardset/{base_set}/insert_sets
 ## History
 ### v0.1
 - basic site creation
+- test endpoints
+- cardset - get seasons endpoint

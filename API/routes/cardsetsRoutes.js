@@ -1,11 +1,12 @@
 // requires
 const express = require('express');
-const { getTestOutput } = require('../controllers/v1/cardsetController');
+const { getTestOutput, getSeasons } = require('../controllers/v1/cardsetsController');
 
 // use the Express router
 const router = express.Router();
 
 // map up routes to controller methods
-router.get(`/`, getTestOutput);
+router.get(`/test`, getTestOutput);
+router.get(`/seasons`, getSeasons);
 
 module.exports = router;
