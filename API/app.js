@@ -37,8 +37,4 @@ app.use(expressValidator());
 // set up endpoints: Controllers act as a middleware
 app.get(`/${process.env.VERSION}/test`, testRoutes);
 
-// start a server
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`)
-});
+module.exports = app;
