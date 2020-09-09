@@ -2,6 +2,23 @@
 ## Summary
 This is a application program interface (API) that will be used by the website, the import tool, and the admin tool, to interface with the database (CRUD).
 
+## Setup Instructions
+1. Ensure that your .env file has been created and includes the following key/value pairs:
+    - VERSION
+    - PORT
+1. Run the following command:
+    ```
+    npm run dev
+    ```
+
+## Testing instructions
+1. Ensure that jest is installed globally
+1. Run the following command to run the test suites:
+    ```
+    jest
+    ```
+
+
 ## Endpoints
 ### Test
 ```

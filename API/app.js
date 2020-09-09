@@ -26,8 +26,8 @@ const morgan = require('morgan');
 
 
 // Bring in route files
-const testRoutes = require('./routes/test');
-const cardSetRoutes = require('./routes/cardset');
+const testRoutes = require('./routes/testRoutes');
+const cardSetRoutes = require('./routes/cardsetRoutes');
 
 // use middleware
 app.use(morgan('dev'));
@@ -35,9 +35,7 @@ app.use(bodyParser.json());
 app.use(expressValidator());
 
 // set up Controllers as middleware
-//app.use(`/${process.env.VERSION}/test`, testRoutes);
 const apiVersion = process.env.VERSION || 'v1';
-console.log(`API version: ${apiVersion}`);
 app.use(`/${apiVersion}/test`, testRoutes);
 app.use(`/${apiVersion}/cardset`, cardSetRoutes);
 

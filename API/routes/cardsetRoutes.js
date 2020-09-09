@@ -1,6 +1,6 @@
 // requires
 const express = require('express');
-const { getTestOutput } = require('../controllers/v1/cardset');
+const { getTestOutput } = require('../controllers/v1/cardsetController');
 
 // use the Express router
 const router = express.Router();
