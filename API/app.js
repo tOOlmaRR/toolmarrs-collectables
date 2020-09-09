@@ -27,7 +27,7 @@ const morgan = require('morgan');
 
 // Bring in routes
 const testRoutes = require('./routes/test');
-//const cardSetRoutes = require('./routes/cardset');
+const cardSetRoutes = require('./routes/cardset');
 
 // use middleware
 app.use(morgan('dev'));
@@ -35,6 +35,8 @@ app.use(bodyParser.json());
 app.use(expressValidator());
 
 // set up endpoints: Controllers act as a middleware
-app.get(`/${process.env.VERSION}/test`, testRoutes);
+//app.use(`/${process.env.VERSION}/test`, testRoutes);
+app.use(`/v1/test`, testRoutes);
+app.use(`/v1/cardset`, cardSetRoutes);
 
 module.exports = app;
