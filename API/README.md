@@ -32,7 +32,7 @@ GET: /v1/test/
 ```
 GET: /v1/cardsets/test
 ```
-- Just a "test" endpoint that can be used for monitoring and confirming that the cardset API group resolves correctly
+- Just a "test" endpoint that can be used for monitoring and confirming that the cardsets API group resolves correctly
 
 ### Cardsets - View Seasons
 ```
@@ -58,7 +58,13 @@ GET: /v1/cardsets/{season}/{basesetname}/insertsets
 ## Currently Known Bugs and Limitations
 
 ## History
-### v0.1
+### v1.0
 - basic site creation
-- test endpoints
-- cardset - get seasons endpoint
+- test endpoint
+- cardsets - test endpoint
+- cardsets - get seasons endpoint
+- cardsets - get base sets endpoint
+- cardsets - get insert sets endpoint
+- a few automated tests for all endpoints
+- documentation
+- Postman collection and test requests for each endpoint
