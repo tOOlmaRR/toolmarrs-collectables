@@ -41,15 +41,15 @@ describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON including a "cardSets" array within a "data" object', async() => {
+    test('Should return JSON including a "baseSets" array within a "data" object', async() => {
         const season = 'anything';
         const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
         const responseBody = response.body;
         expect(responseBody['data']).toBeDefined();
-        expect(responseBody['data']['cardSets']).toBeDefined();
+        expect(responseBody['data']['baseSets']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
-        expect(typeof(responseBody['data']['cardSets'])).toBe('object');
-        expect(Array.isArray(responseBody['data']['cardSets'])).toBe(true);
+        expect(typeof(responseBody['data']['baseSets'])).toBe('object');
+        expect(Array.isArray(responseBody['data']['baseSets'])).toBe(true);
     });
 });
 

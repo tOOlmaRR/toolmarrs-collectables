@@ -90,7 +90,7 @@ exports.getBaseSetNamesBySeason = (req, res) => {
             console.log(sets);
             const jsonResponse = {
                 data: {
-                    cardSets: sets
+                    baseSets: sets
                 }
             };
             console.log(jsonResponse);
