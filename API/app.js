@@ -20,14 +20,9 @@ const expressValidator = require('express-validator');
 // middleware that logs http requests
 const morgan = require('morgan');
 
-
-
-// TODO: Connect to DB
-
-
 // Bring in route files
 const testRoutes = require('./routes/testRoutes');
-const cardSetRoutes = require('./routes/cardsetRoutes');
+const cardSetsRoutes = require('./routes/cardsetsRoutes');
 
 // use middleware
 app.use(morgan('dev'));
@@ -37,7 +32,7 @@ app.use(expressValidator());
 // set up Controllers as middleware
 const apiVersion = process.env.VERSION || 'v1';
 app.use(`/${apiVersion}/test`, testRoutes);
-app.use(`/${apiVersion}/cardset`, cardSetRoutes);
+app.use(`/${apiVersion}/cardsets`, cardSetsRoutes);
 
 // export app to server
 module.exports = app;
