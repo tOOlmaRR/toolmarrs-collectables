@@ -11,7 +11,7 @@ describe("GET ${testEndpoint}", () => {
     test('Should return JSON that tells us which endpoint we are hitting', async() => {
         const response = await request(app).get(testEndpoint);
         const responseBody = response.body;
-        expect(response.body['endpoint']).toBe('test');
+        expect(responseBody['endpoint']).toBe('test');
     });
 });
 
