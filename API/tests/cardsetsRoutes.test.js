@@ -26,26 +26,32 @@ describe(`GET ${viewSeasonsEndpoint}`, () => {
         const response = await request(app).get(viewSeasonsEndpoint);
         const responseBody = response.body;
         expect(responseBody['data']).toBeDefined();
-        expect(typeof(responseBody['data']['seasons'])).toBe('object');
         expect(responseBody['data']['seasons']).toBeDefined();
+        expect(typeof(responseBody['data'])).toBe('object');
         expect(typeof(responseBody['data']['seasons'])).toBe('object');
         expect(Array.isArray(responseBody['data']['seasons'])).toBe(true);
     });
 });
 
-// const viewBaseCardsetListEndpoint = '/v1/cardsets/basesets';
-// describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
-//     test('Should return a 200 HTTP status code', async() => {
-//         const response = await request(app).get(viewBaseCardsetListEndpoint);
-//         expect(response.statusCode).toBe(200);
-//     });
+const viewBaseCardsetListEndpoint = '/v1/cardsets/:season/basesets';
+describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
+    test('Should return a 200 HTTP status code', async() => {
+        const season = 'anything';
+        const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
+        expect(response.statusCode).toBe(200);
+    });
 
-//     test('Should return JSON that tells us which endpoint we are hitting', async() => {
-//         const response = await request(app).get(viewBaseCardsetListEndpoint);
-//         const responseBody = response.body;
-//         expect(response.body['data']).toBeDefined();
-//     });
-// });
+    test('Should return JSON that tells us which endpoint we are hitting', async() => {
+        const season = 'anything';
+        const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
+        const responseBody = response.body;
+        expect(responseBody['data']).toBeDefined();
+        expect(responseBody['data']['cardsets']).toBeDefined();
+        expect(typeof(responseBody['data'])).toBe('object');
+        expect(typeof(responseBody['data']['cardsets'])).toBe('object');
+        expect(Array.isArray(responseBody['data']['cardsets'])).toBe(true);
+    });
+});
 
  // avoid jest open handle error
 afterAll(async () => {
