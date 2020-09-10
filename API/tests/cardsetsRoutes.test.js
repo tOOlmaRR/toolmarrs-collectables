@@ -46,10 +46,10 @@ describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
         const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
         const responseBody = response.body;
         expect(responseBody['data']).toBeDefined();
-        expect(responseBody['data']['cardsets']).toBeDefined();
+        expect(responseBody['data']['cardSets']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
-        expect(typeof(responseBody['data']['cardsets'])).toBe('object');
-        expect(Array.isArray(responseBody['data']['cardsets'])).toBe(true);
+        expect(typeof(responseBody['data']['cardSets'])).toBe('object');
+        expect(Array.isArray(responseBody['data']['cardSets'])).toBe(true);
     });
 });
 
