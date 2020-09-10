@@ -10,6 +10,10 @@
     "node",
     "API"
   ],
+  "jest": {
+    "verbose": true,
+    "testTimeout": 10000
+  },
   "author": "George Marr",
   "license": "ISC",
   "dependencies": {
@@ -18,6 +22,7 @@
     "express": "^4.17.1",
     "express-validator": "^5.3.1",
     "morgan": "^1.10.0",
+    "mssql": "^6.2.1",
     "nodemon": "^2.0.4"
   },
   "devDependencies": {
