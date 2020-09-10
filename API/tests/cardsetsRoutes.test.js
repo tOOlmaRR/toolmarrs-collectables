@@ -22,7 +22,7 @@ describe(`GET ${viewSeasonsEndpoint}`, () => {
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON including a seasons array within a data object', async() => {
+    test('Should return JSON including a "seasons" array within a "data" object', async() => {
         const response = await request(app).get(viewSeasonsEndpoint);
         const responseBody = response.body;
         expect(responseBody['data']).toBeDefined();
@@ -41,7 +41,7 @@ describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON that tells us which endpoint we are hitting', async() => {
+    test('Should return JSON including a "cardSets" array within a "data" object', async() => {
         const season = 'anything';
         const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
         const responseBody = response.body;
@@ -50,6 +50,27 @@ describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
         expect(typeof(responseBody['data'])).toBe('object');
         expect(typeof(responseBody['data']['cardSets'])).toBe('object');
         expect(Array.isArray(responseBody['data']['cardSets'])).toBe(true);
+    });
+});
+
+const viewInsertSetListEndpoint = '/v1/cardsets/:season/:basesetname/insertsets';
+describe(`GET ${viewInsertSetListEndpoint}`, () => {
+    test('Should return a 200 HTTP status code', async() => {
+        const season = 'anything';
+        const baseSetName = 'anything';
+        const response = await request(app).get(viewInsertSetListEndpoint.replace(':season', season).replace(':basesetname', baseSetName));
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('Should return JSON including a "insertSets" array within a "data" object', async() => {
+        const season = 'anything';
+        const baseSetName = 'anything';
+        const response = await request(app).get(viewInsertSetListEndpoint.replace(':season', season).replace(':basesetname', baseSetName));
+        expect(responseBody['data']).toBeDefined();
+        expect(responseBody['data']['insertSets']).toBeDefined();
+        expect(typeof(responseBody['data'])).toBe('object');
+        expect(typeof(responseBody['data']['insertSets'])).toBe('object');
+        expect(Array.isArray(responseBody['data']['insertSets'])).toBe(true);
     });
 });
 

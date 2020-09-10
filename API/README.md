@@ -50,11 +50,10 @@ GET: /v1/cardsets/{season}/basesets
 
 ### Cardsets - View Insert Sets
 ```
-GET: /v1/cardsets/{cardsetID}/insertsets
+GET: /v1/cardsets/{season}/{basesetname}/insertsets
 ```
-- Returns a list of all insert sets with the given base set name
+- Returns a list of all insert sets with the given base set name from the given season
 - Used primarily to populate a drop down in the website
-- Also includes ("base set") by default
 
 ## Currently Known Bugs and Limitations
 
