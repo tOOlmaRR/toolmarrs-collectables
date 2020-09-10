@@ -66,6 +66,7 @@ describe(`GET ${viewInsertSetListEndpoint}`, () => {
         const season = 'anything';
         const baseSetName = 'anything';
         const response = await request(app).get(viewInsertSetListEndpoint.replace(':season', season).replace(':basesetname', baseSetName));
+        const responseBody = response.body;
         expect(responseBody['data']).toBeDefined();
         expect(responseBody['data']['insertSets']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');

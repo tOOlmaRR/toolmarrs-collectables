@@ -23,7 +23,6 @@ exports.getSeasons = (req, res) => {
         },
         stream: true
     };
-    //console.log(config);
 
     (async function () {
         try {
@@ -54,7 +53,7 @@ exports.getSeasons = (req, res) => {
     });
 }
 
-// Return a list of distinct base sets (just their names) for a specified season
+// Return a list of base set names for a specified season
 exports.getBaseSetNamesBySeason = (req, res) => {
     const season = req.params["season"];
 
@@ -73,7 +72,7 @@ exports.getBaseSetNamesBySeason = (req, res) => {
         },
         stream: true
     };
-    //console.log(config);
+
 
     (async function () {
         try {
@@ -87,13 +86,64 @@ exports.getBaseSetNamesBySeason = (req, res) => {
                 const record = records[i];
                 sets.push(record.BaseSetName);
             }
-            console.log(sets);
+            //console.log(sets);
             const jsonResponse = {
                 data: {
                     baseSets: sets
                 }
             };
-            console.log(jsonResponse);
+            //console.log(jsonResponse);
+            res.json(jsonResponse);
+        } catch (err) {
+            console.log(err);
+        }
+    })();
+
+    sql.on('error', err => {
+        console.log(err);
+    });
+}
+
+// Return a list of distinct insert set names within a specified base set (by name) in a specified season
+exports.getInsertSetNamesByBaseSetNameAndSeason = (req, res) => {
+    const season = req.params["season"];
+    const baseSetName = req.params["basesetname"];
+
+    // Connect to DB
+    const sql = require('mssql')
+
+    // Configuration
+    const config = {
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        server: process.env.DB_SERVER,
+        database: process.env.DB_NAME,
+        options: {
+            enableArithAbort: true,
+            encrypt: true
+        },
+        stream: true
+    };
+
+    (async function () {
+        try {
+            const pool = await sql.connect(config)
+            const insertSetsFromDb = await pool.request()
+                .query(`SELECT InsertSetName FROM cardset WHERE Season = '${season}' AND BaseSetName = '${baseSetName}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`);
+            const records = insertSetsFromDb.recordsets[0];
+            //console.log(records);
+            
+            let sets = [];
+            for (let i = 0; i < records.length; i++) {
+                const record = records[i];
+                sets.push(record.InsertSetName);
+            }
+            //console.log(sets);
+            const jsonResponse = {
+                data: {
+                    insertSets: sets
+                }
+            };
             res.json(jsonResponse);
         } catch (err) {
             console.log(err);
