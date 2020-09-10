@@ -10,6 +10,10 @@
     "node",
     "API"
   ],
+  "jest": {
+    "verbose": true,
+    "testTimeout": 10000
+  },
   "author": "George Marr",
   "license": "ISC",
   "dependencies": {

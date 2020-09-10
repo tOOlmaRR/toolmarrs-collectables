@@ -15,8 +15,10 @@ This is a application program interface (API) that will be used by the website, 
 1. Ensure that jest is installed globally
 1. Run the following command to run the test suites:
     ```
-    jest
+    jest --detectOpenHandles --forceExit
     ```
+    The *detectOpenHandles* option indicates if any async operations have not completed, and the *forceExit* appears to be needed quite often for Jest to not hang after a round of tests has completed (not sure what causes the hang - perhaps some async issue I haven't tracked down yet).
+
 
 
 ## Endpoints
