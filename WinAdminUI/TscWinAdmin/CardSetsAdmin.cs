@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -22,6 +22,7 @@ namespace TscWinAdmin
         {
             // TODO: This line of code loads data into the 'geosTradingCardsDataSet.manufacturer' table. You can move, or remove it, as needed.
             this.manufacturerTableAdapter.Fill(this.geosTradingCardsDataSet.manufacturer);
+            
             // TODO: This line of code loads data into the 'geosTradingCardsDataSet.cardset' table. You can move, or remove it, as needed.
             this.cardsetTableAdapter.Fill(this.geosTradingCardsDataSet.cardset);
 
@@ -32,12 +33,10 @@ namespace TscWinAdmin
             //);
             //this.geosTradingCardsDataSet.Relations.Add(relation);
 
-
-
             // Populates the dropdown but doesn't set the appropriate name
             //manufacturerTableAdapter manufacturerDataAdapter = new manufacturerTableAdapter();
             //manufacturerDataAdapter.Fill(this.geosTradingCardsDataSet.manufacturer);
-            
+
             //DataGridViewComboBoxColumn manufacturer = new DataGridViewComboBoxColumn();
             //manufacturer.DataSource = this.geosTradingCardsDataSet.manufacturer;
             //manufacturer.DisplayMember = "Name";
@@ -51,7 +50,6 @@ namespace TscWinAdmin
             if (choice == DialogResult.Yes)
             {
                 this.cardsetTableAdapter.Update(this.geosTradingCardsDataSet.cardset);
-
             }
         }
 
