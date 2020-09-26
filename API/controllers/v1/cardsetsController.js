@@ -154,3 +154,48 @@ exports.getInsertSetNamesByBaseSetNameAndSeason = (req, res) => {
         console.log(err);
     });
 }
+
+exports.getCardSetDetails = (req, res) => {
+    const season = req.params["season"];
+    const baseSetName = req.params["basesetname"];
+    let insertSetName = req.params["insertsetname"] == undefined ? '' : req.params["insertsetname"];
+
+    // Connect to DB
+    const sql = require('mssql')
+
+    // Configuration
+    const config = {
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        server: process.env.DB_SERVER,
+        database: process.env.DB_NAME,
+        options: {
+            enableArithAbort: true,
+            encrypt: true
+        },
+        stream: true
+    };
+
+    (async function () {
+        try {
+            const pool = await sql.connect(config)
+            const cardsetDetailsFromDb = await pool.request()
+                .query(`SELECT top 1 * FROM cardset WHERE Season = '${season}' AND BaseSetName = '${baseSetName}' AND InsertSetName = '${insertSetName}'`);
+            const cardset = cardsetDetailsFromDb.recordsets[0][0] == undefined ? {} : cardsetDetailsFromDb.recordsets[0][0];
+            //console.log(cardset);
+            
+            const jsonResponse = {
+                data: {
+                    cardset
+                }
+            };
+            res.json(jsonResponse);
+        } catch (err) {
+            console.log(err);
+        }
+    })();
+
+    sql.on('error', err => {
+        console.log(err);
+    });
+}
