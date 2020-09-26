@@ -55,16 +55,27 @@ GET: /v1/cardsets/{season}/{basesetname}/insertsets
 - Returns a list of all insert sets with the given base set name from the given season
 - Used primarily to populate a drop down in the website
 
+### Cardsets - View Card Set
+```
+GET: /v1/cardsets/{season}/{basesetname}/{insertsetname}
+```
+- Returns details of a card set given the desired season, base set name, and insert set name
+- Used to populate the card set details page/pane
+
 ## Currently Known Bugs and Limitations
 
 ## History
+
+### v1.1
+- cardsets - view card set details
+
 ### v1.0
 - basic site creation
 - test endpoint
 - cardsets - test endpoint
-- cardsets - get seasons endpoint
-- cardsets - get base sets endpoint
-- cardsets - get insert sets endpoint
+- cardsets - view seasons endpoint
+- cardsets - view base sets endpoint
+- cardsets - view insert sets endpoint
 - a few automated tests for all endpoints
 - documentation
 - Postman collection and test requests for each endpoint
