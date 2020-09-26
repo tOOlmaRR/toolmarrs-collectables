@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require('../app');
 
 const testEndpoint = '/v1/cardsets/test';
-describe(`GET ${testEndpoint}`, () => {
+describe('Test Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
         const response = await request(app).get(testEndpoint);
         expect(response.statusCode).toBe(200);
@@ -16,7 +16,7 @@ describe(`GET ${testEndpoint}`, () => {
 });
 
 const viewSeasonsEndpoint = '/v1/cardsets/seasons';
-describe(`GET ${viewSeasonsEndpoint}`, () => {
+describe('View Seasons Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
         const response = await request(app).get(viewSeasonsEndpoint);
         expect(response.statusCode).toBe(200);
@@ -34,7 +34,7 @@ describe(`GET ${viewSeasonsEndpoint}`, () => {
 });
 
 const viewBaseCardsetListEndpoint = '/v1/cardsets/:season/basesets';
-describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
+describe('View Base Sets Endpoints', () => {
     test('Should return a 200 HTTP status code', async() => {
         const season = 'anything';
         const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
@@ -54,7 +54,7 @@ describe(`GET ${viewBaseCardsetListEndpoint}`, () => {
 });
 
 const viewInsertSetListEndpoint = '/v1/cardsets/:season/:basesetname/insertsets';
-describe(`GET ${viewInsertSetListEndpoint}`, () => {
+describe('View Insert Sets Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
         const season = 'anything';
         const baseSetName = 'anything';
@@ -75,7 +75,65 @@ describe(`GET ${viewInsertSetListEndpoint}`, () => {
     });
 });
 
- // avoid jest open handle error
+const viewBaseSetDetailsEndpoint = '/v1/cardsets/:season/:basesetname';
+describe('View Card Set Endpoint for a Base Set', () => {
+    test('Should return a 200 HTTP status code', async() => {
+        const season = 'anything';
+        const baseSetname = 'anything';
+        const response = await request(app).get(
+            viewBaseSetDetailsEndpoint.replace(':season', season)
+                .replace(':basesetname', baseSetname)
+        );
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('Should return JSON including a "cardset" object within a "data" object', async() => {
+        const season = 'anything';
+        const baseSetname = 'anything';
+        const response = await request(app).get(
+            viewBaseSetDetailsEndpoint.replace(':season', season)
+                .replace(':basesetname', baseSetname)
+        );
+        const responseBody = response.body;
+        expect(responseBody['data']).toBeDefined();
+        expect(responseBody['data']['cardset']).toBeDefined();
+        expect(typeof(responseBody['data'])).toBe('object');
+        expect(typeof(responseBody['data']['cardset'])).toBe('object');
+    });
+});
+
+const viewInsertSetDetailsEndpoint = '/v1/cardsets/:season/:basesetname/:insertsetname';
+describe('View Card Set Endpoint for an Insert Set', () => {
+    test('Should return a 200 HTTP status code', async() => {
+        const season = 'anything';
+        const baseSetname = 'anything';
+        const insertSetName = 'anything';    
+        const response = await request(app).get(viewInsertSetDetailsEndpoint
+            .replace(':season', season)
+            .replace(':basesetname', baseSetname)
+            .replace(':insertsetname', insertSetName)
+            );
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('Should return JSON including a "cardset" object within a "data" object', async() => {
+        const season = 'anything';
+        const baseSetname = 'anything';
+        const insertSetName = 'anything';
+        const response = await request(app).get(viewInsertSetDetailsEndpoint
+            .replace(':season', season)
+            .replace(':basesetname', baseSetname)
+            .replace(':insertsetname', insertSetName)
+            );
+        const responseBody = response.body;
+        expect(responseBody['data']).toBeDefined();
+        expect(responseBody['data']['cardset']).toBeDefined();
+        expect(typeof(responseBody['data'])).toBe('object');
+        expect(typeof(responseBody['data']['cardset'])).toBe('object');
+    });
+});
+
+// avoid jest open handle error
 afterAll(async () => {
 	await new Promise(resolve => setTimeout(() => resolve(), 500));
 });
