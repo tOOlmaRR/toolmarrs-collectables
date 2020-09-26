@@ -23,7 +23,7 @@ This is a application program interface (API) that will be used by the website, 
     ```
     jest --detectOpenHandles --forceExit --testNamePattern "View Card Set Endpoint"
     ```
-    The testNamePattern is a *regex* that that defines a pattern of test names to run. In this case, this command will run both the Base Set and Insert Set test suite because they both start with this string.
+    The testNamePattern is a *regex* that defines a pattern of test names to run. In this case, this command will run both the Base Set and Insert Set test suite because they both start with this string.
 
 
 
