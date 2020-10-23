@@ -9,7 +9,7 @@ use GeoTradingCards\InventoryImportUtility\Helpers\DateTimeHelpers;
 
 class CardSetEntity extends BaseEntity implements iEntity
 {
-    // private members
+    // private members - DB columns
     private $baseSetName;
     private $insertSetName;
     private $fullName;
@@ -20,7 +20,10 @@ class CardSetEntity extends BaseEntity implements iEntity
     private $comments;
     private $lastBeckettUpdate;
     private $lastInventoryCheck;
-    private $manufacturerID;
+    
+    // private members - foreign keys
+    private $manufacturer_ID;
+    private $sport_ID;
     
     
     
@@ -31,17 +34,20 @@ class CardSetEntity extends BaseEntity implements iEntity
         $db = $this->getDB();
         if ($this->getUseSPROCs()) {
             $sproc = $this->getSPROCs()["select"]["cardset"];
-            $sql = "EXEC [$sproc] @ID=:id, @baseSetName=:baseSetName, @insertSetName=:insertSetName, @season=:season";
+            $sql = "EXEC [$sproc] @ID=:id, @baseSetName=:baseSetName, @insertSetName=:insertSetName, @season=:season, @sport_ID=:sportID";
             $sqlParams = [":id" => $cardSet->getID(),
                 ":baseSetName" => $cardSet->getBaseSetName(),
                 ":insertSetName" => $cardSet->getInsertSetName(),
                 ":season" => $cardSet->getSeason(),
+                ":sportID" => 1, // for now, assume we are trying to retrieve a Hockey card set.
             ];
         } else {
-            $sql = "SELECT `ID`, `BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID` FROM `cardset` WHERE `BaseSetName` = :baseSetName AND `InsertSetName` = :insertSetName AND `Season` = :season LIMIT 1";
+            $sql = "SELECT `ID`, `BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, 
+            `Manufacturer_ID`, `Sport_ID` FROM `cardset` WHERE `BaseSetName` = :baseSetName AND `InsertSetName` = :insertSetName AND `Season` = :season AND `Sport_ID` = :sportID LIMIT 1";
             $sqlParams = [":baseSetName" => $cardSet->getBaseSetName(),
                 ":insertSetName" => $cardSet->getInsertSetName(),
                 ":season" => $cardSet->getSeason(),
+                ":sportID" => 1, // for now, assume we are trying to retrieve a Hockey card set.
             ];
         }
         $getStatement = $db->prepare($sql);
@@ -76,6 +82,7 @@ class CardSetEntity extends BaseEntity implements iEntity
             $cardSetFromDatabase->setLastBeckettUpdate($row["LastBeckettUpdate"] != null ? $row["LastBeckettUpdate"] : '');
             $cardSetFromDatabase->setLastInventoryCheck($row["LastInventoryCheck"] != null ? $row["LastInventoryCheck"] : '');
             $cardSetFromDatabase->setManufacturer($cardSet->getManufacturer());
+            $cardSetFromDatabase->setSport($cardSet->getSport()); 
         }
         return $cardSetFromDatabase;
     }
@@ -83,7 +90,7 @@ class CardSetEntity extends BaseEntity implements iEntity
     
     /**
     * Insert a given CardSet object into the database, if it doesn't already exist
-    * In the absense of an ID, a CardSet is uniquely identified by it's BaseSetName, InsertSetName and Season
+    * In the absense of an ID, a CardSet is uniquely identified by it's BaseSetName, InsertSetName, Season, and Sport
     * 
     * @param {CardSet} $cardSet
     * 
@@ -104,17 +111,19 @@ class CardSetEntity extends BaseEntity implements iEntity
         $this->comments = $cardSet->getComments();
         $this->lastBeckettUpdate = DateTimeHelpers::convertToDbFriendlyString($cardSet->getLastBeckettUpdate(), "F j, Y");
         $this->lastInventoryCheck = DateTimeHelpers::convertToDbFriendlyString($cardSet->getLastInventoryCheck(), "F j, Y");
-        $this->manufacturerID = $cardSet->getManufacturer()->getID();
+        $this->manufacturer_ID = $cardSet->getManufacturer()->getID();
+        $this->sport_ID = $cardSet->getSport()->getID();
         
         // set up the query
         $db = $this->getDB();
         if ($this->getUseSPROCs()) {
             $sproc = $this->getSPROCs()["insert"]["cardset"];
-            $sql = "EXEC [$sproc] :id, :baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturer_ID";
+            $sql = "EXEC [$sproc] :id, :baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturerID,
+            :sportID";
             $insertStatement = $db->prepare($sql);
             $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
-            $sql = "INSERT INTO `cardset` (`BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID`) VALUES (:baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturer_ID)";
+            $sql = "INSERT INTO `cardset` (`BaseSetName`, `InsertSetName`, `FullName`, `Season`, `Size`, `Rarity`, `GradingModifier`, `Comments`, `LastBeckettUpdate`, `LastInventoryCheck`, `Manufacturer_ID`, `Sport_ID`) VALUES (:baseSetName, :insertSetName, :fullName, :season, :size, :rarity, :gradingModifier, :comments, :lastBeckettUpdate, :lastInventoryCheck, :manufacturerID, :sportID)";
             $insertStatement = $db->prepare($sql);
         }
         $insertStatement->bindParam(":baseSetName", $this->baseSetName);
@@ -127,7 +136,8 @@ class CardSetEntity extends BaseEntity implements iEntity
         $insertStatement->bindParam(":comments", $this->comments);
         $insertStatement->bindParam(":lastBeckettUpdate", $this->lastBeckettUpdate);
         $insertStatement->bindParam(":lastInventoryCheck", $this->lastInventoryCheck);
-        $insertStatement->bindParam(":manufacturer_ID", $this->manufacturerID);        
+        $insertStatement->bindParam(":manufacturerID", $this->manufacturer_ID);
+        $insertStatement->bindParam(":sportID", $this->sport_ID);
         
         // perform the insert
         $insertStatement->execute();

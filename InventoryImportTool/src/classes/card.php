@@ -8,19 +8,25 @@ use GeoTradingCards\InventoryImportUtility\Classes\PlayerPosition as PlayerPosit
 use GeoTradingCards\InventoryImportUtility\Classes\CardValue as CardValue;
 use GeoTradingCards\InventoryImportUtility\Classes\CardAttribute as CardAttribute;
 use GeoTradingCards\InventoryImportUtility\Classes\SingleCard as SingleCard;
+use GeoTradingCards\InventoryImportUtility\Classes\Sport as Sport;
 
 class Card
 {
-    // private members
+    // private members - DB columns
     private $ID;
     private $cardNumber;
     private $title;
     private $comments;
     private $gradingModifier;
+
+    // private members - foreign keys
     private $cardSet;
     private $subset;
     private $team;
     private $playerPosition;
+    private $sport;
+    
+    // private members - related columns
     private $cardValue;
     private $attributes;
     private $singleCards;
@@ -35,7 +41,7 @@ class Card
     
     
     
-    // public getters/accessors
+    // public getters - DB columns
     public function getID() : ?int
     {
         return $this->ID;
@@ -61,6 +67,7 @@ class Card
         return $this->gradingModifier;
     }
     
+    // public getters - foreign keys
     public function getCardSet() : CardSet
     {
         return $this->cardSet;
@@ -80,7 +87,13 @@ class Card
     {
         return $this->playerPosition;
     }
+
+    public function getSport() : Sport
+    {
+        return $this->sport;
+    }
     
+    // public getters - related columns
     public function getCardValue() : ?CardValue
     {
         return $this->cardValue;
@@ -98,7 +111,7 @@ class Card
     
     
     
-    // public setters
+    // public setters - DB columns
     public function setID(int $cardID)
     {
         $this->ID = $cardID;
@@ -124,6 +137,7 @@ class Card
         $this->gradingModifier = $cardGradingModifier;
     }
     
+    // public setters - foreign keys
     public function setCardSet(CardSet $cardSet)
     {
         $this->cardSet = $cardSet;
@@ -143,7 +157,13 @@ class Card
     {
         $this->playerPosition = $cardPlayerPosition;
     }
+
+    public function setSport(Sport $cardSport)
+    {
+        $this->sport = $cardSport;
+    }
     
+    // public setters - related columns
     public function setCardValue(CardValue $cardValue)
     {
         $this->cardValue = $cardValue;

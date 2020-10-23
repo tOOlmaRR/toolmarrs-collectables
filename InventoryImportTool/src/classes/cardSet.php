@@ -2,10 +2,11 @@
 namespace GeoTradingCards\InventoryImportUtility\Classes;
 
 use GeoTradingCards\InventoryImportUtility\Classes\Manufacturer as Manufacturer;
+use GeoTradingCards\InventoryImportUtility\Classes\Sport as Sport;
 
 class CardSet
 {
-    // private members
+    // private members - DB columns
     private $ID;
     private $baseSetName;
     private $insertSetName;
@@ -17,7 +18,12 @@ class CardSet
     private $comments;
     private $lastBeckettUpdate;
     private $lastInventoryCheck;
+    
+    // private members - foreign keys
     private $manufacturer;
+    private $sport;
+    
+    // private members - related columns
     private $cards;
     private $subsets;
     
@@ -30,7 +36,7 @@ class CardSet
     }
     
     
-    // public getters/accessors
+    // public getters - DB columns
     public function getID() : ?int
     {
         return $this->ID;
@@ -86,11 +92,18 @@ class CardSet
         return $this->lastInventoryCheck;
     }
     
+    // public getters - foreign keys
     public function getManufacturer() : Manufacturer
     {
         return $this->manufacturer;
     }
+
+    public function getSport() : Sport
+    {
+        return $this->sport;
+    }
     
+    // public getters - related columns
     public function getCards() : ?array
     {
         return $this->cards;
@@ -103,7 +116,7 @@ class CardSet
     
     
     
-    // public setters
+    // public setters - DB columns
     public function setID(int $cardSetID)
     {
         $this->ID = $cardSetID;
@@ -159,11 +172,18 @@ class CardSet
         $this->lastInventoryCheck = $cardSetLastInventoryCheck;
     }
 
+    // public setters - foreign keys
     public function setManufacturer(Manufacturer $cardSetManufacturer)
     {
         $this->manufacturer = $cardSetManufacturer;
     }
+
+    public function setSport(Sport $cardSetSport)
+    {
+        $this->sport = $cardSetSport;
+    }
     
+    // public setters - related columns
     public function setCards(array $cardSetCards)
     {
         $this->cards = $cardSetCards;    
