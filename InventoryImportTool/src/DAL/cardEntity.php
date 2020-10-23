@@ -15,16 +15,19 @@ use GeoTradingCards\InventoryImportUtility\DAL\BaseEntity;
 
 class CardEntity extends BaseEntity implements iEntity
 {
-    // private members
+    // private members - DB Columns
     private $ID;
     private $cardNumber;
     private $title;
     private $comments;
     private $gradingModifier;
+
+    // private members - foreign keys
     private $cardSet_ID;
     private $subset_ID;
     private $team_ID;
     private $playerPosition_ID;
+    private $sport_ID;
 
 
 
@@ -35,7 +38,7 @@ class CardEntity extends BaseEntity implements iEntity
         $db = $this->getDB();
         if ($this->getUseSPROCs()) {
             $sproc = $this->getSPROCs()["select"]["card"];
-            $sql = "EXEC [$sproc] @ID=:id, @cardNumber=:cardNumber, @title=:title, @cardSet_ID=:cardSetID";
+            $sql = "EXEC [$sproc] @ID=:id, @cardNumber=:cardNumber, @cardTitle=:title, @cardSet_ID=:cardSetID";
             $sqlParams = [":id" => $card->getID(),
                 ":cardNumber" => $card->getCardNumber(),
                 ":title" => $card->getTitle(),
@@ -44,14 +47,13 @@ class CardEntity extends BaseEntity implements iEntity
         } else {
             // if we have an ID, query based on that alone
             if (!empty($card->getID())) {
-                $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `ID` = :id";
+                $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`, `Sport_ID` FROM `card` WHERE `ID` = :id";
                 $sqlParams[":id"] = $card->getID();
             }
-            // if we don't have an ID, use the combination of CardNumber and CardSet_ID
-            // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
-            // TODO: Handle no card number like we do in the SPROC
+            // if we don't have an ID, use the combination of CardNumber, Title, and CardSet_ID
+            // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number            
             else {
-                $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID` FROM `card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID";
+                $sql = "SELECT `ID`, `CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`, `Sport_ID` FROM `card` WHERE `CardNumber` = :cardNumber AND `CardSet_ID` = :cardSetID AND `Title` = :title";
                 $sqlParams[":cardNumber"] = $card->getCardNumber();
                 $cardSet = $card->getCardSet();
                 if (empty($cardSet)) {
@@ -93,6 +95,7 @@ class CardEntity extends BaseEntity implements iEntity
             }
             
             if (!is_null($row["Team_ID"])) {
+                // assume that the team belongs to the NHL League and the Hockey sport
                 $nhlLeague = new League();
                 $nhlLeague->setID(1);
                 $nhlLeague->setName('National Hockey League');
@@ -104,12 +107,23 @@ class CardEntity extends BaseEntity implements iEntity
                 $team = new Team();
                 $team->setID($row["Team_ID"]);
                 $team->setLeague($nhlLeague);
+                $cardFromDatabase->setTeam($team);
             }
             
             if (!is_null($row["PlayerPosition_ID"])) {
                 $position = new PlayerPosition();
                 $position->setID($row["PlayerPosition_ID"]);
             }
+            
+            $hockeySport = new Sport();
+            if (!is_null($row["Sport_ID"] && $row["Sport_ID"] == 1)) {
+                $hockeySport->setID(1);
+                $hockeySport->setName("Hockey");
+            } else {
+                $hockeySport->setID($row["Sport_ID"]);
+            }
+            $cardFromDatabase->setSport($hockeySport);
+            
         }
         return $cardFromDatabase;
     }
@@ -129,16 +143,17 @@ class CardEntity extends BaseEntity implements iEntity
         $this->subset_ID = !is_null($card->getSubset()) ? $card->getSubset()->getID() : null;
         $this->team_ID = !is_null($card->getTeam()) ? $card->getTeam()->getID() : null;
         $this->playerPosition_ID = !is_null($card->getPlayerPosition()) ? $card->getPlayerPosition()->getID() : null;
+        $this->sport_ID = 1; // assume all cards we are inserting are Hockey cards
         
         // set up the query
         $db = $this->getDB();
         if ($this->getUseSPROCs()) {
             $sproc = $this->getSPROCs()["insert"]["card"];
-            $sql = "EXEC [$sproc] :id, :cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID";
+            $sql = "EXEC [$sproc] :id, :cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID, :sportID";
             $insertStatement = $db->prepare($sql);
             $insertStatement->bindParam(":id", $newID, \PDO::PARAM_INT, 10);
         } else {
-            $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID)";
+            $sql = "INSERT INTO `card` (`CardNumber`, `Title`, `Comments`, `GradingModifier`, `CardSet_ID`, `Subset_ID`, `Team_ID`, `PlayerPosition_ID`, `Sport_ID`) VALUES (:cardNumber, :title, :comments, :gradingModifier, :cardSetID, :subsetID, :teamID, :positionID, :sportID)";
             $insertStatement = $db->prepare($sql);
         }
         $insertStatement->bindParam(":cardNumber", $this->cardNumber);
@@ -149,6 +164,7 @@ class CardEntity extends BaseEntity implements iEntity
         $insertStatement->bindParam(":subsetID", $this->subset_ID);
         $insertStatement->bindParam(":teamID", $this->team_ID);
         $insertStatement->bindParam(":positionID", $this->playerPosition_ID);
+        $insertStatement->bindParam(":sportID", $this->sport_ID);
 
         // perform the insert
         $insertStatement->execute();

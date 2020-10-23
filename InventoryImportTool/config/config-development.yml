@@ -11,7 +11,7 @@
 database:
     type: "mssql"
     host: "MARR2\\GMARRMSSQL1"
-    name: "GeosTradingCards"
+    name: "GeosTradingCards-DEV"
     user: "Urgele1"
     password: "goldmOOn78!"
     useSPROCS: true
