@@ -231,6 +231,12 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
                     break;
             } //end switch
             
+            // set the CardSet's sport to "Hockey" by default
+            $hockeySport = new Sport();
+            $hockeySport->setID(1);
+            $hockeySport->setName("Hockey");
+            $newCardSet->setSport($hockeySport);
+
             // If there isn't a flag to stop parsing, get the next row
             if (!$this->getStopParsing()) {
                 $currentRow = $this->readNextCsvRecord($fileResource);
@@ -530,6 +536,12 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
             // set other fields that we do not parse from the data file
             $newCard->setGradingModifier(1.0);
             $newCard->setComments("");
+            
+            // set the Card's sport to "Hockey" by default
+            $hockeySport = new Sport();
+            $hockeySport->setID(1);
+            $hockeySport->setName("Hockey");
+            $newCard->setSport($hockeySport);
             
             // add this new Card to the collection - include special case for cards with no card number (use title as the key)
             $cardNumber = $newCard->getCardNumber();
