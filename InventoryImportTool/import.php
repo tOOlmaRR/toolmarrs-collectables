@@ -96,9 +96,9 @@ try {
                 // Insert the data into the database
                 $success = $importer->insertObjects();
                 if (!$success) {
-                    echo "Failure! An issue occured during database insertions: " . PHP_EOL;
+                    echo PHP_EOL . "Failure! An issue occured during database insertions and the operation has been rolled-back" . PHP_EOL;
                     if ($importer->getParseError() != "") {
-                        echo $importer->getParseError();
+                        echo $importer->getParseError() . PHP_EOL;
                     }
                 } else {
                     echo "Success! Data has been successfully inserted into the database" . PHP_EOL;
