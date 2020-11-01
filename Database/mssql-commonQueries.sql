@@ -1,5 +1,5 @@
 -- which database are we connecting to?
-use [GeosTradingCards]
+use [GeosTradingCards-DEV]
 --use [tsc2020]
 
 -- select *
@@ -65,7 +65,8 @@ from [dbo].[cardset] with (nolock)
 left join [dbo].[manufacturer] with (nolock)
 on cardset.[Manufacturer_ID] = [manufacturer].ID
 --where cardset.ID > 169
-order by season
+order by id desc
+--order by season desc
 
 -- cards grid
 select [card].id, [card].CardNumber, [card].Title, Attributes.Abbreviation, [team].Name, [playerposition].Abbreviation, [cardvalue].LowValue, [cardvalue].HighValue, Subset.Name, Card.GradingModifier, 

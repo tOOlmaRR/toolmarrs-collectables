@@ -224,10 +224,16 @@ class BaseImporter implements iImporter
                     }
                 }
             }
+            // if we got this far, and we have no errors, we should be good to commit the transaction!
+            if (empty($this->getParseError())) {
+                $db->commit();
+                return true;
+            } else {
+                $db->rollback();
+                return false;
+            }
         }
-        // if we got this far, we should be good to commit the transaction!
-        $db->commit();
-        return true;
+        return true;        
     }
     
     
