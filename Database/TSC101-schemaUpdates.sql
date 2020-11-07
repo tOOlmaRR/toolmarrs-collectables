@@ -1,4 +1,4 @@
-USE [GeosTradingCards-DEV]
+USE [GeosTradingCards]
 GO
 
 -- Add FK column and constraint to link up Card table to the Sport table (0-to-many)
