@@ -7,7 +7,9 @@ const router = express.Router();
 
 // map up routes to controller methods
 router.get(`/test`, getTestOutput);
-router.get(`/seasons`, getSeasons);
+router.get(`/:sport/seasons`, getSeasons);
+
+//TODO: UPDATE THESE
 router.get(`/:season/basesets`, getBaseSetNamesBySeason);
 router.get(`/:season/:basesetname/insertsets`, getInsertSetNamesByBaseSetNameAndSeason);
 router.get('/:season/:basesetname', getCardSetDetails);

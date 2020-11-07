@@ -9,6 +9,11 @@ exports.getTestOutput = (req, res) => {
 
 // Return a list of distinct seasons based on all card sets in the database
 exports.getSeasons = (req, res) => {
+    // collect inputs
+    inputs = {};
+    const sport = req.params["sport"];
+    inputs.sport = sport;
+    
     // Connect to DB
     const sql = require('mssql')
 
@@ -28,15 +33,18 @@ exports.getSeasons = (req, res) => {
         try {
             const pool = await sql.connect(config)
             const seasonsFromDb = await pool.request()
-                .query('SELECT DISTINCT season FROM cardset ORDER BY season ASC');
+                .query(`SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${sport}' ORDER BY cs.Season ASC`);
             const records = seasonsFromDb.recordsets[0];
             let seasons = [];
             for (let i = 0; i < records.length; i++) {
                 const record = records[i];
-                seasons.push(record.season);
+                seasons.push(record.Season);
             }
 
             const jsonResponse = {
+                inputs: {
+                    sport
+                },
                 data: {
                     seasons
                 }

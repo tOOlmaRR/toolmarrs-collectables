@@ -15,24 +15,35 @@ describe('Test Endpoint', () => {
     });
 });
 
-const viewSeasonsEndpoint = '/v1/cardsets/seasons';
+const viewSeasonsEndpoint = '/v1/cardsets/:sport/seasons';
 describe('View Seasons Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
+        const sport = 'hockey';
         const response = await request(app).get(viewSeasonsEndpoint);
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON including a "seasons" array within a "data" object', async() => {
+    test('Should return JSON including an "inputs" array with the received key-value pairs and a "seasons" array within a "data" object', async() => {
+        const sport = 'hockey';
         const response = await request(app).get(viewSeasonsEndpoint);
         const responseBody = response.body;
+        expect(responseBody['inputs']).toBeDefined();
+        expect(typeof(responseBody['inputs'])).toBe('object');
+        
+        expect(responseBody['inputs']['sport']).toBeDefined();
+        expect(typeof(responseBody['inputs']['sport'])).toBe('string');
+        
         expect(responseBody['data']).toBeDefined();
-        expect(responseBody['data']['seasons']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
+        
+        expect(responseBody['data']['seasons']).toBeDefined();
         expect(typeof(responseBody['data']['seasons'])).toBe('object');
         expect(Array.isArray(responseBody['data']['seasons'])).toBe(true);
     });
 });
 
+
+// TODO: UPDATE THESE
 const viewBaseCardsetListEndpoint = '/v1/cardsets/:season/basesets';
 describe('View Base Sets Endpoints', () => {
     test('Should return a 200 HTTP status code', async() => {

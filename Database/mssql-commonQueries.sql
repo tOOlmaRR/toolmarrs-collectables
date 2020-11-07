@@ -126,3 +126,10 @@ ALTER TABLE singlecardgrading NOCHECK CONSTRAINT FK_singlecardgrading_singlecard
 update singlecardgrading set SingleCard_ID = '0004265' where SingleCard_ID = '4265'
 update singlecard set ID = '0004265' where id = '4265'
 ALTER TABLE singlecardgrading WITH CHECK CHECK CONSTRAINT FK_singlecardgrading_singlecard
+
+SELECT DISTINCT cs.Season 
+FROM cardset cs WITH (NOLOCK) 
+INNER JOIN sport s WITH (NOLOCK) 
+	ON cs.Sport_ID = s.ID 
+	AND s.Name = 'hockey' 
+ORDER BY cs.Season ASC
