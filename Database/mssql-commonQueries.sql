@@ -1,5 +1,6 @@
 -- which database are we connecting to?
 use [GeosTradingCards-DEV]
+--use [GeosTradingCards]
 --use [tsc2020]
 
 -- select *
@@ -88,3 +89,40 @@ left join [singlecardgrading] on [singlecardgrading].SingleCard_ID = [singlecard
 left join [gradingclass] on [gradingclass].ID = [singlecardgrading].GradingClass_ID
 --where [singlecard].Card_ID = 1196
 order by ID
+
+-- all cards in Trade 8
+select cs.ID as CardSetID, cs.FullName, s.ID, c.CardNumber, c.Title, a.Abbreviation, t.Name, v.HighValue, s.SellPrice, g.Name, ss.Name, cs.Rarity, s.Cost from [singlecard] s
+left join [dbo].[card] c on s.Card_ID = c.ID
+left join [cardset] cs on c.CardSet_ID = cs.ID
+left join [card_has_attributes] cha on cha.Card_ID = c.ID
+left join [attributes] a on a.ID = cha.Attributes_ID
+left join [team] t on t.ID = c.Team_ID
+left join [playerposition] p on p.ID = c.PlayerPosition_ID
+left join [cardvalue] v on v.Card_ID = c.ID
+left join [subset] ss on ss.ID = c.Subset_ID
+left join singlecardgrading scg on scg.SingleCard_ID = s.ID
+left join gradingclass g on g.ID = scg.GradingClass_ID
+where s.Status = 'Traded - Trade #8'
+order by cs.FullName, c.CardNumber
+
+-- Single Card Lookup
+select cs.ID as CardSetID, cs.FullName, s.ID, c.CardNumber, c.Title, a.Abbreviation, t.Name, v.HighValue, s.SellPrice, g.Name, ss.Name, cs.Rarity, s.Cost from [singlecard] s
+left join [dbo].[card] c on s.Card_ID = c.ID
+left join [cardset] cs on c.CardSet_ID = cs.ID
+left join [card_has_attributes] cha on cha.Card_ID = c.ID
+left join [attributes] a on a.ID = cha.Attributes_ID
+left join [team] t on t.ID = c.Team_ID
+left join [playerposition] p on p.ID = c.PlayerPosition_ID
+left join [cardvalue] v on v.Card_ID = c.ID
+left join [subset] ss on ss.ID = c.Subset_ID
+left join singlecardgrading scg on scg.SingleCard_ID = s.ID
+left join gradingclass g on g.ID = scg.GradingClass_ID
+where s.ID > '0004254'
+
+-- update a singleID
+select * from singlecard where ID = '0004265'
+select * from singlecardgrading where SingleCard_ID = '0004265'
+ALTER TABLE singlecardgrading NOCHECK CONSTRAINT FK_singlecardgrading_singlecard
+update singlecardgrading set SingleCard_ID = '0004265' where SingleCard_ID = '4265'
+update singlecard set ID = '0004265' where id = '4265'
+ALTER TABLE singlecardgrading WITH CHECK CHECK CONSTRAINT FK_singlecardgrading_singlecard
