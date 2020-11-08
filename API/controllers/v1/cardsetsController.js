@@ -10,9 +10,8 @@ exports.getTestOutput = (req, res) => {
 // Return a list of distinct seasons based on all card sets in the database
 exports.getSeasons = (req, res) => {
     // collect inputs
-    inputs = {};
-    const sport = req.params["sport"];
-    inputs.sport = sport;
+    let inputs = {};
+    inputs.sport = req.params["sport"];
     
     // Connect to DB
     const sql = require('mssql')
@@ -33,7 +32,7 @@ exports.getSeasons = (req, res) => {
         try {
             const pool = await sql.connect(config)
             const seasonsFromDb = await pool.request()
-                .query(`SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${sport}' ORDER BY cs.Season ASC`);
+                .query(`SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' ORDER BY cs.Season ASC`);
             const records = seasonsFromDb.recordsets[0];
             let seasons = [];
             for (let i = 0; i < records.length; i++) {
@@ -42,9 +41,7 @@ exports.getSeasons = (req, res) => {
             }
 
             const jsonResponse = {
-                inputs: {
-                    sport
-                },
+                inputs,
                 data: {
                     seasons
                 }
@@ -63,8 +60,9 @@ exports.getSeasons = (req, res) => {
 // Return a list of base set names for a specified season
 exports.getBaseSetNames = (req, res) => {
     // collect inputs
-    const sport = req.params["sport"];
-    const season = req.params["season"];
+    let inputs = {};
+    inputs.sport = req.params["sport"];
+    inputs.season = req.params["season"];
 
     // Connect to DB
     const sql = require('mssql')
@@ -87,7 +85,7 @@ exports.getBaseSetNames = (req, res) => {
         try {
             const pool = await sql.connect(config)
             const baseSetsFromDb = await pool.request()
-                .query(`SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${sport}' WHERE Season = '${season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`);
+                .query(`SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`);
             const records = baseSetsFromDb.recordsets[0];
 
             let sets = [];
@@ -97,10 +95,7 @@ exports.getBaseSetNames = (req, res) => {
             }
 
             const jsonResponse = {
-                inputs: {
-                    sport,
-                    season
-                },
+                inputs,
                 data: {
                     basesets: sets
                 }
@@ -119,9 +114,10 @@ exports.getBaseSetNames = (req, res) => {
 // Return a list of distinct insert set names within a specified base set (by name) in a specified season
 exports.getInsertSetNames = (req, res) => {
     // collect inputs
-    const sport = req.params["sport"];
-    const season = req.params["season"];
-    const baseSetName = req.params["basesetname"];
+    let inputs = {};
+    inputs.sport = req.params["sport"];
+    inputs.season = req.params["season"];
+    inputs.basesetname = req.params["basesetname"];
 
     // Connect to DB
     const sql = require('mssql')
@@ -143,7 +139,7 @@ exports.getInsertSetNames = (req, res) => {
         try {
             const pool = await sql.connect(config)
             const insertSetsFromDb = await pool.request()
-                .query(`SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${sport}' WHERE Season = '${season}' AND BaseSetName = '${baseSetName}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`);
+                .query(`SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`);
             const records = insertSetsFromDb.recordsets[0];
             
             let sets = [];
@@ -153,11 +149,7 @@ exports.getInsertSetNames = (req, res) => {
             }
 
             const jsonResponse = {
-                inputs: {
-                    sport,
-                    season,
-                    basesetname: baseSetName
-                },
+                inputs,
                 data: {
                     insertsets: sets
                 }
@@ -174,10 +166,11 @@ exports.getInsertSetNames = (req, res) => {
 }
 
 exports.getCardSetDetails = (req, res) => {
-    const sport = req.params["sport"];
-    const season = req.params["season"];
-    const baseSetName = req.params["basesetname"];
-    const insertSetName = req.params["insertsetname"] == undefined ? '' : req.params["insertsetname"];
+    let inputs = {};
+    inputs.sport = req.params["sport"];
+    inputs.season = req.params["season"];
+    inputs.basesetname = req.params["basesetname"];
+    inputs.insertsetname = req.params["insertsetname"] == undefined ? '' : req.params["insertsetname"];
 
     // Connect to DB
     const sql = require('mssql')
@@ -199,16 +192,11 @@ exports.getCardSetDetails = (req, res) => {
         try {
             const pool = await sql.connect(config)
             const cardsetDetailsFromDb = await pool.request()
-                .query(`SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${sport}' WHERE Season = '${season}' AND BaseSetName = '${baseSetName}' AND InsertSetName = '${insertSetName}'`);
+                .query(`SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName = '${inputs.insertsetname}'`);
             const cardset = cardsetDetailsFromDb.recordset == undefined ? {} : cardsetDetailsFromDb.recordset;
             
             const jsonResponse = {
-                inputs: {
-                    sport,
-                    season,
-                    basesetname: baseSetName,
-                    insertsetname: insertSetName
-                },
+                inputs,
                 data: {
                     cardset
                 }
