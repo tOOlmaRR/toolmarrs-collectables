@@ -62,6 +62,7 @@ exports.getSeasons = (req, res) => {
 
 // Return a list of base set names for a specified season
 exports.getBaseSetNames = (req, res) => {
+    // collect inputs
     const sport = req.params["sport"];
     const season = req.params["season"];
 
@@ -116,7 +117,9 @@ exports.getBaseSetNames = (req, res) => {
 }
 
 // Return a list of distinct insert set names within a specified base set (by name) in a specified season
-exports.getInsertSetNamesByBaseSetNameAndSeason = (req, res) => {
+exports.getInsertSetNames = (req, res) => {
+    // collect inputs
+    const sport = req.params["sport"];
     const season = req.params["season"];
     const baseSetName = req.params["basesetname"];
 
@@ -140,7 +143,7 @@ exports.getInsertSetNamesByBaseSetNameAndSeason = (req, res) => {
         try {
             const pool = await sql.connect(config)
             const insertSetsFromDb = await pool.request()
-                .query(`SELECT InsertSetName FROM cardset WHERE Season = '${season}' AND BaseSetName = '${baseSetName}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`);
+                .query(`SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${sport}' WHERE Season = '${season}' AND BaseSetName = '${baseSetName}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`);
             const records = insertSetsFromDb.recordsets[0];
             
             let sets = [];
@@ -150,8 +153,13 @@ exports.getInsertSetNamesByBaseSetNameAndSeason = (req, res) => {
             }
 
             const jsonResponse = {
+                inputs: {
+                    sport,
+                    season,
+                    basesetname: baseSetName
+                },
                 data: {
-                    insertSets: sets
+                    insertsets: sets
                 }
             };
             res.json(jsonResponse);

@@ -54,14 +54,14 @@ GET: /v1/cardsets/{sport}/{season}/basesets
 - Returns a list of all base set names for card sets in the database for the given sport
 - Used primarily to populate a dropdown in the website
 
-## UPDATE THESE:
-
 ### Cardsets - View Insert Sets
 ```
-GET: /v1/cardsets/{season}/{basesetname}/insertsets
+GET: /v1/cardsets/{sport}/{season}/{basesetname}/insertsets
 ```
-- Returns a list of all insert sets with the given base set name from the given season
+- Returns a list of all insert sets in a given base set, season, and sport
 - Used primarily to populate a drop down in the website
+
+## UPDATE THESE:
 
 ### Cardsets - View Base Set Details
 ```

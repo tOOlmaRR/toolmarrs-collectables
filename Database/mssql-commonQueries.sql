@@ -127,9 +127,29 @@ update singlecardgrading set SingleCard_ID = '0004265' where SingleCard_ID = '42
 update singlecard set ID = '0004265' where id = '4265'
 ALTER TABLE singlecardgrading WITH CHECK CHECK CONSTRAINT FK_singlecardgrading_singlecard
 
+-- API: Cardsets - View Seasons
 SELECT DISTINCT cs.Season 
 FROM cardset cs WITH (NOLOCK) 
 INNER JOIN sport s WITH (NOLOCK) 
 	ON cs.Sport_ID = s.ID 
 	AND s.Name = 'hockey' 
 ORDER BY cs.Season ASC
+
+-- API: Cardsets - View Base Sets
+SELECT BaseSetName 
+FROM cardset cs WITH (NOLOCK) 
+INNER JOIN sport s WITH (NOLOCK) 
+	ON cs.Sport_ID = s.ID 
+	AND s.Name = 'hockey' 
+WHERE Season = '2010-11' 
+AND InsertSetName = '' ORDER BY BaseSetName ASC
+
+-- API: Cardsets - View Insert Sets
+SELECT InsertSetName FROM cardset cs WITH (NOLOCK) 
+INNER JOIN sport s WITH (NOLOCK) 
+	ON cs.Sport_ID = s.ID 
+	AND s.Name = 'hockey' 
+WHERE Season = '2010-11' 
+AND BaseSetName = 'O-Pee-Chee' 
+AND InsertSetName <> '' 
+ORDER BY InsertSetName ASC
