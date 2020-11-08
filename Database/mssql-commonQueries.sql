@@ -153,3 +153,13 @@ WHERE Season = '2010-11'
 AND BaseSetName = 'O-Pee-Chee' 
 AND InsertSetName <> '' 
 ORDER BY InsertSetName ASC
+
+-- Cardsets - View Base Set Details
+-- Cardsets - View Insert Set Details
+SELECT cs.* FROM cardset cs WITH (NOLOCK) 
+INNER JOIN sport s WITH (NOLOCK) 
+	ON cs.Sport_ID = s.ID 
+	AND s.Name = 'hockey' 
+WHERE Season = '2010-11' 
+AND BaseSetName = 'O-Pee-Chee' 
+AND InsertSetName = ''

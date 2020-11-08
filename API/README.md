@@ -61,27 +61,31 @@ GET: /v1/cardsets/{sport}/{season}/{basesetname}/insertsets
 - Returns a list of all insert sets in a given base set, season, and sport
 - Used primarily to populate a drop down in the website
 
-## UPDATE THESE:
-
 ### Cardsets - View Base Set Details
 ```
-GET: /v1/cardsets/{season}/{basesetname}
+GET: /v1/cardsets/details/{sport}/{season}/{basesetname}
 ```
-- Returns details of a base card set given the desired season and base set name
+- Returns details of a base card set given the desired sport, season, and base set name
 - Used to populate the card set details page/pane
 - does not include data from related tables such as Manufacturer
 
 ### Cardsets - View Insert Set Details
 ```
-GET: /v1/cardsets/{season}/{basesetname}/{insertsetname}
+GET: /v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}
 ```
-- Returns details of an insert set given the desired season, base set name, and insert set name
+- Returns details of an insert set given the desired sport, season, base set name, and insert set name
 - Used to populate the card set details page/pane
 - does not include data from related tables such as Manufacturer
 
 ## Currently Known Bugs and Limitations
 
 ## History
+
+### v1.2
+- updated all endpoints (except test endpoints) to require "sport" as an input so that cards and card sets are now associated to a sport
+- updated responses of all endpoints (except test endpoints) to include an "inputs" object containing all input key-value pairs (just the ones we are expecting)
+- updated the JSON response object names such as "insertsets" to be consistent as all lowercase names
+- slight improvements to unit testing
 
 ### v1.1
 - cardsets - view base set details

@@ -10,11 +10,7 @@ router.get(`/test`, getTestOutput);
 router.get(`/:sport/seasons`, getSeasons);
 router.get(`/:sport/:season/basesets`, getBaseSetNames);
 router.get(`/:sport/:season/:basesetname/insertsets`, getInsertSetNames);
-
-//TODO: UPDATE THESE
-
-
-router.get('/:season/:basesetname', getCardSetDetails);
-router.get('/:season/:basesetname/:insertsetname', getCardSetDetails);
+router.get('/details/:sport/:season/:basesetname', getCardSetDetails);
+router.get('/details/:sport/:season/:basesetname/:insertsetname', getCardSetDetails);
 
 module.exports = router;
