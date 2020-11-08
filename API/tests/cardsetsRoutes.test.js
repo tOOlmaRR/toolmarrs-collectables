@@ -19,19 +19,20 @@ const viewSeasonsEndpoint = '/v1/cardsets/:sport/seasons';
 describe('View Seasons Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
         const sport = 'hockey';
-        const response = await request(app).get(viewSeasonsEndpoint);
+        const response = await request(app).get(viewSeasonsEndpoint.replace(':sport', sport));
         expect(response.statusCode).toBe(200);
     });
 
     test('Should return JSON including an "inputs" array with the received key-value pairs and a "seasons" array within a "data" object', async() => {
         const sport = 'hockey';
-        const response = await request(app).get(viewSeasonsEndpoint);
+        const response = await request(app).get(viewSeasonsEndpoint.replace(':sport', sport));
         const responseBody = response.body;
         expect(responseBody['inputs']).toBeDefined();
         expect(typeof(responseBody['inputs'])).toBe('object');
         
         expect(responseBody['inputs']['sport']).toBeDefined();
         expect(typeof(responseBody['inputs']['sport'])).toBe('string');
+        expect(responseBody['inputs']['sport']).toBe(sport);
         
         expect(responseBody['data']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
