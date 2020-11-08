@@ -101,7 +101,7 @@ exports.getBaseSetNames = (req, res) => {
                     season
                 },
                 data: {
-                    baseSets: sets
+                    basesets: sets
                 }
             };
             res.json(jsonResponse);

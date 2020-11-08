@@ -53,7 +53,7 @@ describe('View Base Sets Endpoint', () => {
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON including a "baseSets" array within a "data" object', async() => {
+    test('Should return JSON including an "inputs" array with the received key-value pairs and a "basesets" array within a "data" object', async() => {
         const sport = 'hockey';
         const season = 'anything';
         const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':sport', sport).replace(':season', season));
@@ -73,9 +73,9 @@ describe('View Base Sets Endpoint', () => {
         expect(responseBody['data']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
 
-        expect(responseBody['data']['baseSets']).toBeDefined();
-        expect(typeof(responseBody['data']['baseSets'])).toBe('object');
-        expect(Array.isArray(responseBody['data']['baseSets'])).toBe(true);
+        expect(responseBody['data']['basesets']).toBeDefined();
+        expect(typeof(responseBody['data']['basesets'])).toBe('object');
+        expect(Array.isArray(responseBody['data']['basesets'])).toBe(true);
     });
 });
 
