@@ -61,7 +61,8 @@ exports.getSeasons = (req, res) => {
 }
 
 // Return a list of base set names for a specified season
-exports.getBaseSetNamesBySeason = (req, res) => {
+exports.getBaseSetNames = (req, res) => {
+    const sport = req.params["sport"];
     const season = req.params["season"];
 
     // Connect to DB
@@ -85,7 +86,7 @@ exports.getBaseSetNamesBySeason = (req, res) => {
         try {
             const pool = await sql.connect(config)
             const baseSetsFromDb = await pool.request()
-                .query(`SELECT BaseSetName FROM cardset WHERE Season = '${season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`);
+                .query(`SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${sport}' WHERE Season = '${season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`);
             const records = baseSetsFromDb.recordsets[0];
 
             let sets = [];
@@ -95,6 +96,10 @@ exports.getBaseSetNamesBySeason = (req, res) => {
             }
 
             const jsonResponse = {
+                inputs: {
+                    sport,
+                    season
+                },
                 data: {
                     baseSets: sets
                 }

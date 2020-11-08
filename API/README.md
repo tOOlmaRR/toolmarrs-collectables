@@ -47,14 +47,14 @@ GET: /v1/cardsets/{sport}/seasons
 - Returns a list of all seasons for which card sets exists within the database for the given sport
 - Used primarily to populate a dropdown in the website
 
-## UPDATE THESE:
-
 ### Cardsets - View Base Sets
 ```
-GET: /v1/cardsets/{season}/basesets
+GET: /v1/cardsets/{sport}/{season}/basesets
 ```
-- Returns a list of all base set names for card sets in the database
+- Returns a list of all base set names for card sets in the database for the given sport
 - Used primarily to populate a dropdown in the website
+
+## UPDATE THESE:
 
 ### Cardsets - View Insert Sets
 ```

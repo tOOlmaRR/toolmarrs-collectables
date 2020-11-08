@@ -27,6 +27,7 @@ describe('View Seasons Endpoint', () => {
         const sport = 'hockey';
         const response = await request(app).get(viewSeasonsEndpoint.replace(':sport', sport));
         const responseBody = response.body;
+        
         expect(responseBody['inputs']).toBeDefined();
         expect(typeof(responseBody['inputs'])).toBe('object');
         
@@ -43,27 +44,42 @@ describe('View Seasons Endpoint', () => {
     });
 });
 
-
-// TODO: UPDATE THESE
-const viewBaseCardsetListEndpoint = '/v1/cardsets/:season/basesets';
-describe('View Base Sets Endpoints', () => {
+const viewBaseCardsetListEndpoint = '/v1/cardsets/:sport/:season/basesets';
+describe('View Base Sets Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
+        const sport = 'hockey';
         const season = 'anything';
-        const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
+        const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':sport', sport).replace(':season', season));
         expect(response.statusCode).toBe(200);
     });
 
     test('Should return JSON including a "baseSets" array within a "data" object', async() => {
+        const sport = 'hockey';
         const season = 'anything';
-        const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':season', season));
+        const response = await request(app).get(viewBaseCardsetListEndpoint.replace(':sport', sport).replace(':season', season));
         const responseBody = response.body;
+        
+        expect(responseBody['inputs']).toBeDefined();
+        expect(typeof(responseBody['inputs'])).toBe('object');
+
+        expect(responseBody['inputs']['sport']).toBeDefined();
+        expect(typeof(responseBody['inputs']['sport'])).toBe('string');
+        expect(responseBody['inputs']['sport']).toBe(sport);
+
+        expect(responseBody['inputs']['season']).toBeDefined();
+        expect(typeof(responseBody['inputs']['season'])).toBe('string');
+        expect(responseBody['inputs']['season']).toBe(season);
+        
         expect(responseBody['data']).toBeDefined();
-        expect(responseBody['data']['baseSets']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
+
+        expect(responseBody['data']['baseSets']).toBeDefined();
         expect(typeof(responseBody['data']['baseSets'])).toBe('object');
         expect(Array.isArray(responseBody['data']['baseSets'])).toBe(true);
     });
 });
+
+// TODO: UPDATE THESE
 
 const viewInsertSetListEndpoint = '/v1/cardsets/:season/:basesetname/insertsets';
 describe('View Insert Sets Endpoint', () => {
