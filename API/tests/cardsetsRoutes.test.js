@@ -91,7 +91,7 @@ describe('View Insert Sets Endpoint', () => {
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON including a "insertSets" array within a "data" object', async() => {
+    test('Should return JSON including an "inputs" array with the received key-value pairs and an "insertsets" array within a "data" object', async() => {
         const sport = 'hockey';
         const season = 'anything';
         const baseSetName = 'anything';
@@ -138,7 +138,7 @@ describe('View Card Set Endpoint for a Base Set', () => {
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON including a "cardset" object within a "data" object', async() => {
+    test('Should return JSON including an "inputs" array with the received key-value pairs and a "cardset" object within a "data" object', async() => {
         const sport = 'hockey';
         const season = 'anything';
         const baseSetName = 'anything';
