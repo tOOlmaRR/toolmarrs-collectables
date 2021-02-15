@@ -70,7 +70,7 @@ order by id desc
 --order by season desc
 
 -- cards grid
-select [card].id, [card].CardNumber, [card].Title, Attributes.Abbreviation, [team].Name, [playerposition].Abbreviation, [cardvalue].LowValue, [cardvalue].HighValue, Subset.Name, Card.GradingModifier, 
+select [card].id, [card].CardNumber, [card].Title, Attributes.Abbreviation, [team].Name, [playerposition].Abbreviation, [cardvalue].LowValue, [cardvalue].HighValue, Subset.Name as 'Subset Name', Card.GradingModifier, 
 	[cardvalue].LastAppraisal, [cardvalue].LastAppraisalSource
 from [dbo].[card] with (nolock)
 left join [card_has_attributes] on [card_has_attributes].Card_ID = [card].ID
@@ -81,6 +81,7 @@ left join [cardvalue] on [cardvalue].Card_ID = [card].ID
 left join [subset] on Subset.ID = [card].Subset_ID
 --where card.CardSet_ID > 169
 order by card.id
+order by CAST(card.CardNumber AS INT)
 
 -- single cards grid
 select [singlecard].ID, [singlecard].SellPrice, [singlecard].Cost, [singlecard].PriceSoldFor, [singlecard].Rarity, [singlecard].Comments, [gradingclass].Abbreviation
