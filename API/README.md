@@ -1,6 +1,7 @@
-# tOOlmaRR's Collectables - API
+# Geo Trading Cards - API
+
 ## Summary
-This is a application program interface (API) that will be used by the website, the import tool, and the admin tool, to interface with the database (CRUD).
+A node.js API used to interface with the database, through which inventory data may be managed. This is in its infantcy, but will become the backbone of both the website and the WinAdminUI.
 
 ## Setup Instructions
 1. Ensure that your .env file has been created and includes the following key/value pairs:
@@ -25,9 +26,8 @@ This is a application program interface (API) that will be used by the website, 
     ```
     The testNamePattern is a *regex* that defines a pattern of test names to run. In this case, this command will run both the Base Set and Insert Set test suite because they both start with this string.
 
-
-
 ## Endpoints
+
 ### Test
 ```
 GET: /v1/test/
@@ -38,7 +38,7 @@ GET: /v1/test/
 ```
 GET: /v1/cardsets/test
 ```
-- Just a "test" endpoint that can be used for monitoring and confirming that the cardsets API group resolves correctly
+- Just a "test" endpoint that can be used for monitoring and confirming that the cardsets API endpoint group resolves correctly
 
 ### Cardsets - View Seasons
 ```
@@ -78,6 +78,8 @@ GET: /v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}
 - does not include data from related tables such as Manufacturer
 
 ## Currently Known Bugs and Limitations
+1. exception handling and error responses need a little standardization and testing
+1. asynchronous operations appear to be a bit buggy, especially when it comes to the automated tests
 
 ## History
 
