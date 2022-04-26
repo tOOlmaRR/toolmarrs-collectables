@@ -1,4 +1,4 @@
-# Geo Trading Cards - API
+# Geo Trading Cards
 
 ## Summary:
 This is a repository for all code related to Geo Trading Cards and Collectables. The major applications and/or components are listed below, and each has its own documentation. Click on a section header below to view more spefic documentation.

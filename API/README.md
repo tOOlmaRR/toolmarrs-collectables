@@ -1,4 +1,6 @@
-# Geo Trading Cards - API
+[BACK](../README.md)
+
+# Geo Trading Cards - tSc API
 
 ## Summary
 A node.js API used to interface with the database, through which inventory data may be managed. This is in its infantcy, but will become the backbone of both the website and the WinAdminUI.
@@ -13,7 +15,7 @@ A node.js API used to interface with the database, through which inventory data 
     ```
 
 ## Testing instructions
-1. Ensure that jest is installed globally
+1. Ensure that *Jest* is installed globally
 1. Run the following command to run the test suites:
     ```
     jest --detectOpenHandles --forceExit
