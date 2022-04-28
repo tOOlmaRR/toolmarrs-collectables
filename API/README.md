@@ -28,56 +28,23 @@ A node.js API used to interface with the database, through which inventory data 
     ```
     The testNamePattern is a *regex* that defines a pattern of test names to run. In this case, this command will run both the Base Set and Insert Set test suite because they both start with this string.
 
-## Endpoints
+## Endpoints: Test
+|Name|HTTP|Request Format|Desription and Comments|
+|----|----|----------|-----------------------|
+Test|GET|/v1/test/|Just a "test" endpoint that can be used for monitoring and confirming that the API resolves correctly|
 
-### Test
-```
-GET: /v1/test/
-```
-- Just a "test" endpoint that can be used for monitoring and confirming that the API resolves correctly
+## Endpoints: Cardsets
 
-### Cardsets - Test 
-```
-GET: /v1/cardsets/test
-```
-- Just a "test" endpoint that can be used for monitoring and confirming that the cardsets API endpoint group resolves correctly
+|Name|HTTP|Request Format|Desription and Comments|
+|----|----|----------|-----------------------|
+Test|GET|/v1/cardsets/test|Just a "test" endpoint that can be used for monitoring and confirming that the cardsets API endpoint group resolves correctly|
+View Seasons|GET|/v1/cardsets/test|Returns a list of all seasons for which card sets exists within the database for the given sport. Used primarily to populate a dropdown in the website
+View Base Sets|GET|/v1/cardsets/{sport}/{season}/basesets|Returns a list of all base set names for card sets in the database for the given sport. Used primarily to populate a dropdown in the website
+View Insert Sets|GET|/v1/cardsets/{sport}/{season}/{basesetname}/insertsets|Returns a list of all insert sets in a given base set, season, and sport. Used primarily to populate a drop down in the website
+View Base Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}|Returns details of a base card set given the desired sport, season, and base set name. Used to populate the card set details page/pane. Ddoes not include data from related tables such as Manufacturer.
+View Insert Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}|Returns details of an insert set given the desired sport, season, base set name, and insert set name. Used to populate the card set details page/pane. Does not include data from related tables such as Manufacturer.
 
-### Cardsets - View Seasons
-```
-GET: /v1/cardsets/{sport}/seasons
-```
-- Returns a list of all seasons for which card sets exists within the database for the given sport
-- Used primarily to populate a dropdown in the website
-
-### Cardsets - View Base Sets
-```
-GET: /v1/cardsets/{sport}/{season}/basesets
-```
-- Returns a list of all base set names for card sets in the database for the given sport
-- Used primarily to populate a dropdown in the website
-
-### Cardsets - View Insert Sets
-```
-GET: /v1/cardsets/{sport}/{season}/{basesetname}/insertsets
-```
-- Returns a list of all insert sets in a given base set, season, and sport
-- Used primarily to populate a drop down in the website
-
-### Cardsets - View Base Set Details
-```
-GET: /v1/cardsets/details/{sport}/{season}/{basesetname}
-```
-- Returns details of a base card set given the desired sport, season, and base set name
-- Used to populate the card set details page/pane
-- does not include data from related tables such as Manufacturer
-
-### Cardsets - View Insert Set Details
-```
-GET: /v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}
-```
-- Returns details of an insert set given the desired sport, season, base set name, and insert set name
-- Used to populate the card set details page/pane
-- does not include data from related tables such as Manufacturer
+**Note**: All dynamic elements are in {curly braces}, and should be replaced with the actual values you are looking for and not their IDs.
 
 ## Currently Known Bugs and Limitations
 1. exception handling and error responses need a little standardization and testing
