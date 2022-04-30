@@ -21,7 +21,10 @@ This is a Windows Forms application that will be used to manage the data in the 
 
 ## History
 
-### v1.0.0.0
+### v1.0.1 (no DLL version update)
+- enhancements to the readme file
+
+### v1.0
 - card set admin page
 	- data grid view to display all cardsets.
 	- save botton which allows all changes in the grid to be saved.

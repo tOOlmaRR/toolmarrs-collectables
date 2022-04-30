@@ -52,6 +52,9 @@ View Insert Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}/
 
 ## History
 
+### v1.3
+- enhanced readme documentation
+
 ### v1.2
 - updated all endpoints (except test endpoints) to require "sport" as an input so that cards and card sets are now associated to a sport
 - updated responses of all endpoints (except test endpoints) to include an "inputs" object containing all input key-value pairs (just the ones we are expecting)

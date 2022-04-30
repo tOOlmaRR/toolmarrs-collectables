@@ -68,5 +68,12 @@ Environment is specified early on in the import.php file (the application entry 
 ### Config File Details:
 1. *config-shared.yml* - general configuration settings such as paths for the data file and some details and where to find the data within the file, the latter of which may not be used at this point.
 1. *inventory-header.yml* - defines the specific labels that the program should look for, although it doesn't appear to be used at this point.
-1. config-{environment} - environment-specific confiiguration files which contain database connections and credentials, and the names of the stored procedures to use. There is also a setting that enables/disables the use of stored procedures. In the data layer there are hardcoded queries that are used if this setting is disabled, but it is older code that is specific to MySQL rather than MS SQL.
+1. *config-{environment}* - environment-specific confiiguration files which contain database connections and credentials, and the names of the stored procedures to use. There is also a setting that enables/disables the use of stored procedures. In the data layer there are hardcoded queries that are used if this setting is disabled, but it is older code that is specific to MySQL rather than MS SQL.
 
+## History
+
+### v1.1
+- created some README documentation.
+
+### v1.0
+- The state of the import utility when I completed development and started using it to import my collection into the database.
