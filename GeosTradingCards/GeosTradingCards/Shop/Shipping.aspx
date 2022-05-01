@@ -15,8 +15,8 @@
 
 <asp:Content ID="mainContent" ContentPlaceHolderID="PageContent" runat="server">
 	<h1>Shipping Policy</h1>
-	<p>Once payment has been received, we will ship your order. Normally, all cards will be shipped in standard sleeves. If only a small number of items have been ordered, they will usually be shipped in top loaders as well. Whenever possible, items will be shipped in padded or bubble envelopes. For a larger number of items, a standard size card box may be used along with appropriate packing materials to prevent movement during shipping and handling.</p>
-	<p>For now, <strong>we only sell and ship to Canada</strong>. We have plans to expand to the United States in the near future and may do so sooner if there is a lot of demand (please let us know if you are outside of Canada and wish to place an order). Feel free to <asp:Hyperlink NavigateUrl="~/Contact.aspx" Text="contact us" runat="server" /> if you have any additional questions that are not answered here.</p>
+	<p>Once payment has been received, we will ship your order. Normally, all cards will be shipped in standard "penny" sleeves. If only a small number of items have been ordered, they will usually be shipped in top loaders as well. Whenever possible, items will be shipped in padded or bubble envelopes or hard plastic containers to prevent movement during shipping. For a larger number of items, a standard size card box may be used along with appropriate packing materials.</p>
+	<p><strong>We typically only sell and ship to Canada</strong>. However, please let us know if you are outside of Canada and wish to place an order and we may be able to make arrangements. Feel free to <asp:Hyperlink NavigateUrl="~/Contact.aspx" Text="contact us" runat="server" /> if you have any additional questions that are not answered here.</p>
 	<table class="shippingTable" border="1" cellpadding="2px" cellspacing="0" rules="all">
 		<caption>Canada:</caption>
 		<tr>
@@ -32,16 +32,16 @@
 		<tr>
 			<td>Canada Post Lettermail</td>
 			<td>26-50 (up to 100g weight)</td>
-			<td align="center">$1.25</td>
+			<td align="center">$1.50</td>
 		</tr>
 		<tr>
 			<td>Canada Post Lettermail</td>
 			<td>50-100 (up to 200g weight)</td>
-			<td align="center">$2.00</td>
+			<td align="center">$2.50</td>
 		</tr>
 	</table>
 	
-	<p>We can also deliver items through Xpresspost and Priority Next A.M. if desired. Please request this either when placing, confirming, or paying for your order. Any larger orders will be dealt with on a case-bay-case basis (the charge will often be dependent upon the weight) and will normally be discounted to some extent.</p>
+	<p>We can also deliver items through Xpresspost and Priority Next A.M. via Canada Post, or through other shipping companies if desired. Please request this either when placing, confirming, or paying for your order. Larger orders will be dealt with on a case-by-case basis. The charge will often be dependent upon the weight and size and be discounted to some extent.</p>
 
 	<Ad:MediumRectangleROS ID="medRect" runat="server" />
 	<Nav:Footer ID="shopFooter" runat="server" />

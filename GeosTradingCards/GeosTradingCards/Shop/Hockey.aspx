@@ -7,7 +7,7 @@ MasterPageFile="~/Main.Master" Title="Geo Trading Cards - Hockey Cards" %>
 
 <asp:Content ID="metaTags" ContentPlaceHolderID="metaTags" runat="server">
 	<meta name="keywords" content="geo trading cards, george u marr enterprises, hockey cards, trading cards, hockey, collectables" />
-	<meta name="description" content="Geo Trading Cards - Our online hockey card shop. By far the largest collection of trading cards we have to offer for sale or trade, numbering at well over 15,000!" />
+	<meta name="description" content="Geo Trading Cards - Our online hockey card shop. By far the largest collection of trading cards we have to offer for sale or trade, numbering at well over 30,000!" />
 </asp:Content>
 
 <asp:Content ID="leftMenuContent" ContentPlaceHolderID="cpleftMenu" runat="server">
@@ -45,7 +45,7 @@ MasterPageFile="~/Main.Master" Title="Geo Trading Cards - Hockey Cards" %>
 	</asp:Panel>
 	<asp:Panel ID="pnlPreamble" runat="server">
 		<p>By far, hockey cards is our specialty. We have a large assortment of cards from the 1990-91 season up to the most recent releases, but we have some cards, though not very numerous, from seasons prior to 1990-91. Going forward, we would like to expand into other sports and non-sports cards, but for now, hockey is our passion.</p>
-		<p>Begin by selecting a season from the drop-down box to the right. From there, you will be able to navigate to each individual set that we have available. Expect to see new sets listed rather frequently. Normally we publish every 2 weeks or so.</p>
+		<p>Begin by selecting a season from the drop-down box to the right. From there, you will be able to navigate to each individual sets that we have electronic inventory listings for. Expect to see new sets listed rather frequently.</p>
 		<p>Remember, not everything we own may be published here due to the sheer number of cards in our inventory, so if you do not see it here, it doesn't necessarily mean that we do not have that item available. Feel free to <asp:Hyperlink NavigateUrl="~/contact.aspx" Text="contact us" runat="server" /> at any time.</p>
 	</asp:Panel>
 	<br clear="all" />

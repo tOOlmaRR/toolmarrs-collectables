@@ -15,7 +15,7 @@
 
 <asp:Content ID="mainContent" ContentPlaceHolderID="PageContent" runat="server">
 	<h1>Baseball Cards</h1>
-	<p>Our inventory of baseball cards is fairly limited, but this is one area in which we would like to expand in the future. Most of the cards in our inventory are from the 1990's, particularly from 1990-1993. We also have a fairly large number of cards between 1980 and 1990, but they are primarily commons and minor stars.</p>
+	<p>Our inventory of baseball cards is signficantly smaller than hockey, but this is the sport that we would like to expand on in the future. Most of the cards in our inventory are from the 1990's, particularly from 1990-1993. We also have a fairly large number of cards between 1980 and 1990, but they are primarily commons and minor stars.</p>
 	<p>It may be some time before we are able to get any inventory listed here. Please feel free to <asp:HyperLink NavigateUrl="~/Contact.aspx" Text="email us" runat="server" /> with a list of the cards you are looking for. Below is a list of sets that we have a significant number of cards from:</p>
 	<ul>
 		<li>1987 Topps</li>
