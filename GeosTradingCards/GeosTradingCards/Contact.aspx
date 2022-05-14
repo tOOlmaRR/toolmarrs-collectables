@@ -15,19 +15,22 @@
 
 <asp:Content ID="mainContent" ContentPlaceHolderID="PageContent" runat="server">
     <h1>Contact Us</h1>
-    <p>We may be contacted through several means. Please send us an email to the appropriate address below, depending on the nature of your email. If necessary or desired, other means of contact (egs. phone, Msn/Live Messenger) may be provided.</p>
+    <p>Please send us an email to the appropriate address below depending on the nature of your request. If necessary or desired, other means of contact may be discussed at that point.</p>
     <ul>
-		<li>To place or follow up on an order:
-			<asp:Hyperlink Text="sales@geotradingcards.com" NavigateUrl="mailto:sales@geotradingcards.com" runat="server" />
+		<li>Purchase Requests and Discussions:
+			<asp:Hyperlink Text="toolmarr+sales@gmail.com" NavigateUrl="mailto:toolmarr+sales@gmail.com" runat="server" />
 		</li>
-		<li>To request a return:
-			<asp:Hyperlink Text="returns@geotradingcards.com" NavigateUrl="mailto:returns@geotradingcards.com" runat="server" />
+		<li>Trading Discussions:
+			<asp:Hyperlink Text="toolmarr+trade@gmail.com" NavigateUrl="mailto:toolmarr+trade@gmail.com" runat="server" />
 		</li>
-		<li>Anything else:
-			<asp:Hyperlink Text="support@geotradingcards.com" NavigateUrl="mailto:support@geotradingcards.com" runat="server" />
+		<li>Return Requests:
+			<asp:Hyperlink Text="toolmarr+returns@gmail.com" NavigateUrl="mailto:toolmarr+returns@gmail.com" runat="server" />
+		</li>
+		<li>Anything Else:
+			<asp:Hyperlink Text="toolmarr+general@gmail.com" NavigateUrl="mailto:toolmarr+general@gmail.com" runat="server" />
 		</li>
     </ul>
-    <p>In the near future, we plan to build a request form and shopping cart system through which you can more easily order items from our online store.</p>
+    <p>In the future, we plan to build a request form and shopping cart system through which you can order items from our online store.</p>
     <Ad:MediumRectangleROS ID="medRect" runat="server" />
     <Nav:Footer ID="mainFooter" runat="server" />
 </asp:Content>

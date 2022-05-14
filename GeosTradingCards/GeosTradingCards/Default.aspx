@@ -15,8 +15,8 @@
 
 <asp:Content ID="mainContent" ContentPlaceHolderID="PageContent" runat="server">
     <h1>Geo Trading Cards &amp; Collectables</h1>
-    <p>Welcome to Geo Trading Cards online! Here, you can (eventually) view my entire trading card collection and order any cards you wish to purchase. My collection is large and will grow over time, and I will be publishing every single card here. That means if you are looking for a few common cards to fill a set, or trying to assemble a team or player-based collection, you can find what you are looking for fast, without having to send checklists and wait for a response.</p>
-    <p>I can also help you to publish your collection online by following in my footsteps. After all, collecting isn't quite as fun if you cannot show other collectors what you have and what you want. You might even earn a few dollars in the process (and probably run out to buy more cards!).</p>
+    <p>Welcome to Geo Trading Cards online! Here, you can browse my trading card collection and order any cards you wish to purchase. My collection is large and will only grow over time, and I will be publishing every single card here in due time. That means if you are looking for a few common cards to fill a set, or trying to assemble a team or player-based collection, you can find what you are looking for fast, without having to send checklists and wait for a response.</p>
+    <p>I can also help you to publish your collection online by following in my footsteps. After all, collecting isn't quite as fun if you cannot show other collectors what you have and what you want. You might even earn a few dollars in the process and, if you are anything like me, probably run out to buy more cards with it!</p>
 	<Ad:MediumRectangleROS ID="MedRectAd" runat="server" />
     <Nav:Footer ID="mainFooter" runat="server" />
 </asp:Content>
