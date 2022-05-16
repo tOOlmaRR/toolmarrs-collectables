@@ -19,10 +19,11 @@
 	<p>We generally follow Beckett's grading system, but we are admittedly a little more lax on our grading. The following table summarizes the criteria by which we grade our cards. Also keep in mind that it is a <strong>very</strong> time consuming process to grade thousands of cards, and so most commons, semi-star, and even unlisted star cards have not been graded. You can be fairly confident that these cards are in near-mint condition or better, and we will always perform a full evaluation during the ordering process and provide you with those details.</p>
 	<p>In the table to follow, the "value modification" column indicates the approximate adjustment we make to the sell price of a card given its condition. Keep in mind that these adjustments are generally for non-vintage cards. Any cards printed prior to 1990 will be valued at a different scale - generally about one grading class above the actual condition.</p>
 	<table id="gradingTable" border="1" cellpadding="2px" cellspacing="0" rules="all">
+		<caption>Card Grading Guidelines Table</caption>
 		<tr>
-			<th width="16%">Grade</th>
-			<th width="64%">Description</th>
-			<th width="20%">Value Modification</th>
+			<th scope="col" width="16%">Grade</th>
+			<th scope="col" width="64%">Description</th>
+			<th scope="col" width="20%">Value Modification</th>
 		</tr>
 		<tr>
 			<td class="className">Pristine<br />(PR)</td>

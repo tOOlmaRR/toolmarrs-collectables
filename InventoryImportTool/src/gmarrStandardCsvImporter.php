@@ -26,7 +26,7 @@ class GmarrStandardCsvImporter extends CsvImporter implements iImporter
 {
     public function parseFileToImport($fullFileContent) : bool
     {
-        $fileResource;
+        $fileResource = null;
         $newCardSet = null;
         try {
             // Start reading from the file

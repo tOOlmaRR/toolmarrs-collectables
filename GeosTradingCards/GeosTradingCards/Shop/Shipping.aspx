@@ -18,11 +18,11 @@
 	<p>Once payment has been received, we will ship your order. Normally, all cards will be shipped in standard "penny" sleeves. If only a small number of items have been ordered, they will usually be shipped in top loaders as well, particularly if the value of the item is over $2. Whenever possible, items will be shipped in padded or bubble envelopes and/or hard plastic containers or "team bags" to prevent movement during shipping. For a larger number of items, a standard size card box may be used along with appropriate packing materials.</p>
 	<p><strong>We typically only sell and ship to Canada</strong>. However, if you are outside of Canada and wish to place an order, we may be able to make arrangements on a case-by-case basis. Feel free to <asp:Hyperlink NavigateUrl="~/Contact.aspx" Text="contact us" runat="server" /> if you have any additional questions that are not answered here.</p>
 	<table class="shippingTable" border="1" cellpadding="2px" cellspacing="0" rules="all">
-		<caption>Standard Shipping Costs:</caption>
+		<caption>Standard Shipping Costs Within Canada:</caption>
 		<tr>
-			<th width="40%">Postage Service</th>
-			<th width="40%">Quantity</th>
-			<th width="20%">Charge</th>
+			<th scope="col" width="40%">Postage Service</th>
+			<th scope="col" width="40%">Quantity</th>
+			<th scope="col" width="20%">Charge</th>
 		</tr>
 		<tr>
 			<td>Canada Post Lettermail</td>

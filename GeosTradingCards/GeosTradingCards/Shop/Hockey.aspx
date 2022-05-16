@@ -18,13 +18,10 @@ MasterPageFile="~/Main.Master" Title="Geo Trading Cards - Hockey Cards" %>
 	<h1 id="h1PageTitle" runat="server">Hockey Cards</h1>
 	<asp:Panel ID="pnlBrowseHockey" class="browse" runat="server">
 		<table cellpadding="0" cellspacing="0">
+			<caption class="browseCaption">Browse Our Inventory</caption>
 			<tr class="browseRow">
-				<td width="75px">&nbsp;</td>
-				<td width="275px"><h2>Browse Our Inventory</h2></td>
-			</tr>
-			<tr class="browseRow">
-				<td class="browseLabel"><asp:Label ID="lbSeason" Text="Season: " runat="server" /></td>
-				<td>
+				<td class="browseLabel" width="75px"><asp:Label ID="lbSeason" Text="Season: " runat="server" /></td>
+				<td width="275px">
 					<asp:DropDownList ID="ddlSeason" AutoPostBack="true" Font-Size="12pt" Width="250px" runat="server"
 					OnSelectedIndexChanged="ddlSeason_SelectedIndexChanged" />
 				</td>

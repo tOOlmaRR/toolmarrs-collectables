@@ -30,7 +30,7 @@ class AttributeEntity extends BaseEntity implements iEntity
             // if we have an ID, query based on that alone
             if (!empty($cardAttribute->getID())) {
                 $sql = "SELECT `ID`, `Abbreviation`, `FullName`, `Comments` FROM `attributes` WHERE `ID` = :id";
-                $sqlParams[":id"] = $card->getID();
+                $sqlParams[":id"] = $cardAttribute->getID();
             }
             // if we don't have an ID, use the abbreviation
             // TODO: Handle Error/Corrected Variations, and any other edge cases where two different cards in the same set may have the same card number
