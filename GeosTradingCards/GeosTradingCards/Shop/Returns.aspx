@@ -6,7 +6,7 @@
 
 <asp:Content ID="metaTags" ContentPlaceHolderID="metaTags" runat="server">
 	<meta name="keywords" content="geo trading cards, george u marr enterprises, hockey cards, trading cards, hockey, collectables" />
-	<meta name="description" content="Geo Trading Cards - An explanation our return policy including under want circumstances we accept or do not accept returns, and what procedures to follow when requesting a return." />
+	<meta name="description" content="Geo Trading Cards - An explanation of our return policy including under want circumstances we accept or do not accept returns, and what procedures to follow when requesting a return." />
 </asp:Content>
 
 <asp:Content ID="leftMenuContent" ContentPlaceHolderID="cpleftMenu" runat="server">
@@ -28,12 +28,12 @@
 	<h3>Invalid Return Requests</h3>
 	<ol>
 		<li>"I no longer want these cards"<br />
-			<p>We will not accept the return of any items for the simple reason that you no longer want the item. There are several reasons for this policy.</p>
-			<p>The main reason for this is to prevent situations where a card has decreased in perceived value since the purchase and may be purchased for a cheaper price. Since trading cards can be a volatile market, perceived value of cards can vary significantly over time and even within certain geographic areas. Sometimes values change abruptly enough that the perceived value of the card is different between the time you order a card and when you receive it. This is the nature of collectables and a risk that we all take, and by freely accepting returns without a good reason does not make sense.</p>
+			<p>We will not accept the return of any items for the simple reason that you no longer want the. There are several reasons for this policy.</p>
+			<p>The main reason for this is to prevent situations where a card has decreased in perceived value since the purchase and may be purchased for a cheaper price. Since trading cards can be a volatile market, perceived value of cards can vary significantly over time and even within certain geographic areas. Sometimes values change abruptly enough that the perceived value of the card is different between the time you order a card and when you receive it. This is the nature of collectables and a risk that we all take, and freely accepting returns without a good reason does not make sense.</p>
 			<p>If you believe a price does not reflect the item's current perceived value, you are free to make us a fair offer, which we may accept or reject for any reason. Once a sale has been made however, the prices are no longer negotiable and the order cannot be returned without a good reason.</p>
 		</li>
-		<li>"I ordered the wrong item"
-			<p>If you have ordered the wrong item by accident, we sympathize with you (I'm sure at least one of us has done this at some point), but we cannot accept a return on this basis. You have several opportunities to ensure that the items you have ordered are indeed the ones you want. Please do not send a payment (and thus committ yourself to the order) until you are confident that the items in your order are indeed the ones you wish to purchase. If you are not clear on exactly what an item is (ie. what set it belongs to, what it looks like, etc.), please do your research and feel free to <asp:HyperLink NavigateUrl="~/contact.aspx" Text="contact us" runat="server" /> with a request for more details. We'd be happy to assist you!</p>
+		<li>"I have ordered the wrong item"
+			<p>If you have ordered the wrong item by accident, we sympathize with you. I'm sure at least one of us has done this at some point in the past. However, we cannot accept a return on this basis. You have several opportunities to ensure that the items you have ordered are correct. Please do not send a payment (and thus commit yourself to the order) until you are confident that the items in your order are indeed the ones you wish to purchase. If you are not clear on exactly what an item is (ie. what set it belongs to, what it looks like, etc.), please do your research and feel free to <asp:HyperLink NavigateUrl="~/contact.aspx" Text="contact us" runat="server" /> with a request for more details. We'd be happy to assist you!</p>
 		</li>
 	</ol>
 	<Ad:MediumRectangleROS ID="medRect" runat="server" />
