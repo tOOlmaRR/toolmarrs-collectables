@@ -20,23 +20,25 @@ MasterPageFile="~/Main.Master" Title="Geo Trading Cards - Hockey Cards" %>
 		<table cellpadding="0" cellspacing="0">
 			<caption class="browseCaption">Browse Our Inventory</caption>
 			<tr class="browseRow">
-				<td class="browseLabel" width="75px"><asp:Label ID="lbSeason" Text="Season: " runat="server" /></td>
-				<td width="275px">
+				<td class="browseLabel"><asp:Label ID="lbSeason" Text="Season: " runat="server" /></td>
+				<td class="browseSelection">
 					<asp:DropDownList ID="ddlSeason" AutoPostBack="true" Font-Size="12pt" Width="250px" runat="server"
 					OnSelectedIndexChanged="ddlSeason_SelectedIndexChanged" />
 				</td>
 			</tr>
 			<tr class="browseRow">
 				<td class="browseLabel"><asp:Label ID="lbCardSet" Text="Card Set: " runat="server" /></td>
-				<td>
+				<td class="browseSelection">
 					<asp:DropDownList ID="ddlCardSet" Font-Size="12pt" Enabled="false" Width="250px" runat="server" />
 				</td>
 			</tr>
 			<tr id="trErrorRow" runat="server" visible="false">
-				<td class="error" colspan="2">Don't forget to select both a season and a set from the drodown boxes above...</td>
+				<td colspan="2" class="error" >Don't forget to select both a season and a set from the drodown boxes above...</td>
 			</tr>
 			<tr class="browseBtnRow">
-				<td colspan="2" style="padding-right: 9px;"><asp:Button ID="btnBrowse" CssClass="btnBrowse" Text="GO!" OnClick="btnBrowse_OnClick" runat="server" /></td>
+				<td colspan="2" style="padding-right: 9px;">
+					<asp:Button ID="btnBrowse" CssClass="btnBrowse" Text="GO!" OnClick="btnBrowse_OnClick" runat="server" />
+				</td>
 			</tr>
 		</table>
 	</asp:Panel>

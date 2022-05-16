@@ -17,12 +17,12 @@
 	<h1>Shipping Policy</h1>
 	<p>Once payment has been received, we will ship your order. Normally, all cards will be shipped in standard sleeves. If only a small number of items have been ordered, they will usually be shipped in top loaders as well. Whenever possible, items will be shipped in padded or bubble envelopes. For a larger number of items, a standard size card box may be used along with appropriate packing materials to prevent movement during shipping and handling.</p>
 	<p>For now, <strong>we only sell and ship to Canada</strong>. We have plans to expand to the United States in the near future and may do so sooner if there is a lot of demand (please let us know if you are outside of Canada and wish to place an order). Feel free to <asp:Hyperlink NavigateUrl="~/Contact.aspx" Text="contact us" runat="server" /> if you have any additional questions that are not answered here.</p>
-	<table class="shippingTable" border="1" cellpadding="2px" cellspacing="0" rules="all">
-		<caption>Standard Shipping Costs Within Canada:</caption>
+	<table id="shippingTable" border="1" cellpadding="2px" cellspacing="0" rules="all">
+		<caption>Standard Shipping Costs</caption>
 		<tr>
-			<th scope="col" width="40%">Postage Service</th>
-			<th scope="col" width="40%">Quantity</th>
-			<th scope="col" width="20%">Charge</th>
+			<th class="postageServiceHeader" scope="col">Postage Service</th>
+			<th class="cardQuantityHeader" scope="col">Quantity</th>
+			<th class="postageChargeHeader" scope="col">Charge</th>
 		</tr>
 		<tr>
 			<td>Canada Post Lettermail</td>

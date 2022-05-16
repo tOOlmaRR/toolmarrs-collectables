@@ -19,9 +19,9 @@
     <p>Please note that we are in no way responsible for the activities of these third party websites and will not be held accountable for any issues you may encounter while you are there. In addition, we do not receive any compensation from the owners of these websites, except where stated. This section is simply an attempt to build the seeds of a small community of collectors and to compile a list of resources for all of.</p>
     
     <ul>
-		<li><a href="http://www.beckett.com">beckett.com</a>: The center of the universe when it comes to collecting all types trading cards.</li>
-		<li><a href="http://www.upperdeck.com">upperdeck.com</a>: One of the most renowned card manufacturers in the world.</li>
-		<li><a href="http://www.ebay.com">ebay.com</a>: You may be surprised by just how many people sell cards through Ebay!</li>
+		<li><a href="http://www.beckett.com" rel="noopener">beckett.com</a>: The center of the universe when it comes to collecting all types trading cards.</li>
+		<li><a href="http://www.upperdeck.com" rel="noopener">upperdeck.com</a>: One of the most renowned card manufacturers in the world.</li>
+		<li><a href="http://www.ebay.com" rel="noopener">ebay.com</a>: You may be surprised by just how many people sell cards through Ebay!</li>
     </ul>
     
     <Ad:MediumRectangleROS ID="medRect" runat="server" />
