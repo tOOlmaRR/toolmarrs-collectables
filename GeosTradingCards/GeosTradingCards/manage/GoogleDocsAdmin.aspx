@@ -15,8 +15,8 @@
 
 <asp:Content ID="mainContent" ContentPlaceHolderID="PageContent" runat="server">
 	<h1>Google Docs Admin Tool</h1>
+	<h2>Insert New Google Doc</h2>
 	<table role="presentation" style="width:100%;">
-		<caption style="font-size: 18pt; font-weight: bold; text-align: left;">Insert New Google Doc</caption>
 		<tr>
 			<td class="style1">
 				<asp:Label ID="Label2" AssociatedControlID="ddlSeasons" runat="server" Text="Season"></asp:Label>
