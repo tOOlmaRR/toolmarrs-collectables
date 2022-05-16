@@ -6,7 +6,7 @@
 
 <asp:Content ID="metaTags" ContentPlaceHolderID="metaTags" runat="server">
 	<meta name="keywords" content="geo trading cards, george u marr enterprises, hockey cards, trading cards, hockey, collectables" />
-	<meta name="description" content="Geo Trading Cards - Our shipping policy, including what shipping options we offer, where we are willing to ship to, how much it'll cost you, and what kind of packaging you should expect your order to be shipped in." />
+	<meta name="description" content="Geo Trading Cards  Card Shop - Our shipping policy, including what shipping options we offer, where we are willing to ship to, how much it'll cost you, and what kind of packaging you should expect your order to be shipped in." />
 </asp:Content>
 
 <asp:Content ID="leftMenuContent" ContentPlaceHolderID="cpleftMenu" runat="server">
@@ -15,10 +15,10 @@
 
 <asp:Content ID="mainContent" ContentPlaceHolderID="PageContent" runat="server">
 	<h1>Shipping Policy</h1>
-	<p>Once payment has been received, we will ship your order. Normally, all cards will be shipped in standard "penny" sleeves. If only a small number of items have been ordered, they will usually be shipped in top loaders as well. Whenever possible, items will be shipped in padded or bubble envelopes or hard plastic containers to prevent movement during shipping. For a larger number of items, a standard size card box may be used along with appropriate packing materials.</p>
-	<p><strong>We typically only sell and ship to Canada</strong>. However, please let us know if you are outside of Canada and wish to place an order and we may be able to make arrangements. Feel free to <asp:Hyperlink NavigateUrl="~/Contact.aspx" Text="contact us" runat="server" /> if you have any additional questions that are not answered here.</p>
+	<p>Once payment has been received, we will ship your order. Normally, all cards will be shipped in standard "penny" sleeves. If only a small number of items have been ordered, they will usually be shipped in top loaders as well, particularly if the value of the item is over $2. Whenever possible, items will be shipped in padded or bubble envelopes and/or hard plastic containers or "team bags" to prevent movement during shipping. For a larger number of items, a standard size card box may be used along with appropriate packing materials.</p>
+	<p><strong>We typically only sell and ship to Canada</strong>. However, if you are outside of Canada and wish to place an order, we may be able to make arrangements on a case-by-case basis. Feel free to <asp:Hyperlink NavigateUrl="~/Contact.aspx" Text="contact us" runat="server" /> if you have any additional questions that are not answered here.</p>
 	<table class="shippingTable" border="1" cellpadding="2px" cellspacing="0" rules="all">
-		<caption>Canada:</caption>
+		<caption>Standard Shipping Costs:</caption>
 		<tr>
 			<th width="40%">Postage Service</th>
 			<th width="40%">Quantity</th>
@@ -27,21 +27,21 @@
 		<tr>
 			<td>Canada Post Lettermail</td>
 			<td>1-25 (up to 50g weight)</td>
-			<td align="center">$1.00</td>
-		</tr>
-		<tr>
-			<td>Canada Post Lettermail</td>
-			<td>26-50 (up to 100g weight)</td>
 			<td align="center">$1.50</td>
 		</tr>
 		<tr>
 			<td>Canada Post Lettermail</td>
+			<td>26-50 (up to 100g weight)</td>
+			<td align="center">$2.00</td>
+		</tr>
+		<tr>
+			<td>Canada Post Lettermail</td>
 			<td>50-100 (up to 200g weight)</td>
-			<td align="center">$2.50</td>
+			<td align="center">$3.00</td>
 		</tr>
 	</table>
 	
-	<p>We can also deliver items through Xpresspost and Priority Next A.M. via Canada Post, or through other shipping companies if desired. Please request this either when placing, confirming, or paying for your order. Larger orders will be dealt with on a case-by-case basis. The charge will often be dependent upon the weight and size and be discounted to some extent.</p>
+	<p>We can also deliver items through Xpresspost and Priority via Canada Post, or through other shipping companies if desired. Please request this either when placing or confirming your order, prior to payment. Larger orders will be dealt with on a case-by-case basis. The charge will often be dependent upon the weight and size and may be discounted to some extent.</p>
 
 	<Ad:MediumRectangleROS ID="medRect" runat="server" />
 	<Nav:Footer ID="shopFooter" runat="server" />

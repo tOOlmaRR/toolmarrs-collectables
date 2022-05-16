@@ -6,7 +6,7 @@
 
 <asp:Content ID="metaTags" ContentPlaceHolderID="metaTags" runat="server">
 	<meta name="keywords" content="geo trading cards, george u marr enterprises, hockey cards, trading cards, hockey, collectables, shopping" />
-	<meta name="description" content="Geo Trading Cards - The homepage of our online card shop. Keep in mind that we have much more available for sale than what is listed online." />
+	<meta name="description" content="Geo Trading Cards Card Shop - The homepage of our online card shop. Keep in mind that we have much more available for sale than what is listed online." />
 </asp:Content>
 
 <asp:Content ID="leftMenuContent" ContentPlaceHolderID="cpleftMenu" runat="server">

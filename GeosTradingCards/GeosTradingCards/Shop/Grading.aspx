@@ -6,7 +6,7 @@
 
 <asp:Content ID="metaTags" ContentPlaceHolderID="metaTags" runat="server">
 	<meta name="keywords" content="geo trading cards, george u marr enterprises, hockey cards, trading cards, hockey, collectables" />
-	<meta name="description" content="Geo Trading Cards - A detailed examination of the guidelines we use to grade cards and how prices are typically adjusted accordingly." />
+	<meta name="description" content="Geo Trading Cards Card Shop - A detailed examination of the guidelines we use to grade cards and how prices are typically adjusted accordingly." />
 </asp:Content>
 
 <asp:Content ID="leftMenuContent" ContentPlaceHolderID="cpleftMenu" runat="server">
@@ -17,7 +17,7 @@
 	<h1>Card Grading Guildlines</h1>
 	<p>"Grading", or evaluating the condition of a card, is somewhat subjective. There are generally accepted guidelines, but everyone seems to use their own guidelines and classifications. Since Beckett is the center of the card collecting universe, what they say is generally accepted, but if you use Upper Deck's collection management features, they use slightly different classes for grading a card (Pristine, Mint, NearMint etc.) than the same features on Beckett's website (Mint, NRMT-MT, NRMT, etc.).</p>
 	<p>We generally follow Beckett's grading system, but we are admittedly a little more lax on our grading. The following table summarizes the criteria by which we grade our cards. Also keep in mind that it is a <strong>very</strong> time consuming process to grade thousands of cards, and so most commons, semi-star, and even unlisted star cards have not been graded. You can be fairly confident that these cards are in near-mint condition or better, and we will always perform a full evaluation during the ordering process and provide you with those details.</p>
-	<p>In the table to follow, the "value modification" column indicates the approximate adjustment we make to the sell price of a card given it's condition.</p>
+	<p>In the table to follow, the "value modification" column indicates the approximate adjustment we make to the sell price of a card given its condition. Keep in mind that these adjustments are generally for non-vintage cards. Any cards printed prior to 1990 will be valued at a different scale - generally about one grading class above the actual condition.</p>
 	<table id="gradingTable" border="1" cellpadding="2px" cellspacing="0" rules="all">
 		<tr>
 			<th width="16%">Grade</th>
@@ -26,22 +26,22 @@
 		</tr>
 		<tr>
 			<td class="className">Pristine<br />(PR)</td>
-			<td>This is the very top grading class possible. This grading is generally used in cases where a card has been very closely examined and, as far as we can tell, the card has no flaws or damage whatsoever. At the time of writing this, we are currently not using this class, but plan to use it in exceptional cases where we have very closely examined a card and it is found to be flawless.</td>
+			<td>This is the very top grading class possible. This grading is generally used in cases where a card has been very closely examined and, as far as we can tell, the card has no flaws or damage whatsoever. This grading class is only used in exceptional cases where we have very closely examined a card and it is found to be flawless.</td>
 			<td align="center">125%+</td>
 		</tr>
 		<tr>
 			<td class="className">Mint<br />(MINT)</td>
 			<td>This grading class is used to indicate that the card has been examined and that no significant flaws or damage could be found. The difference between Mint and Pristine is that the card may not have been as meticulously examined, or a very minor flaw such as a barely detectable nick in a corner, a subtle printing flaw, or a small drop of gloss was found, but wasn't immediately obvious.</td>
-			<td align="center">100-110%+</td>
+			<td align="center">100-125%+</td>
 		</tr>
 		<tr>
 			<td class="className">Near-Mint/Mint+<br />(NRMT-MT+)</td>
-			<td>This is our default grading. Any cards that have not been graded will be classified as NRMT-MT+. When grading cards, this class will be used to indicate a single minor flaw that is not immediately evident. Often this class will be used in situations where the "flaw" was clearly there when the card came from it's original packaging, such as minor surface scratches or lines, or foil stamping which is slightly malformed and where it is not supposed to be. If this/these flaws are very noticable or significantly worse than normal, the card will often be graded NRMT-MT or worse, depending on the severity.</td>
+			<td>This is our default grading. Any cards that have not been graded will be classified as NRMT-MT+. This class will be used to indicate one or two minor flaws that are not immediately evident. Often this class will be used in situations where the "flaw" was clearly there when the card came from its original packaging, such as minor surface scratches or lines, or foil stamping which is slightly malformed and/or not quite where it's not supposed to be. If this/these flaws are very noticable or significantly worse than normal, the card will often be graded NRMT-MT or worse depending on the severity.</td>
 			<td align="center">90-100%</td>
 		</tr>
 		<tr>
 			<td class="className">Near-Mint/Mint (NRMT-MT)</td>
-			<td>Generally, several barely noticable flaws will cause a card to be classified as NRMT-MT. An example of this is a card that has a couple of corners on the front and/or back that appear to be nicked, but only if tilted at a certain angle. If there are many of these, or if one or more of these is fairly pronounced (such as obvious centering problems, a damaged corner, wear on a card edge, etc.), the grade will be pushed below NRMT-MT. Also note here that this class used to be the default class given to common cards and those that have not been graded, and thus some cards (expecially those with IDs under 500) that are classified as NRMT-MT may in fact be NRMT-MT+.</td>
+			<td>Generally, several barely noticable flaws will cause a card to be classified as NRMT-MT. An example of this is a card that has a couple of corners on the front and/or back that appear to be nicked, but only if tilted at a certain angle. If there are many of these, or if one or more of these is fairly pronounced (such as obvious centering problems, a damaged corner, wear on a card edge, etc.), the grade may be pushed below NRMT-MT. Also note here that this class was originally used as the default class given to common cards and those that have not been graded, and thus some cards (expecially those with IDs under 500) that are classified as NRMT-MT may in fact be NRMT-MT+ or higher.</td>
 			<td align="center">75-100%</td>
 		</tr>
 		<tr>
@@ -66,7 +66,7 @@
 		</tr>
 	</table>
 	
-	<p>For the most part, we will not use a grade under VG since any card damaged enough to warrant using a grade of GOOD, FAIR or POOR isn't usually worth keeping around. A badly damaged rookie card or star may be kept around. We have also graded a few cards that have one corner with some nasty damage. They were pulled from a box of 2008-09 Trilogy hockey that somehow made it through Upper Deck's quality assurance team. These cards were almost perfect with the exception of that one corner, and since they are in a premium set, we decided to keep them, grade them low, but be a little generous in the price adjustment. In general however, the value of these cards will be under 25%.</p>
+	<p>For the most part, we will not use a grade under VG since any card damaged enough to warrant using a grade of GOOD, FAIR or POOR isn't usually worth keeping around. A badly damaged rookie card or star may be kept around, and obviously vintage cards are as well. We have also graded a few cards that have one corner with some nasty damage. They were pulled from a box of 2008-09 Trilogy hockey that somehow made it through Upper Deck's quality assurance team. These cards were almost perfect with the exception of that one corner, and since they are in a premium set, we decided to keep them, grade them low, but be a little generous in the price adjustment. In general however, the value of these cards will be under 25%.</p>
 	
 	<Ad:MediumRectangleROS ID="medRect" runat="server" />
 	<Nav:Footer ID="shopFooter" runat="server" />

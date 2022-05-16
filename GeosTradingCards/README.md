@@ -14,7 +14,9 @@ When you submit your selections from the web form, you will be redirected to the
 
 ### v1.3
 - refactored existing README documentation to link together separate documents from each component of Geo Trading Cards, and wrote some additional documentation.
-- numerous minor copy updates throughout the website.
+- numerous minor copy updates throughout the website including:
+    - changes to the shipping, ordering and returns process
+    - changes to contact us links all point to a valid email address
 
 ### v1.2
 - The condition of the website when I ceased official buisness activities around the 2014-2015 timeframe.
