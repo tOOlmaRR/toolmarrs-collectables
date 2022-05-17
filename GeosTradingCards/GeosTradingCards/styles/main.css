@@ -180,6 +180,10 @@ a {
 			width: 20%;
 		}
 
+	#shippingTable td.postageCharge {
+		text-align: center;
+	}
+
 /* Grading Table */
 #gradingTable th {
 	background-color: #C0C0C0;
