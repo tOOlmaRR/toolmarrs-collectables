@@ -27,17 +27,17 @@
 		<tr>
 			<td>Canada Post Lettermail</td>
 			<td>1-25 (up to 50g weight)</td>
-			<td align="center">$1.50</td>
+			<td class="postageCharge">$1.50</td>
 		</tr>
 		<tr>
 			<td>Canada Post Lettermail</td>
 			<td>26-50 (up to 100g weight)</td>
-			<td align="center">$2.00</td>
+			<td class="postageCharge">$2.00</td>
 		</tr>
 		<tr>
 			<td>Canada Post Lettermail</td>
 			<td>50-100 (up to 200g weight)</td>
-			<td align="center">$3.00</td>
+			<td class="postageCharge">$3.00</td>
 		</tr>
 	</table>
 	
