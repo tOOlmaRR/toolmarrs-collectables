@@ -3,7 +3,7 @@
 # Geo Trading Cards - tSc API
 
 ## Summary
-A node.js API used to interface with the database, through which inventory data may be managed. This is in its infantcy, but will become the backbone of both the website and the WinAdminUI.
+A node.js API used to interface with the database, through which inventory data may be managed. This is in its infancy, but will become the backbone of both the website and the WinAdminUI.
 
 ## Setup Instructions
 1. Ensure that your .env file has been created and includes the following key/value pairs:

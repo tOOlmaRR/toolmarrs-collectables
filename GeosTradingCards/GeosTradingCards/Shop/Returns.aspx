@@ -62,7 +62,7 @@
 			<p>Typically these only apply to situations where a card's condition is significantly different from the details provided to you in the order details or invoice at the time of purchase. The difference must be significant and demonstrated. In this case, we may propose a partial reimbursement for this item and not require any return shipment. If you disagree to the proposal, you may always request a full refund for the item or your entire order upon its return.</p>
 		</li>
 		<li>Full Refunds<br />
-			<p>In cases where you wish to return certain items or your entire order for a refund, once approved/authorized, we will refund the original purchase cost of the items. In additional we will typically refund the original shipping cost, and the cost for you to return the items to us, but only at our standard shipping rates.</p>
+			<p>In cases where you wish to return certain items or your entire order for a refund, once approved/authorized, we will refund the original purchase cost of the item(s). In addition we will typically refund the original shipping cost, and the cost for you to return the item(s) to us, but only at our standard shipping rates.</p>
 		</li>
 	</ol>
 	<p>Please note that reimbursement of shipping costs is always at our discretion.</p>
