@@ -43,7 +43,7 @@ MasterPageFile="~/Main.Master" Title="Geo Trading Cards - Hockey Cards" %>
 		</table>
 	</asp:Panel>
 	<asp:Panel ID="pnlPreamble" runat="server">
-		<p>By far, hockey is our specialty. We have a large assortment of cards from the 1990-91 season up to the most recent releases, but we have some vintage cards, though not very numerous, from seasons prior to 1990-91. Going forward, we would like to expand into other sports and non-sports cards, but for now, hockey is our passion.</p>
+		<p>By far, hockey is our specialty. We have a large assortment of cards from the 1990-91 season up to the most recent releases, but we also have some vintage cards, though not very numerous, from seasons prior to 1990-91. Going forward, we would like to expand into other sports and non-sports cards, but for now, we concentrate on hockey cards.</p>
 		<p>Begin by selecting a season from the drop-down box to the right. From there, you will be able to navigate to individual sets that we have electronic inventory listings for. Expect to see new sets listed rather frequently.</p>
 		<p>Remember, not everything we own may be published here due to the sheer number of cards in our inventory, so if you do not see it here, it doesn't necessarily mean that we do not have that item available. Feel free to <asp:Hyperlink NavigateUrl="~/contact.aspx" Text="contact us" runat="server" /> at any time.</p>
 	</asp:Panel>

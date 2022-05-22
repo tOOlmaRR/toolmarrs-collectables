@@ -37,7 +37,7 @@
 		</tr>
 		<tr>
 			<td class="className">Near-Mint/Mint+<br />(NRMT-MT+)</td>
-			<td>This is our default grading. Any cards that have not been graded will be classified as NRMT-MT+. When grading cards, this class will be used to indicate a single minor flaw that is not immediately evident. Often this class will be used in situations where the "flaw" was clearly there when the card came from it's original packaging, such as minor surface scratches or lines, or foil stamping which is slightly malformed and where it is not supposed to be. If this/these flaws are very noticable or significantly worse than normal, the card will often be graded NRMT-MT or worse, depending on the severity.</td>
+			<td>This is our default grading. Any cards that have not been graded will be classified as NRMT-MT+. When grading cards, this class will be used to indicate a single minor flaw that is not immediately evident. Often this class will be used in situations where the "flaw" was clearly there when the card came from its original packaging, such as minor surface scratches or lines, or foil stamping which is slightly malformed and where it is not supposed to be. If this/these flaws are very noticable or significantly worse than normal, the card will often be graded NRMT-MT or worse, depending on the severity.</td>
 			<td class="valueModifier">90-100%</td>
 		</tr>
 		<tr>
@@ -57,7 +57,7 @@
 		</tr>
 		<tr>
 			<td class="className">Excellent<br />(EX)</td>
-			<td>In most cases, more than one flaw or point-of-damage is required to classify a card as EX or below, but a single corner that has been badly damages may push a card's grading down to EX or worse. An example is a card with many nicked corners with some minor printing flaws (print lines across the front) and a worn edge. Unless something really stands out, most badly damaged cards will be graded as EX.</td>
+			<td>In most cases, more than one flaw or point-of-damage is required to classify a card as EX or below, but a single corner that has been badly damaged may push a card's grading down to EX or worse. An example is a card with many nicked corners with some minor printing flaws (print lines across the front) and a worn edge. Unless something really stands out, most badly damaged cards will be graded as EX.</td>
 			<td class="valueModifier">25%-50%</td>
 		</tr>
 		<tr>
