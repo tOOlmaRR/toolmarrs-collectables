@@ -81,8 +81,6 @@
       <DependentUpon>CardCollection.mdf</DependentUpon>
     </Content>
     <Content Include="Default.aspx" />
-    <Content Include="scripts\fullMsSqlDB-20200308.sql" />
-    <Content Include="scripts\fullMsSqlDB-prodDeploy-20200308.sql" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
