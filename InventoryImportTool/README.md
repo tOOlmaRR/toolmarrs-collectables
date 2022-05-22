@@ -1,13 +1,13 @@
 # Geo Trading Cards - Import Utility
 
 ## Summary:
-A small PHP program that can be used to import existing inventory data into the database from "flat" text files. Currently only one format and layout is supported, based off of spreadsheets I've been building for years to track my inventory. The format and layout are very specific, and some updates may not be supported, but it will help with the process of importing existing inventory information into the database.
+A small PHP program that can be used to import existing inventory data into the database from "flat" text files. Currently only one format and layout is supported, based on spreadsheets I've been building for years to track my inventory. The format and layout is very specific, and some updates may not be supported, but it will help with the process of importing existing inventory information into the database.
 
 ## Features:
 1. More than one file can be processed at a time.
-1. Processed files are moved into a separate folder, and (I think) any files that failed to process should be moved into a third folder.
+1. Processed files are moved into a separate folder.
 1. Card Set Details - Can detect and load in basic card set details including manufacturer, season, base set name, insert set name, size, etc.
-1. Cards - Detects and loads in basic data for cards including card number and description. Creates and links up data regarding it's value including low and high prices, and links up to a team and player position if provided. Will also parse out and link up a card to attributes if present in the RC column. If any of these do not exist (team, position, attributes), new values will be inserted, otherwise the card will be linked up the existing value. Cards are always linked to Hockey as the sport and NHL as the League.
+1. Cards - Detects and loads in basic data for cards including card number and description. Creates and links up data regarding its value including low and high prices, and links up to a team and player position if provided. Will also parse out and link up a card to attributes if present in the RC column. If any of these do not exist (team, position, attributes), new values will be inserted, otherwise the card will be linked up to the existing value. Cards are always linked to Hockey as the sport and NHL as the League.
 2. Single Cards - For each card found in the data file, a single card will also be created and associated to the card, including its provided ID, rarity, cost and sell price. Also, the grading class of the card will be linked up (and created if not present).
 3. Subsets - subsets will also be created or linked up as needed to both the card and the cardset.
 4. Statistics - last inventory check will be added to the card set. Last appraisal and source will be added to the card value associated to the card.
@@ -34,7 +34,7 @@ A small PHP program that can be used to import existing inventory data into the 
 
 
 ## Data File Layout
-A sample of the data file layout is included in the Git repository and can ve found in the data folder. A few highlights:
+A sample of the data file layout is included in the Git repository and can be found in the data folder. A few highlights:
 1. Card Set Details
     1. Must be in rows 3-10.
     1. The labels in column 1 must exactly match what is expected and the values must be in the second column.
@@ -50,8 +50,8 @@ A sample of the data file layout is included in the Git repository and can ve fo
     1. Low Value, High Value, Cost, and Sell values must be numeric values but dollar signs are stripped off if present.
     1. Grading modifier must be a numeric value and is set to 1.0 if it is empty.    
 1. Statistics
-    1. Labels must be in column 1 and they must exactly match what is expected, but can technically be in any oder.
-    1. The values should be in column 4, but technically should load if they are another column as well.
+    1. Labels must be in column 1 and they must exactly match what is expected, but can technically be in any order.
+    1. The values should be in column 4, but technically should load if they are in another column as well.
     1. Rows with labels that the program does not look for are skipped.
     1. Processing ends when it finds an empty row or when the end of the file is reached.
     1. Details:
@@ -61,14 +61,14 @@ A sample of the data file layout is included in the Git repository and can ve fo
         1. *Beckett.com Last Update* - when Beckett.com was last updated with the inventory of this card set. Value must be in the correct format (eg. January 31, 2022), otherwise it will be inserted as a NULL value. This will get loaded into a column in the cardset table.
 
 ## Configuration and Environments
-There are multiple configuration files defined for this application, including separate environment-specific configuration files for "*development*" and "*production*". They are written in the YAML language/syntax and requires the appropriate composer package.
+There are multiple configuration files defined for this application, including separate environment-specific configuration files for "*development*" and "*production*". They are written in the YAML language/syntax and requires the appropriate Composer package.
 
 Environment is specified early on in the import.php file (the application entry point).
 
 ### Config File Details:
-1. *config-shared.yml* - general configuration settings such as paths for the data file and some details and where to find the data within the file, the latter of which may not be used at this point.
+1. *config-shared.yml* - general configuration settings such as paths for the data file and some details like where to find the data within the file, the latter of which may not be used at this point.
 1. *inventory-header.yml* - defines the specific labels that the program should look for, although it doesn't appear to be used at this point.
-1. *config-{environment}* - environment-specific confiiguration files which contain database connections and credentials, and the names of the stored procedures to use. There is also a setting that enables/disables the use of stored procedures. In the data layer there are hardcoded queries that are used if this setting is disabled, but it is older code that is specific to MySQL rather than MS SQL.
+1. *config-{environment}* - environment-specific confiiguration files which contain database connections and credentials, and the names of the stored procedures to use. There is also a setting that enables/disables the use of stored procedures. In the data layer there are hardcoded queries that are used if this setting is disabled, but this is older code and is specific to MySQL rather than MS SQL.
 
 ## History
 

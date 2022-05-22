@@ -1,7 +1,7 @@
 # Geo Trading Cards - Windows Admin Tool
 
 ## Summary
-This is a Windows Forms application that will be used to manage the data in the database. At some point early in development, I'd like to connect this tool to the API I'm building to centralize all interactions with the database
+This is a Windows Forms application that will be used to manage the data in the database. At some point early in development, I'd like to connect this tool to the API I'm building to centralize all interactions with the database.
 
 ## Installation Instructions
 1. Just run the setup.exe executable file

@@ -363,7 +363,8 @@
     <None Include="DAL\GoogleDocs.dbml.layout">
       <DependentUpon>GoogleDocs.dbml</DependentUpon>
     </None>
-    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\Local.pubxml" />
+    <None Include="Properties\PublishProfiles\Somee.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{3259AA49-8AA1-44D3-9025-A0B520596A8C}" />
