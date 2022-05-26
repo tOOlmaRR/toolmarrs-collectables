@@ -21,7 +21,7 @@
 	</asp:Panel>
 	
 	<asp:Panel ID="pnlCardListing" runat="server">
-		<iframe id="cardListingFrame" width="770" height="400" frameborder="0" runat="server"></iframe>
+		<iframe id="cardListingFrame" title="Card set inventory listing" width="770" height="400" frameborder="0" runat="server"></iframe>
 	</asp:Panel>
 	
 	<Ad:MediumRectangleROS ID="medRect" runat="server" />

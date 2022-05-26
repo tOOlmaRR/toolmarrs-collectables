@@ -13,7 +13,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
+    <PublishUrl>C:\Users\georg\OneDrive\Documents\tOOlmaRRs Collectables\WinAdminUI\Latest\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -26,7 +26,6 @@
     <UpdateUrl>//MARR2/Users/georg/OneDrive/Documents/tOOlmaRRs%2520Collectables/WinAdminUI/Latest/</UpdateUrl>
     <ProductName>tSc Windows Admin Tool</ProductName>
     <PublisherName>tOOlmaRR%27s Collectables</PublisherName>
-    <AutorunEnabled>true</AutorunEnabled>
     <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
@@ -53,10 +52,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>032C2E971766B7E052AF85146C2BD092C7A18BE1</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>2E97CA1689B3790E64599090158DB1ED0BAEDEAD</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>TscWinAdmin_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>TscWinAdmin_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -126,6 +125,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="TscWinAdmin_1_TemporaryKey.pfx" />
     <None Include="TscWinAdmin_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

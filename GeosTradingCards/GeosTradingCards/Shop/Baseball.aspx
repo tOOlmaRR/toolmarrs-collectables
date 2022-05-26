@@ -6,7 +6,7 @@
 
 <asp:Content ID="metaTags" ContentPlaceHolderID="metaTags" runat="server">
 	<meta name="keywords" content="geo trading cards, george u marr enterprises, baseball cards, trading cards, baseball, collectables" />
-	<meta name="description" content="Geo Trading Cards - Our online baseball card shop. The cards we have available for sale or trade are primarily between 1987 and 1993. This is one area in which we hope to grow our inventory in the future" />
+	<meta name="description" content="Geo Trading Cards Card Shop - Our online baseball card shop. The cards we have available for sale or trade are primarily between 1987 and 1993. This is one area in which we hope to grow our inventory in the future" />
 </asp:Content>
 
 <asp:Content ID="leftMenuContent" ContentPlaceHolderID="cpleftMenu" runat="server">
@@ -15,8 +15,8 @@
 
 <asp:Content ID="mainContent" ContentPlaceHolderID="PageContent" runat="server">
 	<h1>Baseball Cards</h1>
-	<p>Our inventory of baseball cards is fairly limited, but this is one area in which we would like to expand in the future. Most of the cards in our inventory are from the 1990's, particularly from 1990-1993. We also have a fairly large number of cards between 1980 and 1990, but they are primarily commons and minor stars.</p>
-	<p>It may be some time before we are able to get any inventory listed here. Please feel free to <asp:HyperLink NavigateUrl="~/Contact.aspx" Text="email us" runat="server" /> with a list of the cards you are looking for. Below is a list of sets that we have a significant number of cards from:</p>
+	<p>Our inventory of baseball cards is signficantly smaller than hockey, but this is the first sport that we would like to expand on in the future. Most of the cards in our inventory are from the 1990's, particularly from 1990-1993. We also have a fairly large number of cards between 1980 and 1990, but they are primarily commons and minor stars.</p>
+	<p>It may be some time before we are able to get any inventory listed here. Please feel free to <asp:HyperLink NavigateUrl="~/Contact.aspx" Text="contact us" runat="server" /> to find out if we have what you are looking for. Below is a list of sets that we have a significant number of cards from:</p>
 	<ul>
 		<li>1987 Topps</li>
 		<li>1988 Donruss</li>
