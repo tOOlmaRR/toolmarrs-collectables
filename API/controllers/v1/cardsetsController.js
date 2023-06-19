@@ -1,5 +1,20 @@
 //const cardSetModel = require('../models/cardsets');
 
+const sql = require('mssql')
+
+// DB Configuration
+const config = {
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    server: process.env.DB_SERVER,
+    database: process.env.DB_NAME,
+    options: {
+        enableArithAbort: true,
+        encrypt: true
+    },
+    stream: false
+};
+
 // Return a test response
 exports.getTestOutput = (req, res) => {
     res.json({
@@ -13,33 +28,24 @@ exports.getSeasons = (req, res) => {
     let inputs = {};
     inputs.sport = req.params["sport"];
     
-    // Connect to DB
-    const sql = require('mssql')
-
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
-
-    (async function () {
+    return new Promise(async function(resolve, reject) {
+        let conn;
+        let jsonResponse;
+        let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' ORDER BY cs.Season ASC`;
         try {
-            const pool = await sql.connect(config)
-            const seasonsFromDb = await pool.request()
-                .query(`SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' ORDER BY cs.Season ASC`);
-            const records = seasonsFromDb.recordsets[0];
+            // connect
+            conn = await sql.connect(config);
+            
+            // get results
+            let result = await conn.request().query(sqlQuery);
+            const seasonsFromDb = result.recordset == undefined ? [] : result.recordset;
             let seasons = [];
-            for (let i = 0; i < records.length; i++) {
-                const record = records[i];
+            for (let i = 0; i < seasonsFromDb.length; i++) {
+                const record = seasonsFromDb[i];
                 seasons.push(record.Season);
             }
 
+            // build reponse
             const jsonResponse = {
                 inputs,
                 data: {
@@ -47,13 +53,12 @@ exports.getSeasons = (req, res) => {
                 }
             };
             res.json(jsonResponse);
+            return resolve(jsonResponse);
         } catch (err) {
-            console.log(err);
+            // Handle connection and logic errors (but not SQL errors)
+            res.json(jsonResponse);
+            return reject(err);
         }
-    })();
-     
-    sql.on('error', err => {
-        console.log(err);
     });
 }
 
@@ -64,36 +69,25 @@ exports.getBaseSetNames = (req, res) => {
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
 
-    // Connect to DB
-    const sql = require('mssql')
-
-    // Configuration
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
-
-
-    (async function () {
+    return new Promise(async function(resolve, reject) {
+        let conn;
+        let jsonResponse;
+        let sqlQuery = `SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`;
+        
         try {
-            const pool = await sql.connect(config)
-            const baseSetsFromDb = await pool.request()
-                .query(`SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`);
-            const records = baseSetsFromDb.recordsets[0];
-
+            // connect
+            conn = await sql.connect(config);
+            
+            // get results
+            let result = await conn.request().query(sqlQuery);
+            const baseSetsFromDb = result.recordset == undefined ? [] : result.recordset;
             let sets = [];
-            for (let i = 0; i < records.length; i++) {
-                const record = records[i];
+            for (let i = 0; i < baseSetsFromDb.length; i++) {
+                const record = baseSetsFromDb[i];
                 sets.push(record.BaseSetName);
             }
 
+            // build reponse
             const jsonResponse = {
                 inputs,
                 data: {
@@ -101,13 +95,12 @@ exports.getBaseSetNames = (req, res) => {
                 }
             };
             res.json(jsonResponse);
+            return resolve(jsonResponse);
         } catch (err) {
-            console.log(err);
+            // Handle connection and logic errors (but not SQL errors)
+            res.json(jsonResponse);
+            return reject(err);
         }
-    })();
-
-    sql.on('error', err => {
-        console.log(err);
     });
 }
 
@@ -119,35 +112,25 @@ exports.getInsertSetNames = (req, res) => {
     inputs.season = req.params["season"];
     inputs.basesetname = req.params["basesetname"];
 
-    // Connect to DB
-    const sql = require('mssql')
+    return new Promise(async function(resolve, reject) {
+        let conn;
+        let jsonResponse;
+        let sqlQuery = `SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`;
 
-    // Configuration
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
-
-    (async function () {
         try {
-            const pool = await sql.connect(config)
-            const insertSetsFromDb = await pool.request()
-                .query(`SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`);
-            const records = insertSetsFromDb.recordsets[0];
+            // connect
+            conn = await sql.connect(config);
             
+            // get results
+            let result = await conn.request().query(sqlQuery);
+            const insertSetsFromDb = result.recordset == undefined ? [] : result.recordset;
             let sets = [];
-            for (let i = 0; i < records.length; i++) {
-                const record = records[i];
+            for (let i = 0; i < insertSetsFromDb.length; i++) {
+                const record = insertSetsFromDb[i];
                 sets.push(record.InsertSetName);
             }
 
+            // build reponse
             const jsonResponse = {
                 inputs,
                 data: {
@@ -155,13 +138,12 @@ exports.getInsertSetNames = (req, res) => {
                 }
             };
             res.json(jsonResponse);
+            return resolve(jsonResponse);
         } catch (err) {
-            console.log(err);
+            // Handle connection and logic errors (but not SQL errors)
+            res.json(jsonResponse);
+            return reject(err);
         }
-    })();
-
-    sql.on('error', err => {
-        console.log(err);
     });
 }
 
@@ -172,42 +154,32 @@ exports.getCardSetDetails = (req, res) => {
     inputs.basesetname = req.params["basesetname"];
     inputs.insertsetname = req.params["insertsetname"] == undefined ? '' : req.params["insertsetname"];
 
-    // Connect to DB
-    const sql = require('mssql')
-
-    // Configuration
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
-
-    (async function () {
+    return new Promise(async function(resolve, reject) {
+        let conn;
+        let jsonResponse;
+        let sqlQuery = `SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName = '${inputs.insertsetname}'`;
+    
         try {
-            const pool = await sql.connect(config)
-            const cardsetDetailsFromDb = await pool.request()
-                .query(`SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName = '${inputs.insertsetname}'`);
-            const cardset = cardsetDetailsFromDb.recordset == undefined ? {} : cardsetDetailsFromDb.recordset;
+            // connect
+            conn = await sql.connect(config);
             
-            const jsonResponse = {
+            // get results
+            let result = await conn.request().query(sqlQuery);
+            const cardset = result.recordset == undefined ? {} : result.recordset;
+            
+            // build reponse
+            jsonResponse = {
                 inputs,
                 data: {
                     cardset
                 }
             };
             res.json(jsonResponse);
+            return resolve(jsonResponse);
         } catch (err) {
-            console.log(err);
+            // Handle connection and logic errors (but not SQL errors)
+            res.json(jsonResponse);
+            return reject(err);
         }
-    })();
-
-    sql.on('error', err => {
-        console.log(err);
     });
 }
