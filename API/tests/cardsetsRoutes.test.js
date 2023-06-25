@@ -228,7 +228,7 @@ describe('View Card Set Endpoint for an Insert Set', () => {
     });
 });
 
-// avoid jest open handle error
+// avoid jest open handle error potentially due to DB connections in the pool that need a little extra time to close
 afterAll(async () => {
 	await new Promise(resolve => setTimeout(() => resolve(), 500));
 });

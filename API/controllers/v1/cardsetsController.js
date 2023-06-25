@@ -1,19 +1,6 @@
 //const cardSetModel = require('../models/cardsets');
 
-const sql = require('mssql')
-
-// DB Configuration
-const config = {
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    server: process.env.DB_SERVER,
-    database: process.env.DB_NAME,
-    options: {
-        enableArithAbort: true,
-        encrypt: true
-    },
-    stream: false
-};
+const { poolPromise } = require('../../db')
 
 // Return a test response
 exports.getTestOutput = (req, res) => {
@@ -33,11 +20,11 @@ exports.getSeasons = (req, res) => {
         let jsonResponse;
         let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' ORDER BY cs.Season ASC`;
         try {
-            // connect
-            conn = await sql.connect(config);
+            // wait for the SQL connection pool to be ready
+            const pool = await poolPromise
             
             // get results
-            let result = await conn.request().query(sqlQuery);
+            let result = await pool.query(sqlQuery);
             const seasonsFromDb = result.recordset == undefined ? [] : result.recordset;
             let seasons = [];
             for (let i = 0; i < seasonsFromDb.length; i++) {
@@ -75,11 +62,11 @@ exports.getBaseSetNames = (req, res) => {
         let sqlQuery = `SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`;
         
         try {
-            // connect
-            conn = await sql.connect(config);
+            // wait for the SQL connection pool to be ready
+            const pool = await poolPromise
             
             // get results
-            let result = await conn.request().query(sqlQuery);
+            let result = await pool.query(sqlQuery);
             const baseSetsFromDb = result.recordset == undefined ? [] : result.recordset;
             let sets = [];
             for (let i = 0; i < baseSetsFromDb.length; i++) {
@@ -118,11 +105,11 @@ exports.getInsertSetNames = (req, res) => {
         let sqlQuery = `SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`;
 
         try {
-            // connect
-            conn = await sql.connect(config);
+            // wait for the SQL connection pool to be ready
+            const pool = await poolPromise
             
             // get results
-            let result = await conn.request().query(sqlQuery);
+            let result = await pool.query(sqlQuery);
             const insertSetsFromDb = result.recordset == undefined ? [] : result.recordset;
             let sets = [];
             for (let i = 0; i < insertSetsFromDb.length; i++) {
@@ -160,11 +147,11 @@ exports.getCardSetDetails = (req, res) => {
         let sqlQuery = `SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName = '${inputs.insertsetname}'`;
     
         try {
-            // connect
-            conn = await sql.connect(config);
+            // wait for the SQL connection pool to be ready
+            const pool = await poolPromise
             
             // get results
-            let result = await conn.request().query(sqlQuery);
+            let result = await pool.query(sqlQuery);
             const cardset = result.recordset == undefined ? {} : result.recordset;
             
             // build reponse
