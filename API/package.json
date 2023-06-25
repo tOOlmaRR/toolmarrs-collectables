@@ -4,7 +4,9 @@
   "description": "a NodeJS API",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon -r dotenv/config server.js dotenv_config_path=./.env.dev",
+    "start:dev": "node -r dotenv/config server.js dotenv_config_path=./.env.dev", 
+    "start:prod": "node -r dotenv/config server.js dotenv_config_path=./.env.prod"
   },
   "keywords": [
     "node",

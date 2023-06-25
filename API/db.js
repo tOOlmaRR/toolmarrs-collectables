@@ -15,11 +15,14 @@ const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
     if (process.env.NODE_ENV !== 'test') {
-      console.log('Connected to MSSQL');
+      console.log(`Connected to MSSQL (Server: '${process.env.DB_SERVER}',  Database: ${process.env.DB_NAME})`);
     }
     return pool
   })
-  .catch(err => console.log('Database Connection Failed! Bad Config: ', err))
+  .catch(err => {
+    console.log('Database Connection Failed! Bad Config: ', err);
+    process.kill(process.pid, 'SIGINT')
+  });
 
 module.exports = {
   sql, poolPromise
