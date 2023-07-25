@@ -6,13 +6,26 @@
 A node.js API used to interface with the database, through which inventory data may be managed. This is in its infancy, but will become the backbone of both the website and the WinAdminUI.
 
 ## Setup Instructions
-1. Ensure that your .env file has been created and includes the following key/value pairs:
-    - VERSION
-    - PORT
-1. Run the following command:
-    ```
-    npm run dev
-    ```
+1. Ensure that your .env files have been created for each environment and includes the following key/value pairs:
+    - VERSION: API version (eg. v1)
+    - PORT: which port to use (eg. 8080)
+    - DB_SERVER: the name of the (MS SQL) DB server
+    - DB_USER: the name of the (MS SQL) user to use
+    - DB_PASSWORD: the MS SQL user's password
+    - DB_NAME: the database name
+1. To start up the application, you have three options by entering the following commands at the command line:
+    1. DEVELOPMENT Environment with nodemon to monitor for changes:
+        ```
+        npm run dev
+        ```
+    2. DEVELOPMENT environment without monitoring:
+        ```
+        npm run start:dev
+        ```
+    3. PRODUCTION environment without monitoring:
+        ```
+        npm run start:prod
+        ```
 
 ## Testing instructions
 1. Ensure that *Jest* is installed globally
@@ -27,6 +40,8 @@ A node.js API used to interface with the database, through which inventory data 
     jest --detectOpenHandles --forceExit --testNamePattern "View Card Set Endpoint"
     ```
     The testNamePattern is a *regex* that defines a pattern of test names to run. In this case, this command will run both the Base Set and Insert Set test suite because they both start with this string.
+
+**Note**: Automated tests use the .env file for environment configuration
 
 ## Endpoints: Test
 |Name|HTTP|Request Format|Desription and Comments|
