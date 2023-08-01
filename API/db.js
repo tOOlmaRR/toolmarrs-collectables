@@ -20,7 +20,7 @@ const poolPromise = new sql.ConnectionPool(config)
     return pool
   })
   .catch(err => {
-    console.log('Database Connection Failed! Bad Config: ', err);
+    console.log('Database Connection Failed: ', err);
     process.kill(process.pid, 'SIGINT')
   });
 
