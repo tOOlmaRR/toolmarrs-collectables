@@ -20,15 +20,16 @@ exports.getSeasons = (req, res) => {
         let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport ORDER BY cs.Season ASC`;
         try {
             // validate inputs
-            // if (!validateSport(inputs.sport))
-            // {
-            //     const jsonResponse = {
-            //         inputs,
-            //         error: "Input Validation Failed (sport)"
-            //     };
-            //     res.json(jsonResponse);
-            //     return resolve(jsonResponse);
-            // }
+            if (!validateSport(inputs.sport))
+            {
+                const jsonResponse = {
+                    inputs,
+                    error: "Input Validation Failed (sport)"
+                };
+                res.status(400);
+                res.json(jsonResponse);
+                return resolve(jsonResponse);
+            }
             
             // wait for the SQL connection pool to be ready
             const pool = await poolPromise;
@@ -65,11 +66,13 @@ exports.getSeasons = (req, res) => {
                 })
                 .catch(function(err) {
                     // handle query errors
+                    res.status(400);
                     res.json(jsonResponse);
                     return reject(err);
                 });      
         } catch (err) {
             // handle connection and logic errors (but not SQL errors)
+            res.status(400);
             res.json(jsonResponse);
             return reject(err);
         }
@@ -215,10 +218,10 @@ exports.getCardSetDetails = (req, res) => {
 }
 
 /* Input Validation */
-// function validateSport(sport) {
-//     var valid = false;
-//     if (typeof(sport) == "string" && sport.length <= 25)
-//         return true;
-//     else
-//         return false;
-// }
+function validateSport(sport) {
+    var valid = false;
+    if (typeof(sport) == "string" && sport.length <= 25)
+        return true;
+    else
+        return false;
+}
