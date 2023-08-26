@@ -1,6 +1,6 @@
 //const cardSetModel = require('../models/cardsets');
-
-const { poolPromise } = require('../../db')
+const sql = require('mssql');
+const { poolPromise } = require('../../db');
 
 // Return a test response
 exports.getTestOutput = (req, res) => {
@@ -16,16 +16,35 @@ exports.getSeasons = (req, res) => {
     inputs.sport = req.params["sport"];
     
     return new Promise(async function(resolve, reject) {
-        let conn;
         let jsonResponse;
-        let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' ORDER BY cs.Season ASC`;
+        let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport ORDER BY cs.Season ASC`;
         try {
+            // validate inputs
+            // if (!validateSport(inputs.sport))
+            // {
+            //     const jsonResponse = {
+            //         inputs,
+            //         error: "Input Validation Failed (sport)"
+            //     };
+            //     res.json(jsonResponse);
+            //     return resolve(jsonResponse);
+            // }
+            
             // wait for the SQL connection pool to be ready
             const pool = await poolPromise;
             
+            // build prepared statement
+            const ps = new sql.PreparedStatement(pool);
+            ps.input('sport', sql.VarChar(25));
+            await ps.prepare(sqlQuery);
+            const parameters = {
+                sport: inputs.sport
+            }
+
             // get results
-            await pool.query(sqlQuery)
+            await ps.execute(parameters)
                 .then(function(result) {
+                    var finalQuery = result.sqlQuery;
                     const seasonsFromDb = result.recordset == undefined ? [] : result.recordset;
                     let seasons = [];
                     for (let i = 0; i < seasonsFromDb.length; i++) {
@@ -33,13 +52,14 @@ exports.getSeasons = (req, res) => {
                         seasons.push(record.Season);
                     }
 
-                    // build reponse
+                    // build response
                     const jsonResponse = {
                         inputs,
                         data: {
                             seasons
                         }
                     };
+                    ps.unprepare();
                     res.json(jsonResponse);
                     return resolve(jsonResponse);
                 })
@@ -64,7 +84,6 @@ exports.getBaseSetNames = (req, res) => {
     inputs.season = req.params["season"];
 
     return new Promise(async function(resolve, reject) {
-        let conn;
         let jsonResponse;
         let sqlQuery = `SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`;
         try {
@@ -81,7 +100,7 @@ exports.getBaseSetNames = (req, res) => {
                         sets.push(record.BaseSetName);
                     }
 
-                    // build reponse
+                    // build response
                     const jsonResponse = {
                         inputs,
                         data: {
@@ -113,7 +132,6 @@ exports.getInsertSetNames = (req, res) => {
     inputs.basesetname = req.params["basesetname"];
 
     return new Promise(async function(resolve, reject) {
-        let conn;
         let jsonResponse;
         let sqlQuery = `SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`;
         try {
@@ -130,7 +148,7 @@ exports.getInsertSetNames = (req, res) => {
                         sets.push(record.InsertSetName);
                     }
 
-                    // build reponse
+                    // build response
                     const jsonResponse = {
                         inputs,
                         data: {
@@ -173,7 +191,7 @@ exports.getCardSetDetails = (req, res) => {
                 .then(function(result) {
                     const cardset = result.recordset == undefined ? {} : result.recordset;
             
-                    // build reponse
+                    // build response
                     jsonResponse = {
                         inputs,
                         data: {
@@ -195,3 +213,12 @@ exports.getCardSetDetails = (req, res) => {
         }
     });
 }
+
+/* Input Validation */
+// function validateSport(sport) {
+//     var valid = false;
+//     if (typeof(sport) == "string" && sport.length <= 25)
+//         return true;
+//     else
+//         return false;
+// }
