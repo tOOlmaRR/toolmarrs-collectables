@@ -65,6 +65,13 @@ View Insert Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}/
 1. exception handling and error responses need a little standardization and testing
 1. asynchronous operations appear to be a bit buggy, especially when it comes to the automated tests
 
+## Support
+### "Error: listen EADDRINUSE: address already in use :::8080"
+
+This means that there is a node process on port 8080 still running in the background. You can kill all running node processes using the following command:
+
+    `taskkill /F /IM node.exe`
+
 ## History
 
 ### v1.3

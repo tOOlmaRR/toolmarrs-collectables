@@ -1,12 +1,32 @@
-//const cardSetModel = require('../models/cardsets');
-const sql = require('mssql');
-const { poolPromise } = require('../../db');
+const { getTestSeasons } = require('../../models/v1/cardsetsModel');
+const sql = require('mssql'); // remove once all DB ops have moved to the model
+const { poolPromise } = require('../../db'); // remove once all DB ops have moved to the model
 
 // Return a test response
 exports.getTestOutput = (req, res) => {
     res.json({
-        endpoint: 'cardsets test'
+        endpoint: 'cardsets controller test'
     });
+}
+
+// Return a test response for seasons
+exports.getTestSeasonsOutput = (req, res) => {
+    let inputs = {};
+    inputs.sport = req.params["sport"];
+
+    getTestSeasons(inputs)
+        .then(result => {
+            res.json({
+                endpoint: "cardsets seasons test",
+                data: result
+            });
+        })
+        .catch(error => {
+            res.json({
+                endpoint: "cardsets seasons test",
+                error: error
+            });
+        })
 }
 
 // Return a list of distinct seasons based on all card sets in the database
@@ -36,7 +56,7 @@ exports.getSeasons = (req, res) => {
             
             // build prepared statement
             const ps = new sql.PreparedStatement(pool);
-            ps.input('sport', sql.VarChar(25));
+            ps.input("sport", sql.VarChar(25));
             await ps.prepare(sqlQuery);
             const parameters = {
                 sport: inputs.sport
