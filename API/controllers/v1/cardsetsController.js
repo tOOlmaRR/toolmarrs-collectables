@@ -1,4 +1,4 @@
-const { getTestSeasons } = require('../../models/v1/cardsetsModel');
+const { getTestSeasons, getSeasonsFromDB } = require('../../models/v1/cardsetsModel');
 const sql = require('mssql'); // remove once all DB ops have moved to the model
 const { poolPromise } = require('../../db'); // remove once all DB ops have moved to the model
 
@@ -17,12 +17,14 @@ exports.getTestSeasonsOutput = (req, res) => {
     getTestSeasons(inputs)
         .then(result => {
             res.json({
+                inputs,
                 endpoint: "cardsets seasons test",
                 data: result
             });
         })
         .catch(error => {
             res.json({
+                inputs,
                 endpoint: "cardsets seasons test",
                 error: error
             });
@@ -31,72 +33,40 @@ exports.getTestSeasonsOutput = (req, res) => {
 
 // Return a list of distinct seasons based on all card sets in the database
 exports.getSeasons = (req, res) => {
-    // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     
-    return new Promise(async function(resolve, reject) {
-        let jsonResponse;
-        let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport ORDER BY cs.Season ASC`;
-        try {
-            // validate inputs
-            if (!validateSport(inputs.sport))
-            {
-                const jsonResponse = {
-                    inputs,
-                    error: "Input Validation Failed (sport)"
-                };
-                res.status(400);
-                res.json(jsonResponse);
-                return resolve(jsonResponse);
-            }
-            
-            // wait for the SQL connection pool to be ready
-            const pool = await poolPromise;
-            
-            // build prepared statement
-            const ps = new sql.PreparedStatement(pool);
-            ps.input("sport", sql.VarChar(25));
-            await ps.prepare(sqlQuery);
-            const parameters = {
-                sport: inputs.sport
-            }
-
-            // get results
-            await ps.execute(parameters)
-                .then(function(result) {
-                    var finalQuery = result.sqlQuery;
-                    const seasonsFromDb = result.recordset == undefined ? [] : result.recordset;
-                    let seasons = [];
-                    for (let i = 0; i < seasonsFromDb.length; i++) {
-                        const record = seasonsFromDb[i];
-                        seasons.push(record.Season);
-                    }
-
-                    // build response
-                    const jsonResponse = {
-                        inputs,
-                        data: {
-                            seasons
-                        }
-                    };
-                    ps.unprepare();
-                    res.json(jsonResponse);
-                    return resolve(jsonResponse);
-                })
-                .catch(function(err) {
-                    // handle query errors
-                    res.status(400);
-                    res.json(jsonResponse);
-                    return reject(err);
-                });      
-        } catch (err) {
-            // handle connection and logic errors (but not SQL errors)
+    // validate inputs
+    if (!validateSport(inputs.sport))
+    {
+        const jsonResponse = {
+            inputs,
+            error: "Input Validation Failed (sport)"
+        };
+        res.status(400);
+        res.json(jsonResponse);
+    } else {
+        getSeasonsFromDB(inputs.sport)
+        .then(result => {
+            res.json({
+                inputs,
+                endpoint: "cardsets seasons",
+                data: {
+                    seasons: result
+                }
+            });
+        })
+        .catch(error => {
             res.status(400);
-            res.json(jsonResponse);
-            return reject(err);
-        }
-    });
+            res.json({
+                inputs,
+                endpoint: "cardsets seasons",
+                error: error.message,
+                stack: error.stack
+            });
+            // TODO: return friendly error message and log the true error in the database
+        })
+    }
 }
 
 // Return a list of base set names for a specified season
