@@ -19,7 +19,9 @@ exports.getTestSeasonsOutput = (req, res) => {
             res.json({
                 inputs,
                 endpoint: "cardsets seasons test",
-                data: result
+                data: {
+                    seasons: result
+                }
             });
         })
         .catch(error => {

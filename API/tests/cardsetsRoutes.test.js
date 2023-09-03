@@ -1,19 +1,55 @@
 const request = require('supertest');
 const app = require('../app');
 
-const testEndpoint = '/v1/cardsets/test';
+const controllerTestEndpoint = '/v1/cardsets/test';
 describe('Test Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
-        const response = await request(app).get(testEndpoint);
+        const response = await request(app).get(controllerTestEndpoint);
         expect(response.statusCode).toBe(200);
     });
 
     test('Should return JSON that tells us which endpoint we are hitting', async() => {
-        const response = await request(app).get(testEndpoint);
+        const response = await request(app).get(controllerTestEndpoint);
         const responseBody = response.body;
-        expect(response.body['endpoint']).toBe('cardsets controller test');
+        expect(responseBody['endpoint']).toBe('cardsets controller test');
     });
 });
+
+const seasonsModelTestEndpoint = '/v1/cardsets/test/:sport/seasons';
+describe('Test Endpoint', () => {
+    test('Should return a 200 HTTP status code', async() => {
+        const sport = 'hockey';
+        const response = await request(app).get(seasonsModelTestEndpoint.replace(':sport', sport));
+        expect(response.statusCode).toBe(200);
+    });
+
+    test('Should return JSON that tells us which endpoint we are hitting', async() => {
+        const sport = 'hockey';
+        const response = await request(app).get(seasonsModelTestEndpoint.replace(':sport', sport));
+        const responseBody = response.body;
+        expect(responseBody['endpoint']).toBe('cardsets seasons test');
+    });
+
+    test('Should return an appropriate JSON results response with data and seasons nodes', async() => {
+        const sport = 'hockey';
+        const response = await request(app).get(seasonsModelTestEndpoint.replace(':sport', sport));
+        const responseBody = response.body;
+        expect(responseBody['data']).toBeDefined();
+        expect(responseBody['data']['seasons']).toBeDefined();
+        expect(responseBody['data']['seasons']).toBe('1990-91');
+    });
+
+    test('Should return an appropriate JSON error response with an error node', async() => {
+        const sport = 'BADINPUT';
+        const response = await request(app).get(seasonsModelTestEndpoint.replace(':sport', sport));
+        const responseBody = response.body;
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']).toBe('BAD INPUT');
+        expect(responseBody['data']).not.toBeDefined();
+    });
+});
+
+
 
 const viewSeasonsEndpoint = '/v1/cardsets/:sport/seasons';
 describe('View Seasons Endpoint', () => {
@@ -41,6 +77,8 @@ describe('View Seasons Endpoint', () => {
         expect(responseBody['data']['seasons']).toBeDefined();
         expect(typeof(responseBody['data']['seasons'])).toBe('object');
         expect(Array.isArray(responseBody['data']['seasons'])).toBe(true);
+
+        expect(responseBody['error']).not.toBeDefined();
     });
 });
 
