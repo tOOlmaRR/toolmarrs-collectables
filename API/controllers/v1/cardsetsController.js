@@ -2,23 +2,32 @@ const { getTestSeasons, getSeasonsFromDB } = require('../../models/v1/cardsetsMo
 const sql = require('mssql'); // remove once all DB ops have moved to the model
 const { poolPromise } = require('../../db'); // remove once all DB ops have moved to the model
 
-// Return a test response
-exports.getTestOutput = (req, res) => {
-    res.json({
-        endpoint: 'cardsets controller test'
+// ENDPOINT: Cardsets Controller Test
+// Return a test response directly from the controller
+exports.getControllerTestResponse = (req, res) => {
+    const endpointName = 'Cardsets Controller Test';
+    return res.json({
+        endpoint: endpointName
     });
 }
 
-// Return a test response for seasons
-exports.getTestSeasonsOutput = (req, res) => {
+
+
+// ENDPOINT: Cardsets Model Test
+// Return a test response from the model
+exports.getModelTestResponse = (req, res) => {
+    const endpointName = 'Cardsets Model Test';
+    
+    // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
 
+    // Get a test reponse via the model
     getTestSeasons(inputs)
         .then(result => {
             res.json({
                 inputs,
-                endpoint: "cardsets seasons test",
+                endpoint: endpointName,
                 data: {
                     seasons: result
                 }
@@ -27,18 +36,21 @@ exports.getTestSeasonsOutput = (req, res) => {
         .catch(error => {
             res.json({
                 inputs,
-                endpoint: "cardsets seasons test",
+                endpoint: endpointName,
                 error: error
             });
         })
 }
 
-// Return a list of distinct seasons based on all card sets in the database
+
+
+// Return a list of distinct seasons based on all card sets in the database for the provided sport
 exports.getSeasons = (req, res) => {
+    // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     
-    // validate inputs
+    // validate inputs and return response if invalid
     if (!validateSport(inputs.sport))
     {
         const jsonResponse = {
@@ -46,29 +58,30 @@ exports.getSeasons = (req, res) => {
             error: "Input Validation Failed (sport)"
         };
         res.status(400);
-        res.json(jsonResponse);
-    } else {
-        getSeasonsFromDB(inputs.sport)
-        .then(result => {
-            res.json({
-                inputs,
-                endpoint: "cardsets seasons",
-                data: {
-                    seasons: result
-                }
-            });
-        })
-        .catch(error => {
-            res.status(400);
-            res.json({
-                inputs,
-                endpoint: "cardsets seasons",
-                error: error.message,
-                stack: error.stack
-            });
-            // TODO: return friendly error message and log the true error in the database
-        })
+        return res.json(jsonResponse);
     }
+
+    // Query the DB via the model for seasons data
+    getSeasonsFromDB(inputs.sport)
+    .then(result => {
+        res.json({
+            inputs,
+            endpoint: "cardsets seasons",
+            data: {
+                seasons: result
+            }
+        });
+    })
+    .catch(error => {
+        res.status(400);
+        return res.json({
+            inputs,
+            endpoint: "cardsets seasons",
+            error: error.message,
+            stack: error.stack
+        });
+        // TODO: interpret and respond with a friendly error message and log the true error in the database
+    })
 }
 
 // Return a list of base set names for a specified season
@@ -77,6 +90,8 @@ exports.getBaseSetNames = (req, res) => {
     let inputs = {};
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
+
+
 
     return new Promise(async function(resolve, reject) {
         let jsonResponse;

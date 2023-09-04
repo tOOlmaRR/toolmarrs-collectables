@@ -1,6 +1,8 @@
+// ENDPOINT: Test Controller Test
 // Return a test response
 exports.getTestOutput = (req, res) => {
-    res.json({
-        endpoint: 'test'
+    const endpointName = 'Test Controller Test';
+    return res.json({
+        endpoint: endpointName
     });
 }

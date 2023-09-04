@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 
+// ENDPOINT: Test Controller Test
 const testEndpoint = '/v1/test';
 describe("GET ${testEndpoint}", () => {
     test('Should return a 200 HTTP status code', async() => {
@@ -11,7 +12,7 @@ describe("GET ${testEndpoint}", () => {
     test('Should return JSON that tells us which endpoint we are hitting', async() => {
         const response = await request(app).get(testEndpoint);
         const responseBody = response.body;
-        expect(responseBody['endpoint']).toBe('test');
+        expect(responseBody['endpoint']).toBe('Test Controller Test');
     });
 });
 

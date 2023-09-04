@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../app');
 
+// ENDPOINT: Cardsets Controller Test
 const controllerTestEndpoint = '/v1/cardsets/test';
 describe('Test Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
@@ -11,10 +12,11 @@ describe('Test Endpoint', () => {
     test('Should return JSON that tells us which endpoint we are hitting', async() => {
         const response = await request(app).get(controllerTestEndpoint);
         const responseBody = response.body;
-        expect(responseBody['endpoint']).toBe('cardsets controller test');
+        expect(responseBody['endpoint']).toBe('Cardsets Controller Test');
     });
 });
 
+// ENDPOINT: Cardsets Model Test
 const seasonsModelTestEndpoint = '/v1/cardsets/test/:sport/seasons';
 describe('Test Endpoint', () => {
     test('Should return a 200 HTTP status code', async() => {
@@ -27,7 +29,7 @@ describe('Test Endpoint', () => {
         const sport = 'hockey';
         const response = await request(app).get(seasonsModelTestEndpoint.replace(':sport', sport));
         const responseBody = response.body;
-        expect(responseBody['endpoint']).toBe('cardsets seasons test');
+        expect(responseBody['endpoint']).toBe('Cardsets Model Test');
     });
 
     test('Should return an appropriate JSON results response with data and seasons nodes', async() => {
@@ -43,6 +45,7 @@ describe('Test Endpoint', () => {
         const sport = 'BADINPUT';
         const response = await request(app).get(seasonsModelTestEndpoint.replace(':sport', sport));
         const responseBody = response.body;
+        expect(responseBody['endpoint']).toBe('Cardsets Model Test');
         expect(responseBody['error']).toBeDefined();
         expect(responseBody['error']).toBe('BAD INPUT');
         expect(responseBody['data']).not.toBeDefined();

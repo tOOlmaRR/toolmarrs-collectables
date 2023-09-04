@@ -46,13 +46,14 @@ A node.js API used to interface with the database, through which inventory data 
 ## Endpoints: Test
 |Name|HTTP|Request Format|Desription and Comments|
 |----|----|----------|-----------------------|
-Test|GET|/v1/test/|Just a "test" endpoint that can be used for monitoring and confirming that the API resolves correctly|
+Test Controller Test|GET|/v1/test/|A "test" endpoint that can be used for monitoring and confirming that the API resolves correctly|
 
 ## Endpoints: Cardsets
 
 |Name|HTTP|Request Format|Desription and Comments|
 |----|----|----------|-----------------------|
-Test|GET|/v1/cardsets/test|Just a "test" endpoint that can be used for monitoring and confirming that the cardsets API endpoint group resolves correctly|
+Cardsets Controller Test|GET|/v1/cardsets/test|A "test" endpoint that can be used for monitoring and confirming that the cardsets controller and API endpoint group resolves correctly|
+Cardsets Model Test|GET|/v1/cardsets/test/{sport}/seasons|A "test" endpoint that can be used for monitoring and confirming that the cardsets model and API endpoint group resolves correctly. Passing in 'hockey' as the sport returns data whereas any other value will return an 'error' response|
 View Seasons|GET|/v1/cardsets/{sport}/seasons|Returns a list of all seasons for which card sets exists within the database for the given sport. Used primarily to populate a dropdown in the website
 View Base Sets|GET|/v1/cardsets/{sport}/{season}/basesets|Returns a list of all base set names for card sets in the database for the given sport. Used primarily to populate a dropdown in the website
 View Insert Sets|GET|/v1/cardsets/{sport}/{season}/{basesetname}/insertsets|Returns a list of all insert sets in a given base set, season, and sport. Used primarily to populate a drop down in the website
