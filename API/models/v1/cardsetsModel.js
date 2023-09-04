@@ -24,9 +24,7 @@ exports.getSeasonsFromDB = (sport, res) => {
             const ps = new sql.PreparedStatement(pool);
             ps.input("sport", sql.VarChar(25));
             await ps.prepare(sqlQuery);
-            const parameters = {
-                sport
-            }
+            const parameters = { sport };
 
             // get results
             await ps.execute(parameters)

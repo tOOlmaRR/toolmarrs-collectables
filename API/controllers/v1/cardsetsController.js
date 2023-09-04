@@ -25,7 +25,7 @@ exports.getModelTestResponse = (req, res) => {
     // Get a test reponse via the model
     getTestSeasons(inputs)
         .then(result => {
-            res.json({
+            return res.json({
                 inputs,
                 endpoint: endpointName,
                 data: {
@@ -34,18 +34,21 @@ exports.getModelTestResponse = (req, res) => {
             });
         })
         .catch(error => {
-            res.json({
+            return res.json({
                 inputs,
                 endpoint: endpointName,
                 error: error
             });
-        })
+        });
 }
 
 
 
+// ENDPOINT: View Seasons
 // Return a list of distinct seasons based on all card sets in the database for the provided sport
 exports.getSeasons = (req, res) => {
+    const endpointName = 'View Seasons';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
@@ -55,7 +58,10 @@ exports.getSeasons = (req, res) => {
     {
         const jsonResponse = {
             inputs,
-            error: "Input Validation Failed (sport)"
+            endpoint: endpointName,
+            error: {
+                message: "Input Validation Failed (sport)"
+            }
         };
         res.status(400);
         return res.json(jsonResponse);
@@ -63,26 +69,30 @@ exports.getSeasons = (req, res) => {
 
     // Query the DB via the model for seasons data
     getSeasonsFromDB(inputs.sport)
-    .then(result => {
-        res.json({
-            inputs,
-            endpoint: "cardsets seasons",
-            data: {
-                seasons: result
-            }
+        .then(result => {
+            return res.json({
+                inputs,
+                endpoint: endpointName,
+                data: {
+                    seasons: result
+                }
+            });
+        })
+        .catch(error => {
+            res.status(400);
+            return res.json({
+                inputs,
+                endpoint: "cardsets seasons",
+                error: {
+                    message: error.message,
+                    stack: error.stack
+                }
+            });
+            // TODO: interpret and respond with a friendly error message and log the true error in the database
         });
-    })
-    .catch(error => {
-        res.status(400);
-        return res.json({
-            inputs,
-            endpoint: "cardsets seasons",
-            error: error.message,
-            stack: error.stack
-        });
-        // TODO: interpret and respond with a friendly error message and log the true error in the database
-    })
 }
+
+
 
 // Return a list of base set names for a specified season
 exports.getBaseSetNames = (req, res) => {
