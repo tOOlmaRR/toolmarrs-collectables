@@ -72,15 +72,60 @@ exports.getBaseSetNamesFromDB = (sport, season) => {
             // get results
             await ps.execute(parameters)
                 .then(function(result) {
-                    const baseSetsFromDb = result.recordset == undefined ? [] : result.recordset;
-                    let baseSets = [];
-                    for (let i = 0; i < baseSetsFromDb.length; i++) {
-                        const record = baseSetsFromDb[i];
-                        baseSets.push(record.BaseSetName);
+                    const baseSetNamesFromDb = result.recordset == undefined ? [] : result.recordset;
+                    let baseSetNames = [];
+                    for (let i = 0; i < baseSetNamesFromDb.length; i++) {
+                        const record = baseSetNamesFromDb[i];
+                        baseSetNames.push(record.BaseSetName);
                     }
 
                     ps.unprepare();
-                    return resolve(baseSets);
+                    return resolve(baseSetNames);
+                })
+                .catch(function(err) {
+                    // handle logic errors after the statement has been executed
+                    ps.unprepare();                    
+                    return reject(err);
+                });      
+        } catch (err) {
+            // handle connection and statement preparation (SQL) errors
+            if (typeof ps !== "undefined")
+            {
+                ps.unprepare();
+            }
+            return reject(err);
+        }
+    });
+}
+
+// Return insert set names for a specified sport, season, and base set name
+exports.getInsertSetNamesFromDB = (sport, season, baseSetName) => {   
+    return new Promise(async function(resolve, reject) {
+        let sqlQuery = `SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport WHERE Season = @season AND BaseSetName = @baseSetName AND InsertSetName <> '' ORDER BY InsertSetName ASC`;
+        try {
+            // wait for the SQL connection pool to be ready
+            const pool = await poolPromise;
+            
+            // build prepared statement
+            const ps = new sql.PreparedStatement(pool);
+            ps.input("sport", sql.VarChar(25));
+            ps.input("season", sql.Char(7));
+            ps.input("baseSetName", sql.VarChar(100));
+            await ps.prepare(sqlQuery);
+            const parameters = { sport, season, baseSetName };
+
+            // get results
+            await ps.execute(parameters)
+                .then(function(result) {
+                    const insertSetNamesFromDb = result.recordset == undefined ? [] : result.recordset;
+                    let insertSetNames = [];
+                    for (let i = 0; i < insertSetNamesFromDb.length; i++) {
+                        const record = insertSetNamesFromDb[i];
+                        insertSetNames.push(record.InsertSetName);
+                    }
+
+                    ps.unprepare();
+                    return resolve(insertSetNames);
                 })
                 .catch(function(err) {
                     // handle logic errors after the statement has been executed
