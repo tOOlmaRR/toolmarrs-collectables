@@ -352,7 +352,7 @@ describe('View Insert Sets Endpoint', () => {
         expect(responseBody['data']).not.toBeDefined();
     });
 
-        test('Should return JSON error response with an error node and a message node within (invalid sport, season, and base set name))', async() => {
+    test('Should return JSON error response with an error node and a message node within (invalid sport, season, and base set name))', async() => {
         const sport = 'zzzzzzzzzzzzzzzzzzzzzzzzzZ';
         const season = 'BADINPUT';
         const baseSetName = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZ';
@@ -373,11 +373,12 @@ describe('View Insert Sets Endpoint', () => {
 
 
 
+// ENDPOINT: View Card Set Details (Base Sets)
 const viewBaseSetDetailsEndpoint = '/v1/cardsets/details/:sport/:season/:basesetname';
 describe('View Card Set Endpoint for a Base Set', () => {
     test('Should return a 200 HTTP status code', async() => {
         const sport = 'hockey';
-        const season = 'anything';
+        const season = '2003-04';
         const baseSetName = 'anything';
         const response = await request(app).get(
             viewBaseSetDetailsEndpoint.replace(':sport', sport)
@@ -387,9 +388,20 @@ describe('View Card Set Endpoint for a Base Set', () => {
         expect(response.statusCode).toBe(200);
     });
 
+    test('Should return JSON that tells us which endpoint we are hitting', async() => {
+        const sport = 'hockey';
+        const season = '2003-04';
+        const baseSetName = 'anything';
+        const response = await request(app).get(viewBaseSetDetailsEndpoint.replace(':sport', sport)
+        .replace(':season', season)
+        .replace(':basesetname', baseSetName));
+        const responseBody = response.body;
+        expect(responseBody['endpoint']).toBe('View Card Set Details');
+    });
+
     test('Should return JSON including an "inputs" array with the received key-value pairs and a "cardset" object within a "data" object', async() => {
         const sport = 'hockey';
-        const season = 'anything';
+        const season = '2003-04';
         const baseSetName = 'anything';
         const response = await request(app).get(
             viewBaseSetDetailsEndpoint.replace(':sport', sport)
@@ -413,19 +425,115 @@ describe('View Card Set Endpoint for a Base Set', () => {
         expect(typeof(responseBody['inputs']['basesetname'])).toBe('string');
         expect(responseBody['inputs']['basesetname']).toBe(baseSetName);
 
+        expect(responseBody['inputs']['insertsetname']).not.toBeDefined();
+
         expect(responseBody['data']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
 
         expect(responseBody['data']['cardset']).toBeDefined();
         expect(typeof(responseBody['data']['cardset'])).toBe('object');
+
+        expect(responseBody['error']).not.toBeDefined();
+    });
+
+    test('Should return a 400 HTTP status code and JSON error response with an error node and a message node within (invalid sport))', async() => {
+        const sport = 'zzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const season = '2003-04';
+        const baseSetName = 'anything';
+        const response = await request(app).get(viewInsertSetListEndpoint.replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName));
+        const responseBody = response.body;
+
+        expect(response.statusCode).toBe(400);
+
+        expect(responseBody['inputs']).toBeDefined();
+        expect(typeof(responseBody['inputs'])).toBe('object');
+
+        expect(responseBody['inputs']['sport']).toBeDefined();
+        expect(typeof(responseBody['inputs']['sport'])).toBe('string');
+        expect(responseBody['inputs']['sport']).toBe(sport);
+
+        expect(responseBody['inputs']['season']).toBeDefined();
+        expect(typeof(responseBody['inputs']['season'])).toBe('string');
+        expect(responseBody['inputs']['season']).toBe(season);
+
+        expect(responseBody['inputs']['basesetname']).toBeDefined();
+        expect(typeof(responseBody['inputs']['basesetname'])).toBe('string');
+        expect(responseBody['inputs']['basesetname']).toBe(baseSetName);
+
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']['message']).toBeDefined();
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('sport'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('season'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('base set name'));
+
+        expect(responseBody['data']).not.toBeDefined();
+    });
+
+    test('Should return JSON error response with an error node and a message node within (invalid sport and season))', async() => {
+        const sport = 'zzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const season = 'BADINPUT';
+        const baseSetName = 'anything';
+        const response = await request(app).get(viewInsertSetListEndpoint.replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName));
+        const responseBody = response.body;
+        
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']['message']).toBeDefined();
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('sport'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('season'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('base set name'));
+
+        expect(responseBody['data']).not.toBeDefined();
+    });
+
+    test('Should return JSON error response with an error node and a message node within (invalid base set name))', async() => {
+        const sport = 'hockey';
+        const season = '2003-04';
+        const baseSetName = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const response = await request(app).get(viewInsertSetListEndpoint.replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName));
+        const responseBody = response.body;
+        
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']['message']).toBeDefined();
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('sport'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('season'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('base set name'));
+
+        expect(responseBody['data']).not.toBeDefined();
+    });
+
+    test('Should return JSON error response with an error node and a message node within (invalid sport, season, and base set name))', async() => {
+        const sport = 'zzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const season = 'BADINPUT';
+        const baseSetName = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const response = await request(app).get(viewInsertSetListEndpoint.replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName));
+        const responseBody = response.body;
+        
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']['message']).toBeDefined();
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('sport'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('season'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('base set name'));
+
+        expect(responseBody['data']).not.toBeDefined();
     });
 });
 
+
+
+// ENDPOINT: View Card Set Details (Insert Sets)
 const viewInsertSetDetailsEndpoint = '/v1/cardsets/details/:sport/:season/:basesetname/:insertsetname';
 describe('View Card Set Endpoint for an Insert Set', () => {
     test('Should return a 200 HTTP status code', async() => {
         const sport = 'hockey';
-        const season = 'anything';
+        const season = '2003-04';
         const baseSetName = 'anything';
         const insertSetName = 'anything';    
         const response = await request(app).get(viewInsertSetDetailsEndpoint
@@ -433,13 +541,13 @@ describe('View Card Set Endpoint for an Insert Set', () => {
             .replace(':season', season)
             .replace(':basesetname', baseSetName)
             .replace(':insertsetname', insertSetName)
-            );
+        );
         expect(response.statusCode).toBe(200);
     });
 
-    test('Should return JSON including a "cardset" object within a "data" object', async() => {
+    test('Should return JSON that tells us which endpoint we are hitting', async() => {
         const sport = 'hockey';
-        const season = 'anything';
+        const season = '2003-04';
         const baseSetName = 'anything';
         const insertSetName = 'anything';
         const response = await request(app).get(viewInsertSetDetailsEndpoint
@@ -447,7 +555,22 @@ describe('View Card Set Endpoint for an Insert Set', () => {
             .replace(':season', season)
             .replace(':basesetname', baseSetName)
             .replace(':insertsetname', insertSetName)
-            );
+        );
+        const responseBody = response.body;
+        expect(responseBody['endpoint']).toBe('View Card Set Details');
+    });
+
+    test('Should return JSON including a "cardset" object within a "data" object', async() => {
+        const sport = 'hockey';
+        const season = '2003-04';
+        const baseSetName = 'anything';
+        const insertSetName = 'anything';
+        const response = await request(app).get(viewInsertSetDetailsEndpoint
+            .replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName)
+            .replace(':insertsetname', insertSetName)
+        );
         const responseBody = response.body;
         
         expect(responseBody['inputs']).toBeDefined();
@@ -465,15 +588,101 @@ describe('View Card Set Endpoint for an Insert Set', () => {
         expect(typeof(responseBody['inputs']['basesetname'])).toBe('string');
         expect(responseBody['inputs']['basesetname']).toBe(baseSetName);
 
-        expect(responseBody['inputs']['basesetname']).toBeDefined();
-        expect(typeof(responseBody['inputs']['basesetname'])).toBe('string');
-        expect(responseBody['inputs']['basesetname']).toBe(insertSetName);
+        expect(responseBody['inputs']['insertsetname']).toBeDefined();
+        expect(typeof(responseBody['inputs']['insertsetname'])).toBe('string');
+        expect(responseBody['inputs']['insertsetname']).toBe(insertSetName);
         
         expect(responseBody['data']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
         
         expect(responseBody['data']['cardset']).toBeDefined();
         expect(typeof(responseBody['data']['cardset'])).toBe('object');
+    });
+
+    test('Should return a 400 HTTP status code and JSON error response with an error node and a message node within (invalid sport))', async() => {
+        const sport = 'zzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const season = '2003-04';
+        const baseSetName = 'anything';
+        const insertSetName = 'anything';
+        const response = await request(app).get(viewInsertSetDetailsEndpoint.replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName)
+            .replace(':insertsetname', insertSetName)
+        );
+        const responseBody = response.body;
+
+        expect(response.statusCode).toBe(400);
+
+        expect(responseBody['inputs']).toBeDefined();
+        expect(typeof(responseBody['inputs'])).toBe('object');
+
+        expect(responseBody['inputs']['sport']).toBeDefined();
+        expect(typeof(responseBody['inputs']['sport'])).toBe('string');
+        expect(responseBody['inputs']['sport']).toBe(sport);
+
+        expect(responseBody['inputs']['season']).toBeDefined();
+        expect(typeof(responseBody['inputs']['season'])).toBe('string');
+        expect(responseBody['inputs']['season']).toBe(season);
+
+        expect(responseBody['inputs']['basesetname']).toBeDefined();
+        expect(typeof(responseBody['inputs']['basesetname'])).toBe('string');
+        expect(responseBody['inputs']['basesetname']).toBe(baseSetName);
+
+        expect(responseBody['inputs']['insertsetname']).toBeDefined();
+        expect(typeof(responseBody['inputs']['insertsetname'])).toBe('string');
+        expect(responseBody['inputs']['insertsetname']).toBe(insertSetName);
+
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']['message']).toBeDefined();
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('sport'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('season'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('base set name'));
+
+        expect(responseBody['data']).not.toBeDefined();
+    });
+
+    test('Should return JSON error response with an error node and a message node within (invalid insert set name))', async() => {
+        const sport = 'hockey';
+        const season = '2003-04';
+        const baseSetName = 'anything';
+        const insertSetName = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const response = await request(app).get(viewInsertSetDetailsEndpoint.replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName)
+            .replace(':insertsetname', insertSetName)
+        );
+        const responseBody = response.body;
+        
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']['message']).toBeDefined();
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('sport'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('season'));
+        expect(responseBody['error']['message']).toEqual(expect.not.stringContaining('base set name'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('insert set name'));
+
+        expect(responseBody['data']).not.toBeDefined();
+    });
+
+    test('Should return JSON error response with an error node and a message node within (invalid sport, season, base set name and insert set name))', async() => {
+        const sport = 'zzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const season = 'BADINPUT';
+        const baseSetName = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const insertSetName = 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzZ';
+        const response = await request(app).get(viewInsertSetDetailsEndpoint.replace(':sport', sport)
+            .replace(':season', season)
+            .replace(':basesetname', baseSetName)
+            .replace(':insertsetname', insertSetName)
+        );
+        const responseBody = response.body;
+        
+        expect(responseBody['error']).toBeDefined();
+        expect(responseBody['error']['message']).toBeDefined();
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('sport'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('season'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('base set name'));
+        expect(responseBody['error']['message']).toEqual(expect.stringContaining('insert set name'));
+
+        expect(responseBody['data']).not.toBeDefined();
     });
 });
 

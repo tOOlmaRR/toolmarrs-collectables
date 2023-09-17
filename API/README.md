@@ -57,8 +57,8 @@ Cardsets Model Test|GET|/v1/cardsets/test/{sport}/seasons|A "test" endpoint that
 View Seasons|GET|/v1/cardsets/{sport}/seasons|Returns a list of all seasons for which card sets exists within the database for the specified sport. Used primarily to populate a dropdown in the website
 View Base Set Names|GET|/v1/cardsets/{sport}/{season}/basesets|Returns a list of all base set names for card sets in the database for the specified sport and season. Used primarily to populate a dropdown in the website
 View Insert Set Names|GET|/v1/cardsets/{sport}/{season}/{basesetname}/insertsets|Returns a list of all insert sets in a given base set, season, and sport. Used primarily to populate a drop down in the website
-View Base Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}|Returns details of a base card set given the desired sport, season, and base set name. Used to populate the card set details page/pane. Ddoes not include data from related tables such as Manufacturer.
-View Insert Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}|Returns details of an insert set given the desired sport, season, base set name, and insert set name. Used to populate the card set details page/pane. Does not include data from related tables such as Manufacturer.
+View Card Set Details (Base Set)|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}|Returns details of a base card set given the desired sport, season, and base set name. Used to populate the card set details page/pane. Does not include data from related tables such as Manufacturer.
+View Card Set Details (Insert Set)|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}|Returns details of an insert set given the desired sport, season, base set name, and insert set name. Used to populate the card set details page/pane. Does not include data from related tables such as Manufacturer.
 
 **Note**: All dynamic elements are in {curly braces}, and should be replaced with the actual values you are looking for and not their IDs.
 

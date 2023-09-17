@@ -5,7 +5,9 @@ http://localhost:8080/v1/cardsets/test/badinput/seasons
 
 http://localhost:8080/v1/cardsets/hockey/seasons
 http://localhost:8080/v1/cardsets/hockey/2003-04/basesets
+http://localhost:8080/v1/cardsets/hockey/2003-04/BOO/insertsets
 http://localhost:8080/v1/cardsets/hockey/2003-04/Victory/insertsets
 http://localhost:8080/v1/cardsets/hockey/anything/anything/insertsets
 http://localhost:8080/v1/cardsets/details/hockey/2003-04/Victory
+http://localhost:8080/v1/cardsets/details/hockey/2003-04/BOO
 http://localhost:8080/v1/cardsets/details/hockey/2003-04/Victory/Game%20Breakers

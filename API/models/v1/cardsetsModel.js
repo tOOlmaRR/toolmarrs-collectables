@@ -12,7 +12,7 @@ exports.getTestSeasons = (req, res) => {
     });
 }
 
-// Return seasons for a specified sport
+// Return a list of distinct seasons based on all card sets in the database for the specified sport
 exports.getSeasonsFromDB = (sport) => {   
     return new Promise(async function(resolve, reject) {
         let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport ORDER BY cs.Season ASC`;
@@ -54,7 +54,7 @@ exports.getSeasonsFromDB = (sport) => {
     });
 }
 
-// Return base set names for a specified sport and season
+// Return a list of base set names for a specified sport and season
 exports.getBaseSetNamesFromDB = (sport, season) => {   
     return new Promise(async function(resolve, reject) {
         let sqlQuery = `SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport WHERE Season = @season AND InsertSetName = '' ORDER BY BaseSetName ASC`;
@@ -98,7 +98,7 @@ exports.getBaseSetNamesFromDB = (sport, season) => {
     });
 }
 
-// Return insert set names for a specified sport, season, and base set name
+// Return a list of insert set names within a specified base set (by name) in a specified season and sport
 exports.getInsertSetNamesFromDB = (sport, season, baseSetName) => {   
     return new Promise(async function(resolve, reject) {
         let sqlQuery = `SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport WHERE Season = @season AND BaseSetName = @baseSetName AND InsertSetName <> '' ORDER BY InsertSetName ASC`;
@@ -126,6 +126,52 @@ exports.getInsertSetNamesFromDB = (sport, season, baseSetName) => {
 
                     ps.unprepare();
                     return resolve(insertSetNames);
+                })
+                .catch(function(err) {
+                    // handle logic errors after the statement has been executed
+                    ps.unprepare();                    
+                    return reject(err);
+                });      
+        } catch (err) {
+            // handle connection and statement preparation (SQL) errors
+            if (typeof ps !== "undefined")
+            {
+                ps.unprepare();
+            }
+            return reject(err);
+        }
+    });
+}
+
+// returns all details for a specified card set (base set or insert set) in a specific season and sport
+exports.getCardSetDetailsFromDB = (sport, season, baseSetName, insertSetName) => {   
+    return new Promise(async function(resolve, reject) {
+        let sqlQuery = `SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = @sport WHERE Season = @season AND BaseSetName = @baseSetName AND InsertSetName = @insertSetName`;
+        try {
+            // wait for the SQL connection pool to be ready
+            const pool = await poolPromise;
+            
+            // build prepared statement
+            const ps = new sql.PreparedStatement(pool);
+            ps.input("sport", sql.VarChar(25));
+            ps.input("season", sql.Char(7));
+            ps.input("baseSetName", sql.VarChar(100));
+            ps.input("insertSetName", sql.VarChar(100));
+            await ps.prepare(sqlQuery);
+            const parameters = { sport, season, baseSetName, insertSetName };
+
+            // get results
+            await ps.execute(parameters)
+                .then(function(result) {
+                    const cardsetDetailsFromDb = result.recordset == undefined ? [] : result.recordset;
+                    let cardsetDetails = [];
+                    for (let i = 0; i < cardsetDetailsFromDb.length; i++) {
+                        const record = cardsetDetailsFromDb[i];
+                        cardsetDetails.push(record);
+                    }
+
+                    ps.unprepare();
+                    return resolve(cardsetDetails);
                 })
                 .catch(function(err) {
                     // handle logic errors after the statement has been executed
