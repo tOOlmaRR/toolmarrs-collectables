@@ -157,6 +157,13 @@ exports.getCardSetDetailsFromDB = (sport, season, baseSetName, insertSetName) =>
             ps.input("season", sql.Char(7));
             ps.input("baseSetName", sql.VarChar(100));
             ps.input("insertSetName", sql.VarChar(100));
+            
+            // if provided insert set name is undefined, treat it as an empty string when querying the DB
+            if (insertSetName == undefined)
+            {
+                insertSetName = '';
+            }
+
             await ps.prepare(sqlQuery);
             const parameters = { sport, season, baseSetName, insertSetName };
 
