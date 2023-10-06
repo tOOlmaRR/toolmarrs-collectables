@@ -430,8 +430,8 @@ describe('View Card Set Endpoint for a Base Set', () => {
         expect(responseBody['data']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
 
-        expect(responseBody['data']['cardset']).toBeDefined();
-        expect(typeof(responseBody['data']['cardset'])).toBe('object');
+        // when there are no results, we expect no cardset object within the data object
+        expect(responseBody['data'].cardset).not.toBeDefined();
 
         expect(responseBody['error']).not.toBeDefined();
     });
@@ -595,8 +595,8 @@ describe('View Card Set Endpoint for an Insert Set', () => {
         expect(responseBody['data']).toBeDefined();
         expect(typeof(responseBody['data'])).toBe('object');
         
-        expect(responseBody['data']['cardset']).toBeDefined();
-        expect(typeof(responseBody['data']['cardset'])).toBe('object');
+        // when there are no results, we expect no cardset object within the data object
+        expect(responseBody['data']['cardset']).not.toBeDefined();
     });
 
     test('Should return a 400 HTTP status code and JSON error response with an error node and a message node within (invalid sport))', async() => {

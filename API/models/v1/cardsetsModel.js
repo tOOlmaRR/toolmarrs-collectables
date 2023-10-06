@@ -171,12 +171,7 @@ exports.getCardSetDetailsFromDB = (sport, season, baseSetName, insertSetName) =>
             await ps.execute(parameters)
                 .then(function(result) {
                     const cardsetDetailsFromDb = result.recordset == undefined ? [] : result.recordset;
-                    let cardsetDetails = [];
-                    for (let i = 0; i < cardsetDetailsFromDb.length; i++) {
-                        const record = cardsetDetailsFromDb[i];
-                        cardsetDetails.push(record);
-                    }
-
+                    let cardsetDetails = cardsetDetailsFromDb[0];
                     ps.unprepare();
                     return resolve(cardsetDetails);
                 })
