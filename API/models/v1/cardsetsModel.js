@@ -78,7 +78,6 @@ exports.getBaseSetNamesFromDB = (sport, season) => {
                         const record = baseSetNamesFromDb[i];
                         baseSetNames.push(record.BaseSetName);
                     }
-
                     ps.unprepare();
                     return resolve(baseSetNames);
                 })
@@ -123,7 +122,6 @@ exports.getInsertSetNamesFromDB = (sport, season, baseSetName) => {
                         const record = insertSetNamesFromDb[i];
                         insertSetNames.push(record.InsertSetName);
                     }
-
                     ps.unprepare();
                     return resolve(insertSetNames);
                 })

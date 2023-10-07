@@ -1,6 +1,6 @@
 const { getTestSeasons, getSeasonsFromDB, getBaseSetNamesFromDB, getInsertSetNamesFromDB, getCardSetDetailsFromDB } = require('../../models/v1/cardsetsModel');
-const sql = require('mssql'); // remove once all DB ops have moved to the model
-const { poolPromise } = require('../../db'); // remove once all DB ops have moved to the model
+
+
 
 // ENDPOINT: Cardsets Controller Test
 // Return a test response directly from the controller
@@ -88,7 +88,6 @@ exports.getSeasons = (req, res) => {
                     stack: error.stack
                 }
             });
-            // TODO: interpret and respond with a friendly error message and log the true error in the database
         });
 }
 
@@ -146,7 +145,6 @@ exports.getBaseSetNames = (req, res) => {
                 stack: error.stack
             }
         });
-        // TODO: interpret and respond with a friendly error message and log the true error in the database
     });
 }
 
@@ -208,7 +206,6 @@ exports.getInsertSetNames = (req, res) => {
                 stack: error.stack
             }
         });
-        // TODO: interpret and respond with a friendly error message and log the true error in the database
     });
 }
 
@@ -273,7 +270,6 @@ exports.getCardSetDetails = (req, res) => {
                 stack: error.stack
             }
         });
-        // TODO: interpret and respond with a friendly error message and log the true error in the database
     });
 }
 
