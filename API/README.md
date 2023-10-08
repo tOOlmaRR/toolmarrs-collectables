@@ -46,24 +46,32 @@ A node.js API used to interface with the database, through which inventory data 
 ## Endpoints: Test
 |Name|HTTP|Request Format|Desription and Comments|
 |----|----|----------|-----------------------|
-Test|GET|/v1/test/|Just a "test" endpoint that can be used for monitoring and confirming that the API resolves correctly|
+Test Controller Test|GET|/v1/test/|A "test" endpoint that can be used for monitoring and confirming that the API resolves correctly|
 
 ## Endpoints: Cardsets
 
 |Name|HTTP|Request Format|Desription and Comments|
 |----|----|----------|-----------------------|
-Test|GET|/v1/cardsets/test|Just a "test" endpoint that can be used for monitoring and confirming that the cardsets API endpoint group resolves correctly|
-View Seasons|GET|/v1/cardsets/{sport}/seasons|Returns a list of all seasons for which card sets exists within the database for the given sport. Used primarily to populate a dropdown in the website
-View Base Sets|GET|/v1/cardsets/{sport}/{season}/basesets|Returns a list of all base set names for card sets in the database for the given sport. Used primarily to populate a dropdown in the website
-View Insert Sets|GET|/v1/cardsets/{sport}/{season}/{basesetname}/insertsets|Returns a list of all insert sets in a given base set, season, and sport. Used primarily to populate a drop down in the website
-View Base Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}|Returns details of a base card set given the desired sport, season, and base set name. Used to populate the card set details page/pane. Ddoes not include data from related tables such as Manufacturer.
-View Insert Set Details|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}|Returns details of an insert set given the desired sport, season, base set name, and insert set name. Used to populate the card set details page/pane. Does not include data from related tables such as Manufacturer.
+Cardsets Controller Test|GET|/v1/cardsets/test|A "test" endpoint that can be used for monitoring and confirming that the cardsets controller and API endpoint group resolves correctly|
+Cardsets Model Test|GET|/v1/cardsets/test/{sport}/seasons|A "test" endpoint that can be used for monitoring and confirming that the cardsets model and API endpoint group resolves correctly. Passing in 'hockey' as the sport returns data whereas any other value will return an 'error' response|
+View Seasons|GET|/v1/cardsets/{sport}/seasons|Returns a list of all seasons for which card sets exists within the database for the specified sport. Used primarily to populate a dropdown in the website
+View Base Set Names|GET|/v1/cardsets/{sport}/{season}/basesets|Returns a list of all base set names for card sets in the database for the specified sport and season. Used primarily to populate a dropdown in the website
+View Insert Set Names|GET|/v1/cardsets/{sport}/{season}/{basesetname}/insertsets|Returns a list of all insert sets in a given base set, season, and sport. Used primarily to populate a drop down in the website
+View Card Set Details (Base Set)|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}|Returns details of a base card set given the desired sport, season, and base set name. Used to populate the card set details page/pane. Does not include data from related tables such as Manufacturer.
+View Card Set Details (Insert Set)|GET|/v1/cardsets/details/{sport}/{season}/{basesetname}/{insertsetname}|Returns details of an insert set given the desired sport, season, base set name, and insert set name. Used to populate the card set details page/pane. Does not include data from related tables such as Manufacturer.
 
 **Note**: All dynamic elements are in {curly braces}, and should be replaced with the actual values you are looking for and not their IDs.
 
 ## Currently Known Bugs and Limitations
 1. exception handling and error responses need a little standardization and testing
 1. asynchronous operations appear to be a bit buggy, especially when it comes to the automated tests
+
+## Support
+### "Error: listen EADDRINUSE: address already in use :::8080"
+
+This means that there is a node process on port 8080 still running in the background. You can kill all running node processes using the following command:
+
+    `taskkill /F /IM node.exe`
 
 ## History
 

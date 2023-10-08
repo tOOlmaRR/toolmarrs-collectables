@@ -1,197 +1,305 @@
-//const cardSetModel = require('../models/cardsets');
+const { getTestSeasons, getSeasonsFromDB, getBaseSetNamesFromDB, getInsertSetNamesFromDB, getCardSetDetailsFromDB } = require('../../models/v1/cardsetsModel');
 
-const { poolPromise } = require('../../db')
 
-// Return a test response
-exports.getTestOutput = (req, res) => {
-    res.json({
-        endpoint: 'cardsets test'
+
+// ENDPOINT: Cardsets Controller Test
+// Return a test response directly from the controller
+exports.getControllerTestResponse = (req, res) => {
+    const endpointName = 'Cardsets Controller Test';
+    return res.json({
+        endpoint: endpointName
     });
 }
 
-// Return a list of distinct seasons based on all card sets in the database
+
+
+// ENDPOINT: Cardsets Model Test
+// Return a test response from the model
+exports.getModelTestResponse = (req, res) => {
+    const endpointName = 'Cardsets Model Test';
+    
+    // collect inputs
+    let inputs = {};
+    inputs.sport = req.params["sport"];
+
+    // Get a test reponse via the model
+    getTestSeasons(inputs)
+        .then(result => {
+            return res.json({
+                inputs,
+                endpoint: endpointName,
+                data: {
+                    seasons: result
+                }
+            });
+        })
+        .catch(error => {
+            return res.json({
+                inputs,
+                endpoint: endpointName,
+                error: { message: error }
+            });
+        });
+}
+
+
+
+// ENDPOINT: View Seasons
+// Return a list of distinct seasons based on all card sets in the database for the specified sport
 exports.getSeasons = (req, res) => {
+    const endpointName = 'View Seasons';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     
-    return new Promise(async function(resolve, reject) {
-        let conn;
-        let jsonResponse;
-        let sqlQuery = `SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' ORDER BY cs.Season ASC`;
-        try {
-            // wait for the SQL connection pool to be ready
-            const pool = await poolPromise;
-            
-            // get results
-            await pool.query(sqlQuery)
-                .then(function(result) {
-                    const seasonsFromDb = result.recordset == undefined ? [] : result.recordset;
-                    let seasons = [];
-                    for (let i = 0; i < seasonsFromDb.length; i++) {
-                        const record = seasonsFromDb[i];
-                        seasons.push(record.Season);
-                    }
+    // validate inputs and return response if invalid
+    if (!validateSport(inputs.sport))
+    {
+        const jsonResponse = {
+            inputs,
+            endpoint: endpointName,
+            error: {
+                message: "Input Validation Failed (sport)"
+            }
+        };
+        res.status(400);
+        return res.json(jsonResponse);
+    }
 
-                    // build reponse
-                    const jsonResponse = {
-                        inputs,
-                        data: {
-                            seasons
-                        }
-                    };
-                    res.json(jsonResponse);
-                    return resolve(jsonResponse);
-                })
-                .catch(function(err) {
-                    // handle query errors
-                    res.json(jsonResponse);
-                    return reject(err);
-                });      
-        } catch (err) {
-            // handle connection and logic errors (but not SQL errors)
-            res.json(jsonResponse);
-            return reject(err);
-        }
-    });
+    // Query the DB via the model for seasons data
+    getSeasonsFromDB(inputs.sport)
+        .then(result => {
+            return res.json({
+                inputs,
+                endpoint: endpointName,
+                data: {
+                    seasons: result
+                }
+            });
+        })
+        .catch(error => {
+            res.status(400);
+            return res.json({
+                inputs,
+                endpoint: endpointName,
+                error: {
+                    message: error.message,
+                    stack: error.stack
+                }
+            });
+        });
 }
 
-// Return a list of base set names for a specified season
+
+
+// ENDPOINT: View Base Set Names
+// Return a list of base set names for a specified sport and season
 exports.getBaseSetNames = (req, res) => {
+    const endpointName = 'View Base Set Names';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
 
-    return new Promise(async function(resolve, reject) {
-        let conn;
-        let jsonResponse;
-        let sqlQuery = `SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`;
-        try {
-            // wait for the SQL connection pool to be ready
-            const pool = await poolPromise;
-            
-            // get results
-            await pool.query(sqlQuery)
-                .then(function(result) {
-                    const baseSetsFromDb = result.recordset == undefined ? [] : result.recordset;
-                    let sets = [];
-                    for (let i = 0; i < baseSetsFromDb.length; i++) {
-                        const record = baseSetsFromDb[i];
-                        sets.push(record.BaseSetName);
-                    }
+    // validate inputs
+    const validSport = validateSport(inputs.sport);
+    const validSeason = validateSeason(inputs.season);
+    if (!validSport || !validSeason)
+    {
+        let invalidInputs;
+        if (!validSport && !validSeason) invalidInputs = "sport and season";
+        else if (!validSport) invalidInputs = "sport";
+        else if (!validSeason) invalidInputs = "season";
 
-                    // build reponse
-                    const jsonResponse = {
-                        inputs,
-                        data: {
-                            basesets: sets
-                        }
-                    };
-                    res.json(jsonResponse);
-                    return resolve(jsonResponse);
-                })
-                .catch(function(err) {
-                    // handle query errors
-                    res.json(jsonResponse);
-                    return reject(err);
-                });      
-        } catch (err) {
-            // handle connection and logic errors (but not SQL errors)
-            res.json(jsonResponse);
-            return reject(err);
-        }
+        const jsonResponse = {
+            inputs,
+            endpoint: endpointName,
+            error: {
+                message: `Input Validation Failed (${invalidInputs})`
+            }
+        };
+        res.status(400);
+        return res.json(jsonResponse);
+    }
+
+    // Query the DB via the model for base set names
+    getBaseSetNamesFromDB(inputs.sport, inputs.season)
+    .then(result => {
+        return res.json({
+            inputs,
+            endpoint: endpointName,
+            data: {
+                basesetnames: result
+            }
+        });
+    })
+    .catch(error => {
+        res.status(400);
+        return res.json({
+            inputs,
+            endpoint: endpointName,
+            error: {
+                message: error.message,
+                stack: error.stack
+            }
+        });
     });
 }
 
-// Return a list of distinct insert set names within a specified base set (by name) in a specified season
+
+
+// ENDPOINT: View Insert Set Names
+// Return a list of insert set names within a specified base set (by name) in a specified season and sport
 exports.getInsertSetNames = (req, res) => {
+    const endpointName = 'View Insert Set Names';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
     inputs.basesetname = req.params["basesetname"];
 
-    return new Promise(async function(resolve, reject) {
-        let conn;
-        let jsonResponse;
-        let sqlQuery = `SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`;
-        try {
-            // wait for the SQL connection pool to be ready
-            const pool = await poolPromise;
-            
-            // get results
-            await pool.query(sqlQuery)
-                .then(function(result) {
-                    const insertSetsFromDb = result.recordset == undefined ? [] : result.recordset;
-                    let sets = [];
-                    for (let i = 0; i < insertSetsFromDb.length; i++) {
-                        const record = insertSetsFromDb[i];
-                        sets.push(record.InsertSetName);
-                    }
+    // validate inputs
+    const validSport = validateSport(inputs.sport);
+    const validSeason = validateSeason(inputs.season);
+    const validBaseSetName = validateBaseSetName(inputs.basesetname);
+    
+    if (!validSport || !validSeason || !validBaseSetName)
+    {
+        let invalidInputs = [];
+        if (!validSport) invalidInputs.push("sport");
+        if (!validSeason) invalidInputs.push("season");
+        if (!validBaseSetName) invalidInputs.push("base set name");
 
-                    // build reponse
-                    const jsonResponse = {
-                        inputs,
-                        data: {
-                            insertsets: sets
-                        }
-                    };
-                    res.json(jsonResponse);
-                    return resolve(jsonResponse);
-                })
-            .catch(function(err) {
-                // handle query errors
-                res.json(jsonResponse);
-                return reject(err);
-            });      
-        } catch (err) {
-            // handle connection and logic errors (but not SQL errors)
-            res.json(jsonResponse);
-            return reject(err);
-        }
+        const invalidInputsString = invalidInputs.join();
+        const jsonResponse = {
+            inputs,
+            endpoint: endpointName,
+            error: {
+                message: `Input Validation Failed (${invalidInputsString})`
+            }
+        };
+        res.status(400);
+        return res.json(jsonResponse);
+    }
+
+    // Query the DB via the model for base set names
+    getInsertSetNamesFromDB(inputs.sport, inputs.season, inputs.basesetname)
+    .then(result => {
+        return res.json({
+            inputs,
+            endpoint: endpointName,
+            data: {
+                insertsetnames: result
+            }
+        });
+    })
+    .catch(error => {
+        res.status(400);
+        return res.json({
+            inputs,
+            endpoint: endpointName,
+            error: {
+                message: error.message,
+                stack: error.stack
+            }
+        });
     });
 }
 
+
+
+// ENDPOINT: View Card Set Details
+// returns all details for a specified card set (base set or insert set) in a specific season and sport
 exports.getCardSetDetails = (req, res) => {
+    const endpointName = 'View Card Set Details';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
     inputs.basesetname = req.params["basesetname"];
-    inputs.insertsetname = req.params["insertsetname"] == undefined ? '' : req.params["insertsetname"];
+    inputs.insertsetname = req.params["insertsetname"]
 
-    return new Promise(async function(resolve, reject) {
-        let jsonResponse;
-        let sqlQuery = `SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName = '${inputs.insertsetname}'`;
-        try {
-            // wait for the SQL connection pool to be ready
-            const pool = await poolPromise;
-            
-            // get results
-            await pool.query(sqlQuery)
-                .then(function(result) {
-                    const cardset = result.recordset == undefined ? {} : result.recordset;
-            
-                    // build reponse
-                    jsonResponse = {
-                        inputs,
-                        data: {
-                            cardset
-                        }
-                    };
-                    res.json(jsonResponse);
-                    return resolve(jsonResponse);
-                })
-                .catch(function(err) {
-                    // handle query errors
-                    res.json(jsonResponse);
-                    return reject(err);
-                });            
-        } catch (err) {
-            // handle connection and logic errors (but not SQL errors)
-            res.json(jsonResponse);
-            return reject(err);
-        }
+    // validate inputs
+    const validSport = validateSport(inputs.sport);
+    const validSeason = validateSeason(inputs.season);
+    const validBaseSetName = validateBaseSetName(inputs.basesetname);
+    const validInsertSetName = validateInsertSetName(inputs.insertsetname);
+
+    if (!validSport || !validSeason || !validBaseSetName || !validInsertSetName)
+    {
+        let invalidInputs = [];
+        if (!validSport) invalidInputs.push("sport");
+        if (!validSeason) invalidInputs.push("season");
+        if (!validBaseSetName) invalidInputs.push("base set name");
+        if (!validInsertSetName) invalidInputs.push("insert set name");
+
+        const invalidInputsString = invalidInputs.join();
+        const jsonResponse = {
+            inputs,
+            endpoint: endpointName,
+            error: {
+                message: `Input Validation Failed (${invalidInputsString})`
+            }
+        };
+        res.status(400);
+        return res.json(jsonResponse);
+    }
+
+    // Query the DB via the model for base set names
+    getCardSetDetailsFromDB(inputs.sport, inputs.season, inputs.basesetname, inputs.insertsetname)
+    .then(result => {
+        return res.json({
+            inputs,
+            endpoint: endpointName,
+            data: {
+                cardset: result
+            }
+        });
+    })
+    .catch(error => {
+        res.status(400);
+        return res.json({
+            inputs,
+            endpoint: endpointName,
+            error: {
+                message: error.message,
+                stack: error.stack
+            }
+        });
     });
+}
+
+
+
+/* Input Validation */
+function validateSport(sport) {
+    if (typeof(sport) == "string" && sport.length <= 25)
+        return true;
+    else
+        return false;
+}
+
+function validateSeason(season) {
+    if (typeof(season) == "string" && (season.length == 7 || season.length == 4))
+        return true;
+    else
+        return false;
+}
+
+function validateBaseSetName(baseSetName) {
+    if (typeof(baseSetName) == "string" && baseSetName.length <= 100)
+        return true;
+    else
+        return false;
+}
+
+function validateInsertSetName(insertSetName) {
+    if (typeof(insertSetName) == "undefined" || (typeof(insertSetName) == "string" && insertSetName.length <= 100))
+        return true;
+    else
+        return false;
 }
