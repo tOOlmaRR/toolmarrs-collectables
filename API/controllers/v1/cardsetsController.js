@@ -1,4 +1,5 @@
 const { getTestSeasons, getSeasonsFromDB, getBaseSetNamesFromDB, getInsertSetNamesFromDB, getCardSetDetailsFromDB } = require('../../models/v1/cardsetsModel');
+const inputValidator = require('../../validators/inputValidator');
 
 
 
@@ -54,7 +55,8 @@ exports.getSeasons = (req, res) => {
     inputs.sport = req.params["sport"];
     
     // validate inputs and return response if invalid
-    if (!validateSport(inputs.sport))
+    const validSeason = inputValidator.validateSport(inputs.sport)
+    if (!validSeason)
     {
         const jsonResponse = {
             inputs,
@@ -104,8 +106,8 @@ exports.getBaseSetNames = (req, res) => {
     inputs.season = req.params["season"];
 
     // validate inputs
-    const validSport = validateSport(inputs.sport);
-    const validSeason = validateSeason(inputs.season);
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
     if (!validSport || !validSeason)
     {
         let invalidInputs;
@@ -162,9 +164,9 @@ exports.getInsertSetNames = (req, res) => {
     inputs.basesetname = req.params["basesetname"];
 
     // validate inputs
-    const validSport = validateSport(inputs.sport);
-    const validSeason = validateSeason(inputs.season);
-    const validBaseSetName = validateBaseSetName(inputs.basesetname);
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
+    const validBaseSetName = inputValidator.validateBaseSetName(inputs.basesetname);
     
     if (!validSport || !validSeason || !validBaseSetName)
     {
@@ -224,10 +226,10 @@ exports.getCardSetDetails = (req, res) => {
     inputs.insertsetname = req.params["insertsetname"]
 
     // validate inputs
-    const validSport = validateSport(inputs.sport);
-    const validSeason = validateSeason(inputs.season);
-    const validBaseSetName = validateBaseSetName(inputs.basesetname);
-    const validInsertSetName = validateInsertSetName(inputs.insertsetname);
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
+    const validBaseSetName = inputValidator.validateBaseSetName(inputs.basesetname);
+    const validInsertSetName = inputValidator.validateInsertSetName(inputs.insertsetname);
 
     if (!validSport || !validSeason || !validBaseSetName || !validInsertSetName)
     {
@@ -271,35 +273,4 @@ exports.getCardSetDetails = (req, res) => {
             }
         });
     });
-}
-
-
-
-/* Input Validation */
-function validateSport(sport) {
-    if (typeof(sport) == "string" && sport.length <= 25)
-        return true;
-    else
-        return false;
-}
-
-function validateSeason(season) {
-    if (typeof(season) == "string" && (season.length == 7 || season.length == 4))
-        return true;
-    else
-        return false;
-}
-
-function validateBaseSetName(baseSetName) {
-    if (typeof(baseSetName) == "string" && baseSetName.length <= 100)
-        return true;
-    else
-        return false;
-}
-
-function validateInsertSetName(insertSetName) {
-    if (typeof(insertSetName) == "undefined" || (typeof(insertSetName) == "string" && insertSetName.length <= 100))
-        return true;
-    else
-        return false;
 }
