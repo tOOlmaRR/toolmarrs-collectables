@@ -73,6 +73,10 @@ This means that there is a node process on port 8080 still running in the backgr
 
     `taskkill /F /IM node.exe`
 
+### "Failed to connect to {ServerName}:{Port} - Could not connect (sequence)"
+
+There may be some configuration settings that aren't set up. Ensure that your SQL Server instance in SQL Server Connection Manager has TCP/IP Protocol enabled
+
 ## History
 
 ### v1.3
