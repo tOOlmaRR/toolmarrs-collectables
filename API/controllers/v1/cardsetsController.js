@@ -1,14 +1,17 @@
 const { getTestSeasons, getSeasonsFromDB, getBaseSetNamesFromDB, getInsertSetNamesFromDB, getCardSetDetailsFromDB } = require('../../models/v1/cardsetsModel');
+const inputValidator = require('../../validators/inputValidator');
+const JsonResponse = require('./jsonResponseV1');
+const JsonErrorResponse = require('./jsonErrorResponseV1');
 
 
 
 // ENDPOINT: Cardsets Controller Test
 // Return a test response directly from the controller
 exports.getControllerTestResponse = (req, res) => {
+    const inputs = {};
     const endpointName = 'Cardsets Controller Test';
-    return res.json({
-        endpoint: endpointName
-    });
+    const data = {};
+    return res.json(new JsonResponse(inputs, endpointName, data));
 }
 
 
@@ -25,20 +28,14 @@ exports.getModelTestResponse = (req, res) => {
     // Get a test reponse via the model
     getTestSeasons(inputs)
         .then(result => {
-            return res.json({
-                inputs,
-                endpoint: endpointName,
-                data: {
-                    seasons: result
-                }
-            });
+            const data =  {
+                seasons: result
+            };
+            return res.json(new JsonResponse(inputs, endpointName, data));
         })
         .catch(error => {
-            return res.json({
-                inputs,
-                endpoint: endpointName,
-                error: { message: error }
-            });
+            const errorNode =  { message: error };
+            return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
         });
 }
 
@@ -54,40 +51,26 @@ exports.getSeasons = (req, res) => {
     inputs.sport = req.params["sport"];
     
     // validate inputs and return response if invalid
-    if (!validateSport(inputs.sport))
+    const validSeason = inputValidator.validateSport(inputs.sport)
+    if (!validSeason)
     {
-        const jsonResponse = {
-            inputs,
-            endpoint: endpointName,
-            error: {
-                message: "Input Validation Failed (sport)"
-            }
-        };
+        const errorNode = { message: "Input Validation Failed (sport)" };
         res.status(400);
-        return res.json(jsonResponse);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     }
 
     // Query the DB via the model for seasons data
     getSeasonsFromDB(inputs.sport)
         .then(result => {
-            return res.json({
-                inputs,
-                endpoint: endpointName,
-                data: {
-                    seasons: result
-                }
-            });
+            const dataNode = { seasons: result };
+            return res.json(new JsonResponse(inputs, endpointName, dataNode));
         })
         .catch(error => {
-            res.status(400);
-            return res.json({
-                inputs,
-                endpoint: endpointName,
-                error: {
-                    message: error.message,
-                    stack: error.stack
-                }
-            });
+            const errorNode = {
+                message: "Input Validation Failed (sport)",
+                stack: error.stack
+            };
+            return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
         });
 }
 
@@ -104,8 +87,8 @@ exports.getBaseSetNames = (req, res) => {
     inputs.season = req.params["season"];
 
     // validate inputs
-    const validSport = validateSport(inputs.sport);
-    const validSeason = validateSeason(inputs.season);
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
     if (!validSport || !validSeason)
     {
         let invalidInputs;
@@ -113,38 +96,24 @@ exports.getBaseSetNames = (req, res) => {
         else if (!validSport) invalidInputs = "sport";
         else if (!validSeason) invalidInputs = "season";
 
-        const jsonResponse = {
-            inputs,
-            endpoint: endpointName,
-            error: {
-                message: `Input Validation Failed (${invalidInputs})`
-            }
-        };
+        const errorNode = { message: `Input Validation Failed (${invalidInputs})` };
         res.status(400);
-        return res.json(jsonResponse);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     }
 
     // Query the DB via the model for base set names
     getBaseSetNamesFromDB(inputs.sport, inputs.season)
     .then(result => {
-        return res.json({
-            inputs,
-            endpoint: endpointName,
-            data: {
-                basesetnames: result
-            }
-        });
+        const dataNode = { basesetnames: result };
+        return res.json(new JsonResponse(inputs, endpointName, dataNode));
     })
     .catch(error => {
+        const errorNode = {
+            message: error.message,
+            stack: error.stack
+        };
         res.status(400);
-        return res.json({
-            inputs,
-            endpoint: endpointName,
-            error: {
-                message: error.message,
-                stack: error.stack
-            }
-        });
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     });
 }
 
@@ -162,9 +131,9 @@ exports.getInsertSetNames = (req, res) => {
     inputs.basesetname = req.params["basesetname"];
 
     // validate inputs
-    const validSport = validateSport(inputs.sport);
-    const validSeason = validateSeason(inputs.season);
-    const validBaseSetName = validateBaseSetName(inputs.basesetname);
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
+    const validBaseSetName = inputValidator.validateBaseSetName(inputs.basesetname);
     
     if (!validSport || !validSeason || !validBaseSetName)
     {
@@ -174,38 +143,24 @@ exports.getInsertSetNames = (req, res) => {
         if (!validBaseSetName) invalidInputs.push("base set name");
 
         const invalidInputsString = invalidInputs.join();
-        const jsonResponse = {
-            inputs,
-            endpoint: endpointName,
-            error: {
-                message: `Input Validation Failed (${invalidInputsString})`
-            }
-        };
+        const errorNode = { message: `Input Validation Failed (${invalidInputs})` };
         res.status(400);
-        return res.json(jsonResponse);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     }
 
     // Query the DB via the model for base set names
     getInsertSetNamesFromDB(inputs.sport, inputs.season, inputs.basesetname)
     .then(result => {
-        return res.json({
-            inputs,
-            endpoint: endpointName,
-            data: {
-                insertsetnames: result
-            }
-        });
+        const dataNode = { insertsetnames: result };
+        return res.json(new JsonResponse(inputs, endpointName, dataNode));
     })
     .catch(error => {
+        const errorNode = {
+            message: error.message,
+            stack: error.stack
+        };
         res.status(400);
-        return res.json({
-            inputs,
-            endpoint: endpointName,
-            error: {
-                message: error.message,
-                stack: error.stack
-            }
-        });
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     });
 }
 
@@ -224,10 +179,10 @@ exports.getCardSetDetails = (req, res) => {
     inputs.insertsetname = req.params["insertsetname"]
 
     // validate inputs
-    const validSport = validateSport(inputs.sport);
-    const validSeason = validateSeason(inputs.season);
-    const validBaseSetName = validateBaseSetName(inputs.basesetname);
-    const validInsertSetName = validateInsertSetName(inputs.insertsetname);
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
+    const validBaseSetName = inputValidator.validateBaseSetName(inputs.basesetname);
+    const validInsertSetName = inputValidator.validateInsertSetName(inputs.insertsetname);
 
     if (!validSport || !validSeason || !validBaseSetName || !validInsertSetName)
     {
@@ -238,68 +193,23 @@ exports.getCardSetDetails = (req, res) => {
         if (!validInsertSetName) invalidInputs.push("insert set name");
 
         const invalidInputsString = invalidInputs.join();
-        const jsonResponse = {
-            inputs,
-            endpoint: endpointName,
-            error: {
-                message: `Input Validation Failed (${invalidInputsString})`
-            }
-        };
+        const errorNode = { message: `Input Validation Failed (${invalidInputs})` };
         res.status(400);
-        return res.json(jsonResponse);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     }
 
     // Query the DB via the model for base set names
     getCardSetDetailsFromDB(inputs.sport, inputs.season, inputs.basesetname, inputs.insertsetname)
     .then(result => {
-        return res.json({
-            inputs,
-            endpoint: endpointName,
-            data: {
-                cardset: result
-            }
-        });
+        const dataNode = { cardset: result };
+        return res.json(new JsonResponse(inputs, endpointName, dataNode));
     })
     .catch(error => {
+        const errorNode = {
+            message: error.message,
+            stack: error.stack
+        };
         res.status(400);
-        return res.json({
-            inputs,
-            endpoint: endpointName,
-            error: {
-                message: error.message,
-                stack: error.stack
-            }
-        });
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     });
-}
-
-
-
-/* Input Validation */
-function validateSport(sport) {
-    if (typeof(sport) == "string" && sport.length <= 25)
-        return true;
-    else
-        return false;
-}
-
-function validateSeason(season) {
-    if (typeof(season) == "string" && (season.length == 7 || season.length == 4))
-        return true;
-    else
-        return false;
-}
-
-function validateBaseSetName(baseSetName) {
-    if (typeof(baseSetName) == "string" && baseSetName.length <= 100)
-        return true;
-    else
-        return false;
-}
-
-function validateInsertSetName(insertSetName) {
-    if (typeof(insertSetName) == "undefined" || (typeof(insertSetName) == "string" && insertSetName.length <= 100))
-        return true;
-    else
-        return false;
 }
