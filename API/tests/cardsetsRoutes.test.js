@@ -50,13 +50,17 @@ describe('Cardsets Model Tests', () => {
         expect(responseBody['error']).not.toBeDefined();
     });
 
-    test('Should return JSON error response with an error node and a message node within', async() => {
+    test('Should return a 400 HTTP status code and a JSON error response with an error node and a message node within', async() => {
         const sport = 'BADINPUT';
         const response = await request(app).get(seasonsModelTestEndpoint.replace(':sport', sport));
         const responseBody = response.body;
+        
+        expect(response.statusCode).toBe(400);
+        
         expect(responseBody['error']).toBeDefined();
         expect(responseBody['error']['message']).toBeDefined();
         expect(responseBody['error']['message']).toBe('BAD INPUT');
+        
         expect(responseBody['data']).not.toBeDefined();
     });
 });

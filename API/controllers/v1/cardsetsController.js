@@ -35,6 +35,7 @@ exports.getModelTestResponse = (req, res) => {
         })
         .catch(error => {
             const errorNode =  { message: error };
+            res.status(400);
             return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
         });
 }
