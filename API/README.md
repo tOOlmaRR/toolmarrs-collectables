@@ -93,6 +93,13 @@ There may be some configuration settings that aren't set up. Ensure that your SQ
 
 ## History
 
+### v1.4
+- NPM package updates via dependabot
+- fixed issues with asynchronous requests
+- addressed potential SQL injection attacks
+- refactored API endpoints to use standard JSON response objects
+- consolidate SQL connection logic
+
 ### v1.3
 - enhanced readme documentation
 
