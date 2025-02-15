@@ -26,6 +26,20 @@ A node.js API used to interface with the database, through which inventory data 
         ```
         npm run start:prod
         ```
+### Apache Integration
+To run nodejs in Apache, you need to use a reverse-proxy technique by running your node server separately from Apache on a different port, and adding/updating the Apache configuration to redirect requests from the Apache server to the nodejs server.
+
+Add the following to your Apache configuration just below your ServerRoot directive:
+- ProxyPass /tsc-api http://localhost:8080
+
+The first parameter is the virtual path you want to map up in your URLs to the nodejs server
+The second parameter is the URL and port that your nodejs server is running on (be sure to leave off the traling slash!)
+
+You will also need to ensure that the following modules are enabled:
+1. mod_proxy.so
+2. mod_proxy_http.so
+
+Reference: https://medium.com/@chamiperera95/how-to-run-node-js-server-and-apache-server-together-ee225ece6a44
 
 ## Testing instructions
 1. Ensure that *Jest* is installed globally
