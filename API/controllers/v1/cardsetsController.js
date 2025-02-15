@@ -1,213 +1,216 @@
-//const cardSetModel = require('../models/cardsets');
+const { getTestSeasons, getSeasonsFromDB, getBaseSetNamesFromDB, getInsertSetNamesFromDB, getCardSetDetailsFromDB } = require('../../models/v1/cardsetsModel');
+const inputValidator = require('../../validators/inputValidator');
+const JsonResponse = require('./jsonResponseV1');
+const JsonErrorResponse = require('./jsonErrorResponseV1');
 
-// Return a test response
-exports.getTestOutput = (req, res) => {
-    res.json({
-        endpoint: 'cardsets test'
-    });
+
+
+// ENDPOINT: Cardsets Controller Test
+// Return a test response directly from the controller
+exports.getControllerTestResponse = (req, res) => {
+    const inputs = {};
+    const endpointName = 'Cardsets Controller Test';
+    const data = {};
+    return res.json(new JsonResponse(inputs, endpointName, data));
 }
 
-// Return a list of distinct seasons based on all card sets in the database
+
+
+// ENDPOINT: Cardsets Model Test
+// Return a test response from the model
+exports.getModelTestResponse = (req, res) => {
+    const endpointName = 'Cardsets Model Test';
+    
+    // collect inputs
+    let inputs = {};
+    inputs.sport = req.params["sport"];
+
+    // Get a test reponse via the model
+    getTestSeasons(inputs)
+        .then(result => {
+            const data =  {
+                seasons: result
+            };
+            return res.json(new JsonResponse(inputs, endpointName, data));
+        })
+        .catch(error => {
+            const errorNode =  { message: error };
+            res.status(400);
+            return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
+        });
+}
+
+
+
+// ENDPOINT: View Seasons
+// Return a list of distinct seasons based on all card sets in the database for the specified sport
 exports.getSeasons = (req, res) => {
+    const endpointName = 'View Seasons';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     
-    // Connect to DB
-    const sql = require('mssql')
+    // validate inputs and return response if invalid
+    const validSeason = inputValidator.validateSport(inputs.sport)
+    if (!validSeason)
+    {
+        const errorNode = { message: "Input Validation Failed (sport)" };
+        res.status(400);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
+    }
 
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
-
-    (async function () {
-        try {
-            const pool = await sql.connect(config)
-            const seasonsFromDb = await pool.request()
-                .query(`SELECT DISTINCT cs.Season FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' ORDER BY cs.Season ASC`);
-            const records = seasonsFromDb.recordsets[0];
-            let seasons = [];
-            for (let i = 0; i < records.length; i++) {
-                const record = records[i];
-                seasons.push(record.Season);
-            }
-
-            const jsonResponse = {
-                inputs,
-                data: {
-                    seasons
-                }
+    // Query the DB via the model for seasons data
+    getSeasonsFromDB(inputs.sport)
+        .then(result => {
+            const dataNode = { seasons: result };
+            return res.json(new JsonResponse(inputs, endpointName, dataNode));
+        })
+        .catch(error => {
+            const errorNode = {
+                message: "Input Validation Failed (sport)",
+                stack: error.stack
             };
-            res.json(jsonResponse);
-        } catch (err) {
-            console.log(err);
-        }
-    })();
-     
-    sql.on('error', err => {
-        console.log(err);
-    });
+            return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
+        });
 }
 
-// Return a list of base set names for a specified season
+
+
+// ENDPOINT: View Base Set Names
+// Return a list of base set names for a specified sport and season
 exports.getBaseSetNames = (req, res) => {
+    const endpointName = 'View Base Set Names';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
 
-    // Connect to DB
-    const sql = require('mssql')
+    // validate inputs
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
+    if (!validSport || !validSeason)
+    {
+        let invalidInputs;
+        if (!validSport && !validSeason) invalidInputs = "sport and season";
+        else if (!validSport) invalidInputs = "sport";
+        else if (!validSeason) invalidInputs = "season";
 
-    // Configuration
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
+        const errorNode = { message: `Input Validation Failed (${invalidInputs})` };
+        res.status(400);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
+    }
 
-
-    (async function () {
-        try {
-            const pool = await sql.connect(config)
-            const baseSetsFromDb = await pool.request()
-                .query(`SELECT BaseSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND InsertSetName = '' ORDER BY BaseSetName ASC`);
-            const records = baseSetsFromDb.recordsets[0];
-
-            let sets = [];
-            for (let i = 0; i < records.length; i++) {
-                const record = records[i];
-                sets.push(record.BaseSetName);
-            }
-
-            const jsonResponse = {
-                inputs,
-                data: {
-                    basesets: sets
-                }
-            };
-            res.json(jsonResponse);
-        } catch (err) {
-            console.log(err);
-        }
-    })();
-
-    sql.on('error', err => {
-        console.log(err);
+    // Query the DB via the model for base set names
+    getBaseSetNamesFromDB(inputs.sport, inputs.season)
+    .then(result => {
+        const dataNode = { basesetnames: result };
+        return res.json(new JsonResponse(inputs, endpointName, dataNode));
+    })
+    .catch(error => {
+        const errorNode = {
+            message: error.message,
+            stack: error.stack
+        };
+        res.status(400);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     });
 }
 
-// Return a list of distinct insert set names within a specified base set (by name) in a specified season
+
+
+// ENDPOINT: View Insert Set Names
+// Return a list of insert set names within a specified base set (by name) in a specified season and sport
 exports.getInsertSetNames = (req, res) => {
+    const endpointName = 'View Insert Set Names';
+    
     // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
     inputs.basesetname = req.params["basesetname"];
 
-    // Connect to DB
-    const sql = require('mssql')
+    // validate inputs
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
+    const validBaseSetName = inputValidator.validateBaseSetName(inputs.basesetname);
+    
+    if (!validSport || !validSeason || !validBaseSetName)
+    {
+        let invalidInputs = [];
+        if (!validSport) invalidInputs.push("sport");
+        if (!validSeason) invalidInputs.push("season");
+        if (!validBaseSetName) invalidInputs.push("base set name");
 
-    // Configuration
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
+        const invalidInputsString = invalidInputs.join();
+        const errorNode = { message: `Input Validation Failed (${invalidInputs})` };
+        res.status(400);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
+    }
 
-    (async function () {
-        try {
-            const pool = await sql.connect(config)
-            const insertSetsFromDb = await pool.request()
-                .query(`SELECT InsertSetName FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName <> '' ORDER BY InsertSetName ASC`);
-            const records = insertSetsFromDb.recordsets[0];
-            
-            let sets = [];
-            for (let i = 0; i < records.length; i++) {
-                const record = records[i];
-                sets.push(record.InsertSetName);
-            }
-
-            const jsonResponse = {
-                inputs,
-                data: {
-                    insertsets: sets
-                }
-            };
-            res.json(jsonResponse);
-        } catch (err) {
-            console.log(err);
-        }
-    })();
-
-    sql.on('error', err => {
-        console.log(err);
+    // Query the DB via the model for base set names
+    getInsertSetNamesFromDB(inputs.sport, inputs.season, inputs.basesetname)
+    .then(result => {
+        const dataNode = { insertsetnames: result };
+        return res.json(new JsonResponse(inputs, endpointName, dataNode));
+    })
+    .catch(error => {
+        const errorNode = {
+            message: error.message,
+            stack: error.stack
+        };
+        res.status(400);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     });
 }
 
+
+
+// ENDPOINT: View Card Set Details
+// returns all details for a specified card set (base set or insert set) in a specific season and sport
 exports.getCardSetDetails = (req, res) => {
+    const endpointName = 'View Card Set Details';
+    
+    // collect inputs
     let inputs = {};
     inputs.sport = req.params["sport"];
     inputs.season = req.params["season"];
     inputs.basesetname = req.params["basesetname"];
-    inputs.insertsetname = req.params["insertsetname"] == undefined ? '' : req.params["insertsetname"];
+    inputs.insertsetname = req.params["insertsetname"]
 
-    // Connect to DB
-    const sql = require('mssql')
+    // validate inputs
+    const validSport = inputValidator.validateSport(inputs.sport);
+    const validSeason = inputValidator.validateSeason(inputs.season);
+    const validBaseSetName = inputValidator.validateBaseSetName(inputs.basesetname);
+    const validInsertSetName = inputValidator.validateInsertSetName(inputs.insertsetname);
 
-    // Configuration
-    const config = {
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        server: process.env.DB_SERVER,
-        database: process.env.DB_NAME,
-        options: {
-            enableArithAbort: true,
-            encrypt: true
-        },
-        stream: true
-    };
+    if (!validSport || !validSeason || !validBaseSetName || !validInsertSetName)
+    {
+        let invalidInputs = [];
+        if (!validSport) invalidInputs.push("sport");
+        if (!validSeason) invalidInputs.push("season");
+        if (!validBaseSetName) invalidInputs.push("base set name");
+        if (!validInsertSetName) invalidInputs.push("insert set name");
 
-    (async function () {
-        try {
-            const pool = await sql.connect(config)
-            const cardsetDetailsFromDb = await pool.request()
-                .query(`SELECT top 1 cs.* FROM cardset cs WITH (NOLOCK) INNER JOIN sport s WITH (NOLOCK) ON cs.Sport_ID = s.ID AND s.Name = '${inputs.sport}' WHERE Season = '${inputs.season}' AND BaseSetName = '${inputs.basesetname}' AND InsertSetName = '${inputs.insertsetname}'`);
-            const cardset = cardsetDetailsFromDb.recordset == undefined ? {} : cardsetDetailsFromDb.recordset;
-            
-            const jsonResponse = {
-                inputs,
-                data: {
-                    cardset
-                }
-            };
-            res.json(jsonResponse);
-        } catch (err) {
-            console.log(err);
-        }
-    })();
+        const invalidInputsString = invalidInputs.join();
+        const errorNode = { message: `Input Validation Failed (${invalidInputs})` };
+        res.status(400);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
+    }
 
-    sql.on('error', err => {
-        console.log(err);
+    // Query the DB via the model for base set names
+    getCardSetDetailsFromDB(inputs.sport, inputs.season, inputs.basesetname, inputs.insertsetname)
+    .then(result => {
+        const dataNode = { cardset: result };
+        return res.json(new JsonResponse(inputs, endpointName, dataNode));
+    })
+    .catch(error => {
+        const errorNode = {
+            message: error.message,
+            stack: error.stack
+        };
+        res.status(400);
+        return res.json(new JsonErrorResponse(inputs, endpointName, errorNode));
     });
 }
